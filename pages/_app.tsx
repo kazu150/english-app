@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -12,6 +12,23 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Link from 'next/link';
+
+type Props = {
+    Component?: FC;
+    pageProps?: {};
+};
+
+type CurrentUser = {
+    userName: string;
+    email: string;
+    initialTime: string;
+    studyTime: string;
+};
+
+type Service = {
+    name: string;
+    timePerLesson: string;
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -28,7 +45,8 @@ const useStyles = makeStyles((theme) => ({
         marginTop: '50px',
     },
 }));
-export default function MyApp(props) {
+
+export const MyApp: FC<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
 
@@ -39,6 +57,30 @@ export default function MyApp(props) {
             jssStyles.parentElement.removeChild(jssStyles);
         }
     }, []);
+
+    const initialState = {
+        currentUser: {
+            userName: '',
+            email: '',
+            initialTime: '',
+            studyTime: '',
+        },
+        service: {
+            name: '',
+            timePerLesson: '',
+        },
+    };
+
+    const action = ({ type, payload }) => {
+        switch (type) {
+            case '':
+                return {};
+            default:
+                return {};
+        }
+    };
+
+    const [state, reducer] = useReducer(action, initialState);
 
     return (
         <React.Fragment>
@@ -76,9 +118,12 @@ export default function MyApp(props) {
             </ThemeProvider>
         </React.Fragment>
     );
-}
-
-MyApp.propTypes = {
-    Component: PropTypes.elementType.isRequired,
-    pageProps: PropTypes.object.isRequired,
 };
+
+// MyApp.propTypes = {
+//     Component: PropTypes.elementType.isRequired,
+//     pageProps: PropTypes.object.isRequired,
+// };
+// TODO エラー原因わからん
+
+export default MyApp;
