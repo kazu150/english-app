@@ -62,7 +62,7 @@ export default function MyApp(props) {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>
-                            News
+                            英語アプリ
                         </Typography>
                         <Button color="inherit">Login</Button>
                     </Toolbar>
