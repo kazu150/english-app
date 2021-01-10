@@ -20,10 +20,12 @@ type Props = {
 
 type State = {
     currentUser?: {
+        userId: number;
         userName: string;
         email: string;
-        initialTime: string;
+        initialTime: number;
         studyTime: string;
+        service: number;
     };
     service?: {
         name: string;
@@ -38,10 +40,12 @@ type ContextType = State & {
 
 const initialState: State = {
     currentUser: {
+        userId: null,
         userName: '',
         email: '',
-        initialTime: '',
+        initialTime: null,
         studyTime: '',
+        service: null,
     },
     service: {
         name: '',
@@ -81,7 +85,19 @@ export const MyApp: FC<Props> = (props) => {
 
     const reducer = (state, action) => {
         switch (action.type) {
-            case '':
+            case 'user_signup':
+                return {};
+            case 'user_signin':
+                return {};
+            case 'user_changepass':
+                return {};
+            case 'user_signout':
+                return {};
+            case 'study_register':
+                return {};
+            case 'study_delete':
+                return {};
+            case 'study_modify':
                 return {};
             default:
                 return {};
