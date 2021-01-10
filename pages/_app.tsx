@@ -1,4 +1,4 @@
-import React, { FC, useReducer } from 'react';
+import React, { FC, useReducer, createContext } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -18,17 +18,38 @@ type Props = {
     pageProps?: {};
 };
 
-type CurrentUser = {
-    userName: string;
-    email: string;
-    initialTime: string;
-    studyTime: string;
+type State = {
+    currentUser?: {
+        userName: string;
+        email: string;
+        initialTime: string;
+        studyTime: string;
+    };
+    service?: {
+        name: string;
+        timePerLesson: string;
+    };
 };
 
-type Service = {
-    name: string;
-    timePerLesson: string;
+type ContextType = State & {
+    state?: State;
+    dispatch?: any;
 };
+
+const initialState: State = {
+    currentUser: {
+        userName: '',
+        email: '',
+        initialTime: '',
+        studyTime: '',
+    },
+    service: {
+        name: '',
+        timePerLesson: '',
+    },
+};
+
+export const MyContext = createContext<ContextType>(initialState);
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -58,21 +79,8 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
-    const initialState = {
-        currentUser: {
-            userName: '',
-            email: '',
-            initialTime: '',
-            studyTime: '',
-        },
-        service: {
-            name: '',
-            timePerLesson: '',
-        },
-    };
-
-    const action = ({ type, payload }) => {
-        switch (type) {
+    const reducer = (state, action) => {
+        switch (action.type) {
             case '':
                 return {};
             default:
@@ -80,42 +88,44 @@ export const MyApp: FC<Props> = (props) => {
         }
     };
 
-    const [state, reducer] = useReducer(action, initialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
         <React.Fragment>
             <Head>
-                <title>My page</title>
+                <title>英語アプリ | Home</title>
                 <meta
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width"
                 />
             </Head>
-            <ThemeProvider theme={theme}>
-                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-                <CssBaseline />
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            className={classes.menuButton}
-                            color="inherit"
-                            aria-label="menu"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            英語アプリ
-                        </Typography>
-                        <Link href="./signin">
-                            <Button color="inherit">Login</Button>
-                        </Link>
-                    </Toolbar>
-                </AppBar>
-                <div className={classes.body}>
-                    <Component {...pageProps} />
-                </div>
-            </ThemeProvider>
+            <MyContext.Provider value={{ state, dispatch }}>
+                <ThemeProvider theme={theme}>
+                    {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                    <CssBaseline />
+                    <AppBar position="static">
+                        <Toolbar>
+                            <IconButton
+                                edge="start"
+                                className={classes.menuButton}
+                                color="inherit"
+                                aria-label="menu"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" className={classes.title}>
+                                英語アプリ
+                            </Typography>
+                            <Link href="./signin">
+                                <Button color="inherit">Login</Button>
+                            </Link>
+                        </Toolbar>
+                    </AppBar>
+                    <div className={classes.body}>
+                        <Component {...pageProps} />
+                    </div>
+                </ThemeProvider>
+            </MyContext.Provider>
         </React.Fragment>
     );
 };
