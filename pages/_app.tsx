@@ -13,14 +13,18 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
+    root: {},
     menuButton: {
         marginRight: theme.spacing(2),
     },
     title: {
         flexGrow: 1,
+    },
+    body: {
+        width: '90%',
+        maxWidth: '500px',
+        margin: 'auto',
+        marginTop: '50px',
     },
 }));
 export default function MyApp(props) {
@@ -63,7 +67,9 @@ export default function MyApp(props) {
                         <Button color="inherit">Login</Button>
                     </Toolbar>
                 </AppBar>
-                <Component {...pageProps} />
+                <div className={classes.body}>
+                    <Component {...pageProps} />
+                </div>
             </ThemeProvider>
         </React.Fragment>
     );
