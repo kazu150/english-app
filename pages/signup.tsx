@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Link from 'next/link';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,7 +33,9 @@ const SignUp: FC = () => {
                 label="パスワード(確認用)"
                 type="password"
             />
-            <Button variant="contained">会員登録</Button>
+            <Link href="./">
+                <Button variant="contained">会員登録</Button>
+            </Link>
         </form>
     );
 };
