@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Link from 'next/link';
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -24,20 +25,24 @@ const Home: FC = () => {
                 <p>
                     このサービスは、オンライン英会話のユーザーが、自分の英語力をチェックするためのものです。
                 </p>
-                <Button
-                    className={classes.button}
-                    fullWidth
-                    variant="contained"
-                >
-                    新規ユーザ登録
-                </Button>
-                <Button
-                    className={classes.button}
-                    fullWidth
-                    variant="contained"
-                >
-                    ログイン
-                </Button>
+                <Link href="./signup">
+                    <Button
+                        className={classes.button}
+                        fullWidth
+                        variant="contained"
+                    >
+                        新規ユーザ登録
+                    </Button>
+                </Link>
+                <Link href="./signin">
+                    <Button
+                        className={classes.button}
+                        fullWidth
+                        variant="contained"
+                    >
+                        ログイン
+                    </Button>
+                </Link>
             </main>
         </div>
     );
