@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SignUp: FC = () => {
-    const { dispatch, state } = useContext(MyContext);
+    const { dispatch } = useContext(MyContext);
 
     const classes = useStyles();
     const [signUpUser, setSignUpUser] = useState({

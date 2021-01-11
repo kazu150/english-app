@@ -33,7 +33,7 @@ const SignIn: FC = () => {
         e.preventDefault();
         console.log(signInUser);
         dispatch({
-            type: 'user_signup',
+            type: 'user_signin',
             payload: signInUser,
         });
     };
