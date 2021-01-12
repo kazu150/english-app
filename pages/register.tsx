@@ -12,6 +12,7 @@ type RegisterData = {
     userName: string;
     initialTime: any;
     service: string;
+    email: string;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -32,12 +33,13 @@ const Register: FC = () => {
         userName: '',
         initialTime: 0,
         service: null,
+        email: '',
     });
     const { dispatch } = useContext(MyContext);
 
     const onSubmitButtonClick = () => {
         dispatch({
-            type: 'user_signup',
+            type: 'user_register',
             payload: registerData,
         });
     };

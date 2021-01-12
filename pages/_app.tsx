@@ -25,6 +25,7 @@ type User = {
     initialTime: number;
     lessonCount: number;
     service: string;
+    userLog?: UserLog;
 };
 
 type UserLog = {
@@ -36,7 +37,7 @@ type UserLog = {
 
 type State = {
     currentUser?: User;
-    users?: (User & UserLog)[];
+    users?: User[];
     services?: {
         name: string;
         timePerLesson: number;
@@ -99,15 +100,56 @@ export const MyApp: FC<Props> = (props) => {
     const reducer = (state, action) => {
         switch (action.type) {
             case 'user_signup':
-                return {};
+                return {
+                    ...state,
+                    users: [...state.users, action.payload],
+                };
+            case 'user_register':
+                return {
+                    ...state,
+                    users: [
+                        ...state.users,
+                        {
+                            ...state.users.filter(
+                                (user) => user.email === action.payload.email
+                            )[0],
+                            ...action.payload,
+                        },
+                    ],
+                };
             case 'user_signin':
-                return {};
+                return {
+                    ...state,
+                    currentUser: {
+                        ...state.users.filter(
+                            (user) => user.email === action.payload.email
+                        )[0],
+                    },
+                };
             case 'user_changepass':
                 return {};
             case 'user_signout':
                 return {};
             case 'study_register':
-                return {};
+                return {
+                    ...state,
+                    users: [
+                        ...state.users.filter(
+                            (user) => user.email !== state.currentUser.email
+                        ),
+                        {
+                            ...state.users.filter(
+                                (user) => user.email === state.currentUser.email
+                            )[0],
+                            ...state.users
+                                .filter(
+                                    (user) =>
+                                        user.email === state.currentUser.email
+                                )[0]
+                                .userLog.push(action.payload),
+                        },
+                    ],
+                };
             case 'study_delete':
                 return {};
             case 'study_modify':
