@@ -11,16 +11,22 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
 
+type Result = {
+    service: string;
+    count: number;
+    nationality: string;
+};
+
 const useStyles = makeStyles((theme) => ({
     button: {
         marginTop: '15px',
     },
 }));
 
-const Submit = () => {
+const Submit: FC = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
-    const [result, setResult] = useState({
+    const [result, setResult] = useState<Result>({
         service: '',
         count: null,
         nationality: '',
@@ -41,20 +47,40 @@ const Submit = () => {
                 labelId="service"
                 id="service"
                 value={result.service}
+                onChange={(e) =>
+                    setResult({
+                        ...result,
+                        service: e.target.value as string,
+                    })
+                }
             >
-                <MenuItem value={'DMM英会話'}>DMM英会話</MenuItem>
-                <MenuItem value={'レアジョブ'}>レアジョブ</MenuItem>
-                <MenuItem value={'ネイティブキャンプ'}>
+                <MenuItem value="DMM英会話">DMM英会話</MenuItem>
+                <MenuItem value="レアジョブ">レアジョブ</MenuItem>
+                <MenuItem value="ネイティブキャンプ">
                     ネイティブキャンプ
                 </MenuItem>
             </Select>
-            <p>一回の英会話時間：２５分</p>
+            <p>
+                一回の英会話時間：
+                {
+                    state.services.filter(
+                        (service) => service.name === result.service
+                    )[0].timePerLesson
+                }
+                分
+            </p>
             <FormControl component="fieldset">
                 <FormLabel component="legend">実施回数</FormLabel>
                 <RadioGroup
                     aria-label="count"
                     name="count1"
                     value={result.count}
+                    onChange={(e) =>
+                        setResult({
+                            ...result,
+                            count: Number(e.target.value),
+                        })
+                    }
                 >
                     <FormControlLabel
                         value={1}
@@ -74,14 +100,18 @@ const Submit = () => {
                 </RadioGroup>
             </FormControl>
 
-            <InputLabel id="demo-simple-select-label">
-                会話相手の国籍
-            </InputLabel>
+            <InputLabel id="nationality">会話相手の国籍</InputLabel>
             <Select
                 fullWidth
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="nationality"
+                id="nationality"
                 value={result.nationality}
+                onChange={(e) =>
+                    setResult({
+                        ...result,
+                        nationality: e.target.value as string,
+                    })
+                }
             >
                 <MenuItem value="US">アメリカ</MenuItem>
                 <MenuItem value="UK">イギリス</MenuItem>

@@ -69,10 +69,10 @@ const Register: FC = () => {
                 }
             />
             <div>
-                <FormLabel component="legend">利用サービス</FormLabel>
+                <FormLabel>利用サービス</FormLabel>
                 <RadioGroup
-                    aria-label="gender"
-                    name="gender1"
+                    aria-label="service"
+                    name="service"
                     value={registerData.service}
                     onChange={(e) =>
                         setRegisterData({

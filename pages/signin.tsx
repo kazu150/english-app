@@ -31,7 +31,6 @@ const SignIn: FC = () => {
 
     const onSignInButtonClick = (e) => {
         e.preventDefault();
-        console.log(signInUser);
         dispatch({
             type: 'user_signin',
             payload: signInUser,
