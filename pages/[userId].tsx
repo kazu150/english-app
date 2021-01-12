@@ -16,32 +16,53 @@ const User: FC = () => {
             <p>
                 Total英会話時間；
                 {state.currentUser.initialTime +
-                    state.currentUser.lessonCount *
-                        state.services.filter(
-                            (service) =>
-                                service.name === state.currentUser.service
-                        )[0].timePerLesson}
+                    state.currentUser.userLog
+                        .map(
+                            (log) =>
+                                log.count *
+                                state.services.filter(
+                                    (service) => service.name === log.service
+                                )[0].timePerLesson
+                        )
+                        .reduce((sum, currentValue) => sum + currentValue)}
                 分
             </p>
             <p>
                 全ユーザーの第
-                {state.users.filter(
-                    (user) =>
-                        user.initialTime +
-                            user.lessonCount *
-                                state.services.filter(
-                                    (service) =>
-                                        service.name ===
-                                        state.currentUser.service
-                                )[0].timePerLesson >
-                        state.currentUser.initialTime +
-                            state.currentUser.lessonCount *
-                                state.services.filter(
-                                    (service) =>
-                                        service.name ===
-                                        state.currentUser.service
-                                )[0].timePerLesson
-                )}
+                {
+                    state.users.filter(
+                        (user) =>
+                            user.initialTime +
+                                user.userLog
+                                    .map(
+                                        (log) =>
+                                            log.count *
+                                            state.services.filter(
+                                                (service) =>
+                                                    service.name === log.service
+                                            )[0].timePerLesson
+                                    )
+                                    .reduce(
+                                        (sum, currentValue) =>
+                                            sum + currentValue
+                                    ) -
+                                user.initialTime -
+                                state.currentUser.userLog
+                                    .map(
+                                        (log) =>
+                                            log.count *
+                                            state.services.filter(
+                                                (service) =>
+                                                    service.name === log.service
+                                            )[0].timePerLesson
+                                    )
+                                    .reduce(
+                                        (sum, currentValue) =>
+                                            sum + currentValue
+                                    ) >
+                            0
+                    ).length
+                }
                 位/{state.users.length}人！
             </p>
             <br />

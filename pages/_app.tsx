@@ -18,19 +18,18 @@ type Props = {
     pageProps?: {};
 };
 
-type User = {
+export type User = {
     userId: number;
     userName: string;
     email: string;
     initialTime: number;
-    lessonCount: number;
     service: string;
     userLog?: UserLog;
 };
 
 type UserLog = {
     date: number;
-    nationality: string[];
+    nationality: string;
     count: number;
     service: string;
 }[];
@@ -55,14 +54,29 @@ const initialState: State = {
         userName: '',
         email: '',
         initialTime: null,
-        lessonCount: null,
         service: '',
+        userLog: [
+            {
+                date: 20200101,
+                nationality: 'US',
+                count: 1,
+                service: 'DMM英会話',
+            },
+        ],
     },
     users: [],
     services: [
         {
-            name: '',
-            timePerLesson: null,
+            name: 'DMM英会話',
+            timePerLesson: 25,
+        },
+        {
+            name: 'レアジョブ',
+            timePerLesson: 30,
+        },
+        {
+            name: 'ネイティブキャンプ',
+            timePerLesson: 35,
         },
     ],
 };
@@ -97,21 +111,33 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
+    React.useEffect(() => console.log(state));
+
     const reducer = (state, action) => {
         switch (action.type) {
             case 'user_signup':
                 return {
                     ...state,
+                    currentUser: {
+                        ...state.currentUser,
+                        ...action.payload,
+                    },
                     users: [...state.users, action.payload],
                 };
             case 'user_register':
                 return {
                     ...state,
+                    currentUser: {
+                        ...state.currentUser,
+                        ...action.payload,
+                    },
                     users: [
-                        ...state.users,
+                        ...state.users.filter(
+                            (user) => user.email !== state.currentUser.email
+                        ),
                         {
                             ...state.users.filter(
-                                (user) => user.email === action.payload.email
+                                (user) => user.email === state.currentUser.email
                             )[0],
                             ...action.payload,
                         },

@@ -1,4 +1,4 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { MyContext } from './_app';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,6 +10,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
+import Router from 'next/router';
 
 type Result = {
     service: string;
@@ -32,11 +33,19 @@ const Submit: FC = () => {
         nationality: '',
     });
 
+    useEffect(() => {
+        setResult({
+            ...result,
+            service: state.currentUser.service,
+        });
+    }, []);
+
     const onResultSubmit = () => {
         dispatch({
             type: 'study_register',
             payload: result,
         });
+        Router.push(`/${state.currentUser.userName}`);
     };
     return (
         <div>
@@ -65,7 +74,7 @@ const Submit: FC = () => {
                 {
                     state.services.filter(
                         (service) => service.name === result.service
-                    )[0].timePerLesson
+                    )[0]?.timePerLesson
                 }
                 分
             </p>
@@ -122,7 +131,7 @@ const Submit: FC = () => {
                 合計：
                 {state.services.filter(
                     (service) => service.name === result.service
-                )[0].timePerLesson * result.count}
+                )[0]?.timePerLesson * result.count}
                 分
             </p>
             <Button

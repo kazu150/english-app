@@ -22,7 +22,7 @@ const SignUp: FC = () => {
 
     const classes = useStyles();
     const [signUpUser, setSignUpUser] = useState({
-        mail: '',
+        email: '',
         password: '',
         passwordConfirm: '',
     });
@@ -37,11 +37,11 @@ const SignUp: FC = () => {
                 fullWidth
                 id="standard-basic"
                 label="メールアドレス"
-                value={signUpUser.mail}
+                value={signUpUser.email}
                 onChange={(e) =>
                     setSignUpUser({
                         ...signUpUser,
-                        mail: e.target.value,
+                        email: e.target.value,
                     })
                 }
             />
@@ -71,7 +71,7 @@ const SignUp: FC = () => {
                     })
                 }
             />
-            <Link href="./">
+            <Link href="./register">
                 <Button onClick={onSignUpSubmit} variant="contained">
                     会員登録
                 </Button>
