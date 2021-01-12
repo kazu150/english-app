@@ -1,12 +1,24 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
+import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 
 const User: FC = () => {
+    const { dispatch, state } = useContext(MyContext);
+
     return (
         <div>
             <h2>[userId]さんのマイページ</h2>
-            <p>今週の英会話時間；XX分</p>
+            <p>
+                今週の英会話時間；
+                {state.currentUser.initialTime +
+                    state.currentUser.lessonCount *
+                        state.services.filter(
+                            (service) =>
+                                service.name === state.currentUser.service
+                        )[0].timePerLesson}
+                分
+            </p>
             <p>全ユーザーの第X位/Y人！</p>
             <p>今月の英会話時間；XX分</p>
             <p>全ユーザーの第X位/Y人！</p>

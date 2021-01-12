@@ -18,19 +18,29 @@ type Props = {
     pageProps?: {};
 };
 
+type User = {
+    userId: number;
+    userName: string;
+    email: string;
+    initialTime: number;
+    lessonCount: number;
+    service: string;
+};
+
+type UserLog = {
+    date: number;
+    nationality: string[];
+    count: number;
+    service: string;
+}[];
+
 type State = {
-    currentUser?: {
-        userId: number;
-        userName: string;
-        email: string;
-        initialTime: number;
-        studyTime: string;
-        service: number;
-    };
-    service?: {
+    currentUser?: User;
+    users?: (User & UserLog)[];
+    services?: {
         name: string;
-        timePerLesson: string;
-    };
+        timePerLesson: number;
+    }[];
 };
 
 type ContextType = State & {
@@ -44,13 +54,16 @@ const initialState: State = {
         userName: '',
         email: '',
         initialTime: null,
-        studyTime: '',
-        service: null,
+        lessonCount: null,
+        service: '',
     },
-    service: {
-        name: '',
-        timePerLesson: '',
-    },
+    users: [],
+    services: [
+        {
+            name: '',
+            timePerLesson: null,
+        },
+    ],
 };
 
 export const MyContext = createContext<ContextType>(initialState);
