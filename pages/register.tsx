@@ -1,4 +1,6 @@
-import React, { FC } from 'react';
+import React, { FC, useContext, useState } from 'react';
+import Router from 'next/router';
+import { User, MyContext } from './_app';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
@@ -21,27 +23,69 @@ const useStyles = makeStyles((theme) => ({
 
 const Register: FC = () => {
     const classes = useStyles();
-    const [value, setValue] = React.useState('female');
+    const { state, dispatch } = useContext(MyContext);
+    const [registerData, setRegisterData] = useState<User>({
+        userId: 1,
+        userName: '',
+        email: state.currentUser.email,
+        initialTime: 0,
+        service: null,
+        userLog: [
+            {
+                date: 20200101,
+                nationality: 'US',
+                count: 1,
+                service: 'DMM英会話',
+            },
+        ],
+    });
 
-    const handleChange = (event) => {
-        setValue(event.target.value);
+    const onSubmitButtonClick = () => {
+        dispatch({
+            type: 'user_register',
+            payload: registerData,
+        });
+        Router.push(`/${registerData.userName}`);
     };
 
     return (
         <form className={classes.root} noValidate autoComplete="off">
-            <TextField fullWidth id="standard-basic" label="ユーザー名" />
             <TextField
                 fullWidth
-                id="standard-basic"
+                id="userName"
+                label="ユーザー名"
+                value={registerData.userName}
+                onChange={(e) =>
+                    setRegisterData({
+                        ...registerData,
+                        userName: e.target.value,
+                    })
+                }
+            />
+            <TextField
+                fullWidth
+                id="initialTime"
                 label="これまでの総会話時間"
+                value={registerData.initialTime}
+                onChange={(e) =>
+                    setRegisterData({
+                        ...registerData,
+                        initialTime: Number(e.target.value),
+                    })
+                }
             />
             <div>
-                <FormLabel component="legend">利用サービス</FormLabel>
+                <FormLabel>利用サービス</FormLabel>
                 <RadioGroup
-                    aria-label="gender"
-                    name="gender1"
-                    value={value}
-                    onChange={handleChange}
+                    aria-label="service"
+                    name="service"
+                    value={registerData.service}
+                    onChange={(e) =>
+                        setRegisterData({
+                            ...registerData,
+                            service: e.target.value,
+                        })
+                    }
                 >
                     <FormControlLabel
                         value="DMM英会話"
@@ -60,7 +104,9 @@ const Register: FC = () => {
                     />
                 </RadioGroup>
             </div>
-            <Button variant="contained">送信</Button>
+            <Button variant="contained" onClick={onSubmitButtonClick}>
+                送信
+            </Button>
         </form>
     );
 };

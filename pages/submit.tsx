@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
+import { MyContext } from './_app';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -9,6 +10,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
+import Router from 'next/router';
+
+type Result = {
+    service: string;
+    count: number;
+    nationality: string;
+};
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -16,59 +24,122 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Submit = () => {
+const Submit: FC = () => {
+    const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
+    const [result, setResult] = useState<Result>({
+        service: '',
+        count: null,
+        nationality: '',
+    });
 
+    useEffect(() => {
+        setResult({
+            ...result,
+            service: state.currentUser.service,
+        });
+    }, []);
+
+    const onResultSubmit = () => {
+        dispatch({
+            type: 'study_register',
+            payload: result,
+        });
+        Router.push(`/${state.currentUser.userName}`);
+    };
     return (
         <div>
             <h2>英会話をやりました！</h2>
-            <InputLabel id="demo-simple-select-label">利用サービス</InputLabel>
+            <InputLabel id="service">利用サービス</InputLabel>
             <Select
                 fullWidth
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="service"
+                id="service"
+                value={result.service}
+                onChange={(e) =>
+                    setResult({
+                        ...result,
+                        service: e.target.value as string,
+                    })
+                }
             >
-                <MenuItem value={10}>DMM英会話</MenuItem>
-                <MenuItem value={20}>レアジョブ</MenuItem>
-                <MenuItem value={30}>ネイティブキャンプ</MenuItem>
+                <MenuItem value="DMM英会話">DMM英会話</MenuItem>
+                <MenuItem value="レアジョブ">レアジョブ</MenuItem>
+                <MenuItem value="ネイティブキャンプ">
+                    ネイティブキャンプ
+                </MenuItem>
             </Select>
-            <p>一回の英会話時間：２５分</p>
+            <p>
+                一回の英会話時間：
+                {
+                    state.services.filter(
+                        (service) => service.name === result.service
+                    )[0]?.timePerLesson
+                }
+                分
+            </p>
             <FormControl component="fieldset">
                 <FormLabel component="legend">実施回数</FormLabel>
-                <RadioGroup aria-label="gender" name="gender1">
+                <RadioGroup
+                    aria-label="count"
+                    name="count1"
+                    value={result.count}
+                    onChange={(e) =>
+                        setResult({
+                            ...result,
+                            count: Number(e.target.value),
+                        })
+                    }
+                >
                     <FormControlLabel
-                        value="female"
+                        value={1}
                         control={<Radio />}
                         label="１回"
                     />
                     <FormControlLabel
-                        value="male"
+                        value={2}
                         control={<Radio />}
                         label="２回"
                     />
                     <FormControlLabel
-                        value="other"
+                        value={3}
                         control={<Radio />}
                         label="３回"
                     />
                 </RadioGroup>
             </FormControl>
 
-            <InputLabel id="demo-simple-select-label">
-                会話相手の国籍
-            </InputLabel>
+            <InputLabel id="nationality">会話相手の国籍</InputLabel>
             <Select
                 fullWidth
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="nationality"
+                id="nationality"
+                value={result.nationality}
+                onChange={(e) =>
+                    setResult({
+                        ...result,
+                        nationality: e.target.value as string,
+                    })
+                }
             >
-                <MenuItem value={10}>アメリカ</MenuItem>
-                <MenuItem value={20}>イギリス</MenuItem>
-                <MenuItem value={30}>オーストラリア</MenuItem>
-                <MenuItem value={30}>その他</MenuItem>
+                <MenuItem value="US">アメリカ</MenuItem>
+                <MenuItem value="UK">イギリス</MenuItem>
+                <MenuItem value="AUS">オーストラリア</MenuItem>
+                <MenuItem value="OTHERS">その他</MenuItem>
             </Select>
-            <p>合計：XX分</p>
-            <Button className={classes.button} fullWidth variant="contained">
+            <p>
+                合計：
+                {state.services.filter(
+                    (service) => service.name === result.service
+                )[0]?.timePerLesson * result.count}
+                分
+            </p>
+            <Button
+                className={classes.button}
+                fullWidth
+                variant="contained"
+                onClick={onResultSubmit}
+            >
                 英会話を登録
             </Button>
         </div>
