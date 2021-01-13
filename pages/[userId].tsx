@@ -3,12 +3,12 @@ import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 
-const User: FC = () => {
+const MyPage: FC = () => {
     const { dispatch, state } = useContext(MyContext);
 
     return (
         <div>
-            <h2>[userId]さんのマイページ</h2>
+            <h2>{state.currentUser.userName}さんのマイページ</h2>
             <p>（今後作成）今週の英会話時間；X分</p>
             <p>（今後作成）全ユーザーの第XX位/Y人！</p>
             <p>（今後作成）今月の英会話時間；XX分</p>
@@ -76,4 +76,4 @@ const User: FC = () => {
     );
 };
 
-export default User;
+export default MyPage;

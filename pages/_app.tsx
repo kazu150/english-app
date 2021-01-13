@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
 
 type Props = {
@@ -41,6 +43,11 @@ type State = {
         name: string;
         timePerLesson: number;
     }[];
+    error?: {
+        isOpened: boolean;
+        message: string;
+        errorPart: string;
+    };
 };
 
 type ContextType = State & {
@@ -79,6 +86,11 @@ const initialState: State = {
             timePerLesson: 35,
         },
     ],
+    error: {
+        isOpened: false,
+        message: '',
+        errorPart: '',
+    },
 };
 
 export const MyContext = createContext<ContextType>(initialState);
@@ -111,6 +123,7 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
+    // TODO デバグ用なので最後に削除します
     React.useEffect(() => console.log(state));
 
     const reducer = (state, action) => {
@@ -180,6 +193,23 @@ export const MyApp: FC<Props> = (props) => {
                 return {};
             case 'study_modify':
                 return {};
+            case 'error_show':
+                return {
+                    ...state,
+                    error: {
+                        isOpened: true,
+                        ...action.payload,
+                    },
+                };
+            case 'error_close':
+                return {
+                    ...state,
+                    error: {
+                        isOpened: false,
+                        message: '',
+                        errorPart: '',
+                    },
+                };
             default:
                 return {};
         }
@@ -220,6 +250,25 @@ export const MyApp: FC<Props> = (props) => {
                     </AppBar>
                     <div className={classes.body}>
                         <Component {...pageProps} />
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            open={state.error.isOpened}
+                            onClose={() => dispatch({ type: 'error_close' })}
+                        >
+                            <MuiAlert
+                                elevation={6}
+                                severity="error"
+                                onClose={() =>
+                                    dispatch({ type: 'error_close' })
+                                }
+                                variant="filled"
+                            >
+                                {state.error.message}
+                            </MuiAlert>
+                        </Snackbar>
                     </div>
                 </ThemeProvider>
             </MyContext.Provider>
