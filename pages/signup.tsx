@@ -65,6 +65,17 @@ const SignUp: FC = () => {
                 },
             });
             return;
+        } else if (
+            state.users.filter((user) => user.email === signUpUser.email).length
+        ) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'このメールアドレスはすでに使われています',
+                },
+            });
+            return;
         } else if (!regPass.test(signUpUser.password)) {
             dispatch({
                 type: 'error_show',

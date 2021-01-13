@@ -26,10 +26,7 @@ const Register: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [registerData, setRegisterData] = useState({
-        userId: !state.users.length
-            ? 0
-            : state.users.reduce((a, b) => (a.userId > b.userId ? a : b))
-                  .userId + 1,
+        userId: null,
         userName: '',
         email: state.currentUser.email,
         initialTime: '0',
@@ -67,14 +64,21 @@ const Register: FC = () => {
             });
             return;
         }
+
+        const currentUserId =
+            state.users
+                .filter((user) => !isNaN(user.userId))
+                .reduce((a, b) => (a.userId > b.userId ? a : b)).userId + 1;
+
         dispatch({
             type: 'user_register',
             payload: {
                 ...registerData,
                 initialTime: Number(registerData.initialTime),
+                userId: currentUserId,
             },
         });
-        Router.push(`/${registerData.userId}`);
+        Router.push(`/${currentUserId}`);
     };
 
     return (

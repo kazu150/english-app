@@ -29,7 +29,7 @@ const Submit: FC = () => {
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
         service: '',
-        count: null,
+        count: 1,
         nationality: '',
     });
 

@@ -71,7 +71,53 @@ const initialState: State = {
             },
         ],
     },
-    users: [],
+    users: [
+        {
+            userId: 0,
+            userName: 'dummy1',
+            email: 'a@a.a',
+            initialTime: 10,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+        {
+            userId: 1,
+            userName: 'dummy2',
+            email: 'b@b.b',
+            initialTime: 100,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+        {
+            userId: 2,
+            userName: 'dummy2',
+            email: 'c@b.b',
+            initialTime: 100,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+    ],
     services: [
         {
             name: 'DMM英会話',
