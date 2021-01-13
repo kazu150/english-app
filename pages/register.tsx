@@ -8,6 +8,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,12 +25,15 @@ const useStyles = makeStyles((theme) => ({
 const Register: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
-    const [registerData, setRegisterData] = useState<User>({
-        userId: 1,
+    const [registerData, setRegisterData] = useState({
+        userId: !state.users.length
+            ? 0
+            : state.users.reduce((a, b) => (a.userId > b.userId ? a : b))
+                  .userId + 1,
         userName: '',
         email: state.currentUser.email,
-        initialTime: 0,
-        service: null,
+        initialTime: '0',
+        service: 'DMM英会話',
         userLog: [
             {
                 date: 20200101,
@@ -41,11 +45,36 @@ const Register: FC = () => {
     });
 
     const onSubmitButtonClick = () => {
+        if (registerData.userName === '') {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'userName',
+                    message: 'ユーザー名を入力してください',
+                },
+            });
+            return;
+        } else if (
+            Number(registerData.initialTime) < 0 ||
+            isNaN(Number(registerData.initialTime))
+        ) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'initialTime',
+                    message: '正しい学習時間を入力してください',
+                },
+            });
+            return;
+        }
         dispatch({
             type: 'user_register',
-            payload: registerData,
+            payload: {
+                ...registerData,
+                initialTime: Number(registerData.initialTime),
+            },
         });
-        Router.push(`/${registerData.userName}`);
+        Router.push(`/${registerData.userId}`);
     };
 
     return (
@@ -54,6 +83,7 @@ const Register: FC = () => {
                 fullWidth
                 id="userName"
                 label="ユーザー名"
+                error={state.error.errorPart === 'userName' ? true : false}
                 value={registerData.userName}
                 onChange={(e) =>
                     setRegisterData({
@@ -65,12 +95,18 @@ const Register: FC = () => {
             <TextField
                 fullWidth
                 id="initialTime"
-                label="これまでの総会話時間"
+                label="これまでの総会話時間（分）"
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">分</InputAdornment>
+                    ),
+                }}
+                error={state.error.errorPart === 'initialTime' ? true : false}
                 value={registerData.initialTime}
                 onChange={(e) =>
                     setRegisterData({
                         ...registerData,
-                        initialTime: Number(e.target.value),
+                        initialTime: e.target.value,
                     })
                 }
             />
