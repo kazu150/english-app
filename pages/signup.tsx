@@ -88,7 +88,18 @@ const SignUp: FC = () => {
             return;
         }
 
-        dispatch({ type: 'user_signup', payload: signUpUser });
+        const currentUserId =
+            state.users
+                .filter((user) => !isNaN(user.userId))
+                .reduce((a, b) => (a.userId > b.userId ? a : b)).userId + 1;
+
+        dispatch({
+            type: 'user_signup',
+            payload: {
+                ...signUpUser,
+                userId: currentUserId,
+            },
+        });
         Router.push('/register');
     };
 

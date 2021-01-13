@@ -34,6 +34,17 @@ const Submit: FC = () => {
     });
 
     useEffect(() => {
+        // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
+        if (
+            !state.users.filter(
+                (user) => user.userId === state.currentUser.userId
+            ).length
+        ) {
+            Router.push('/');
+        }
+    });
+
+    useEffect(() => {
         setResult({
             ...result,
             service: state.currentUser.service,
@@ -48,101 +59,109 @@ const Submit: FC = () => {
         Router.push(`/${state.currentUser.userName}`);
     };
     return (
-        <div>
-            <h2>英会話をやりました！</h2>
-            <InputLabel id="service">利用サービス</InputLabel>
-            <Select
-                fullWidth
-                labelId="service"
-                id="service"
-                value={result.service}
-                onChange={(e) =>
-                    setResult({
-                        ...result,
-                        service: e.target.value as string,
-                    })
-                }
-            >
-                <MenuItem value="DMM英会話">DMM英会話</MenuItem>
-                <MenuItem value="レアジョブ">レアジョブ</MenuItem>
-                <MenuItem value="ネイティブキャンプ">
-                    ネイティブキャンプ
-                </MenuItem>
-            </Select>
-            <p>
-                一回の英会話時間：
-                {
-                    state.services.filter(
-                        (service) => service.name === result.service
-                    )[0]?.timePerLesson
-                }
-                分
-            </p>
-            <FormControl component="fieldset">
-                <FormLabel component="legend">実施回数</FormLabel>
-                <RadioGroup
-                    aria-label="count"
-                    name="count1"
-                    value={result.count}
-                    onChange={(e) =>
-                        setResult({
-                            ...result,
-                            count: Number(e.target.value),
-                        })
-                    }
-                >
-                    <FormControlLabel
-                        value={1}
-                        control={<Radio />}
-                        label="１回"
-                    />
-                    <FormControlLabel
-                        value={2}
-                        control={<Radio />}
-                        label="２回"
-                    />
-                    <FormControlLabel
-                        value={3}
-                        control={<Radio />}
-                        label="３回"
-                    />
-                </RadioGroup>
-            </FormControl>
+        <>
+            {!state.users.filter(
+                (user) => user.userId === state.currentUser.userId
+            ).length ? (
+                ''
+            ) : (
+                <div>
+                    <h2>英会話をやりました！</h2>
+                    <InputLabel id="service">利用サービス</InputLabel>
+                    <Select
+                        fullWidth
+                        labelId="service"
+                        id="service"
+                        value={result.service}
+                        onChange={(e) =>
+                            setResult({
+                                ...result,
+                                service: e.target.value as string,
+                            })
+                        }
+                    >
+                        <MenuItem value="DMM英会話">DMM英会話</MenuItem>
+                        <MenuItem value="レアジョブ">レアジョブ</MenuItem>
+                        <MenuItem value="ネイティブキャンプ">
+                            ネイティブキャンプ
+                        </MenuItem>
+                    </Select>
+                    <p>
+                        一回の英会話時間：
+                        {
+                            state.services.filter(
+                                (service) => service.name === result.service
+                            )[0]?.timePerLesson
+                        }
+                        分
+                    </p>
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">実施回数</FormLabel>
+                        <RadioGroup
+                            aria-label="count"
+                            name="count1"
+                            value={result.count}
+                            onChange={(e) =>
+                                setResult({
+                                    ...result,
+                                    count: Number(e.target.value),
+                                })
+                            }
+                        >
+                            <FormControlLabel
+                                value={1}
+                                control={<Radio />}
+                                label="１回"
+                            />
+                            <FormControlLabel
+                                value={2}
+                                control={<Radio />}
+                                label="２回"
+                            />
+                            <FormControlLabel
+                                value={3}
+                                control={<Radio />}
+                                label="３回"
+                            />
+                        </RadioGroup>
+                    </FormControl>
 
-            <InputLabel id="nationality">会話相手の国籍</InputLabel>
-            <Select
-                fullWidth
-                labelId="nationality"
-                id="nationality"
-                value={result.nationality}
-                onChange={(e) =>
-                    setResult({
-                        ...result,
-                        nationality: e.target.value as string,
-                    })
-                }
-            >
-                <MenuItem value="US">アメリカ</MenuItem>
-                <MenuItem value="UK">イギリス</MenuItem>
-                <MenuItem value="AUS">オーストラリア</MenuItem>
-                <MenuItem value="OTHERS">その他</MenuItem>
-            </Select>
-            <p>
-                合計：
-                {state.services.filter(
-                    (service) => service.name === result.service
-                )[0]?.timePerLesson * result.count}
-                分
-            </p>
-            <Button
-                className={classes.button}
-                fullWidth
-                variant="contained"
-                onClick={onResultSubmit}
-            >
-                英会話を登録
-            </Button>
-        </div>
+                    <InputLabel id="nationality">会話相手の国籍</InputLabel>
+                    <Select
+                        fullWidth
+                        labelId="nationality"
+                        id="nationality"
+                        value={result.nationality}
+                        onChange={(e) =>
+                            setResult({
+                                ...result,
+                                nationality: e.target.value as string,
+                            })
+                        }
+                    >
+                        <MenuItem value="US">アメリカ</MenuItem>
+                        <MenuItem value="UK">イギリス</MenuItem>
+                        <MenuItem value="AUS">オーストラリア</MenuItem>
+                        <MenuItem value="OTHERS">その他</MenuItem>
+                    </Select>
+                    <p>
+                        合計：
+                        {state.services.filter(
+                            (service) => service.name === result.service
+                        )[0]?.timePerLesson * result.count}
+                        分
+                    </p>
+                    <Button
+                        className={classes.button}
+                        fullWidth
+                        variant="contained"
+                        onClick={onResultSubmit}
+                    >
+                        英会話を登録
+                    </Button>
+                </div>
+            )}
+        </>
     );
 };
 
