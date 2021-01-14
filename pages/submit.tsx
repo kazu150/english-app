@@ -30,7 +30,7 @@ const Submit: FC = () => {
     const [result, setResult] = useState<Result>({
         service: '',
         count: 1,
-        nationality: '',
+        nationality: 'OTHERS',
     });
 
     useEffect(() => {
@@ -142,7 +142,7 @@ const Submit: FC = () => {
                         <MenuItem value="US">アメリカ</MenuItem>
                         <MenuItem value="UK">イギリス</MenuItem>
                         <MenuItem value="AUS">オーストラリア</MenuItem>
-                        <MenuItem value="OTHERS">その他</MenuItem>
+                        <MenuItem value="OTHERS">その他・未選択</MenuItem>
                     </Select>
                     <p>
                         合計：
