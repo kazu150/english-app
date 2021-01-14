@@ -1,5 +1,6 @@
 import React, { FC, useState, useContext } from 'react';
 import { MyContext } from './_app';
+import Router from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -27,7 +28,7 @@ const SignIn: FC = () => {
         email: '',
         password: '',
     });
-    const { dispatch } = useContext(MyContext);
+    const { state, dispatch } = useContext(MyContext);
 
     const onSignInButtonClick = (e) => {
         e.preventDefault();
@@ -35,6 +36,7 @@ const SignIn: FC = () => {
             type: 'user_signin',
             payload: signInUser,
         });
+        Router.push(`./${state.currentUser.userId}`);
     };
     return (
         <form className={classes.root} noValidate autoComplete="off">

@@ -214,7 +214,10 @@ export const MyApp: FC<Props> = (props) => {
             case 'user_changepass':
                 return {};
             case 'user_signout':
-                return {};
+                return {
+                    ...state,
+                    currentUser: initialState.currentUser,
+                };
             case 'study_register':
                 return {
                     ...state,
@@ -289,9 +292,31 @@ export const MyApp: FC<Props> = (props) => {
                             <Typography variant="h6" className={classes.title}>
                                 英語アプリ
                             </Typography>
-                            <Link href="./signin">
-                                <Button color="inherit">Login</Button>
-                            </Link>
+                            {state.currentUser.userId ? (
+                                <Link href="./">
+                                    <Button
+                                        onClick={() =>
+                                            dispatch({ type: 'user_signout' })
+                                        }
+                                        color="inherit"
+                                    >
+                                        ログアウト
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link href="./signin">
+                                        <Button color="inherit">
+                                            ログイン
+                                        </Button>
+                                    </Link>
+                                    <Link href="./signup">
+                                        <Button color="inherit">
+                                            新規登録
+                                        </Button>
+                                    </Link>
+                                </>
+                            )}
                         </Toolbar>
                     </AppBar>
                     <div className={classes.body}>
