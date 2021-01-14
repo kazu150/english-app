@@ -1,9 +1,10 @@
 import React, { FC, useState, useContext } from 'react';
+import Router from 'next/router';
 import { MyContext } from './_app';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Link from 'next/link';
+import { regEmail, regPass } from '../utils/validate';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SignUp: FC = () => {
-    const { dispatch } = useContext(MyContext);
+    const { dispatch, state } = useContext(MyContext);
 
     const classes = useStyles();
     const [signUpUser, setSignUpUser] = useState({
@@ -28,14 +29,86 @@ const SignUp: FC = () => {
     });
 
     const onSignUpSubmit = () => {
-        dispatch({ type: 'user_signup', payload: signUpUser });
+        if (signUpUser.email === '') {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'メールアドレスが未入力です',
+                },
+            });
+            return;
+        } else if (signUpUser.password === '') {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'password',
+                    message: 'パスワードが未入力です',
+                },
+            });
+            return;
+        } else if (signUpUser.password !== signUpUser.passwordConfirm) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'passwordConfirm',
+                    message: 'パスワードが一致しません',
+                },
+            });
+            return;
+        } else if (!regEmail.test(signUpUser.email)) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: '有効なメールアドレスを入力してください',
+                },
+            });
+            return;
+        } else if (
+            state.users.filter((user) => user.email === signUpUser.email).length
+        ) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'このメールアドレスはすでに使われています',
+                },
+            });
+            return;
+        } else if (!regPass.test(signUpUser.password)) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'password',
+                    message:
+                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
+                },
+            });
+            return;
+        }
+
+        const currentUserId =
+            state.users
+                .filter((user) => !isNaN(user.userId))
+                .reduce((a, b) => (a.userId > b.userId ? a : b)).userId + 1;
+
+        dispatch({
+            type: 'user_signup',
+            payload: {
+                ...signUpUser,
+                userId: currentUserId,
+            },
+        });
+        Router.push('/register');
     };
 
     return (
         <form className={classes.root} noValidate autoComplete="off">
             <TextField
                 fullWidth
-                id="standard-basic"
+                error={state.error.errorPart === 'email' ? true : false}
+                id="email"
                 label="メールアドレス"
                 value={signUpUser.email}
                 onChange={(e) =>
@@ -47,6 +120,7 @@ const SignUp: FC = () => {
             />
             <TextField
                 fullWidth
+                error={state.error.errorPart === 'password' ? true : false}
                 id="standard-basic"
                 label="パスワード"
                 type="password"
@@ -60,6 +134,9 @@ const SignUp: FC = () => {
             />
             <TextField
                 fullWidth
+                error={
+                    state.error.errorPart === 'passwordConfirm' ? true : false
+                }
                 id="standard-basic"
                 label="パスワード(確認用)"
                 type="password"
@@ -71,11 +148,9 @@ const SignUp: FC = () => {
                     })
                 }
             />
-            <Link href="./register">
-                <Button onClick={onSignUpSubmit} variant="contained">
-                    会員登録
-                </Button>
-            </Link>
+            <Button onClick={onSignUpSubmit} variant="contained">
+                会員登録
+            </Button>
         </form>
     );
 };

@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
 
 type Props = {
@@ -41,6 +43,11 @@ type State = {
         name: string;
         timePerLesson: number;
     }[];
+    error?: {
+        isOpened: boolean;
+        message: string;
+        errorPart: string;
+    };
 };
 
 type ContextType = State & {
@@ -64,7 +71,53 @@ const initialState: State = {
             },
         ],
     },
-    users: [],
+    users: [
+        {
+            userId: 0,
+            userName: 'dummy1',
+            email: 'a@a.a',
+            initialTime: 10,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+        {
+            userId: 1,
+            userName: 'dummy2',
+            email: 'b@b.b',
+            initialTime: 100,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+        {
+            userId: 2,
+            userName: 'dummy2',
+            email: 'c@b.b',
+            initialTime: 100,
+            service: 'DMM英会話',
+            userLog: [
+                {
+                    date: 20200101,
+                    nationality: 'US',
+                    count: 1,
+                    service: 'DMM英会話',
+                },
+            ],
+        },
+    ],
     services: [
         {
             name: 'DMM英会話',
@@ -79,6 +132,11 @@ const initialState: State = {
             timePerLesson: 35,
         },
     ],
+    error: {
+        isOpened: false,
+        message: '',
+        errorPart: '',
+    },
 };
 
 export const MyContext = createContext<ContextType>(initialState);
@@ -111,6 +169,7 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
+    // TODO デバグ用なので最後に削除します
     React.useEffect(() => console.log(state));
 
     const reducer = (state, action) => {
@@ -155,7 +214,10 @@ export const MyApp: FC<Props> = (props) => {
             case 'user_changepass':
                 return {};
             case 'user_signout':
-                return {};
+                return {
+                    ...state,
+                    currentUser: initialState.currentUser,
+                };
             case 'study_register':
                 return {
                     ...state,
@@ -180,6 +242,23 @@ export const MyApp: FC<Props> = (props) => {
                 return {};
             case 'study_modify':
                 return {};
+            case 'error_show':
+                return {
+                    ...state,
+                    error: {
+                        isOpened: true,
+                        ...action.payload,
+                    },
+                };
+            case 'error_close':
+                return {
+                    ...state,
+                    error: {
+                        isOpened: false,
+                        message: '',
+                        errorPart: '',
+                    },
+                };
             default:
                 return {};
         }
@@ -213,13 +292,54 @@ export const MyApp: FC<Props> = (props) => {
                             <Typography variant="h6" className={classes.title}>
                                 英語アプリ
                             </Typography>
-                            <Link href="./signin">
-                                <Button color="inherit">Login</Button>
-                            </Link>
+                            {state.currentUser.userId ? (
+                                <Link href="./">
+                                    <Button
+                                        onClick={() =>
+                                            dispatch({ type: 'user_signout' })
+                                        }
+                                        color="inherit"
+                                    >
+                                        ログアウト
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link href="./signin">
+                                        <Button color="inherit">
+                                            ログイン
+                                        </Button>
+                                    </Link>
+                                    <Link href="./signup">
+                                        <Button color="inherit">
+                                            新規登録
+                                        </Button>
+                                    </Link>
+                                </>
+                            )}
                         </Toolbar>
                     </AppBar>
                     <div className={classes.body}>
                         <Component {...pageProps} />
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            open={state.error.isOpened}
+                            onClose={() => dispatch({ type: 'error_close' })}
+                        >
+                            <MuiAlert
+                                elevation={6}
+                                severity="error"
+                                onClose={() =>
+                                    dispatch({ type: 'error_close' })
+                                }
+                                variant="filled"
+                            >
+                                {state.error.message}
+                            </MuiAlert>
+                        </Snackbar>
                     </div>
                 </ThemeProvider>
             </MyContext.Provider>
