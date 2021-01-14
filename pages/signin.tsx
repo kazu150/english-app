@@ -4,6 +4,7 @@ import Router from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { regEmail, regPass } from '../utils/validate';
 
 type SignInUser = {
     email: string;
@@ -32,11 +33,80 @@ const SignIn: FC = () => {
 
     const onSignInButtonClick = (e) => {
         e.preventDefault();
+        if (signInUser.email === '') {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'メールアドレスが未入力です',
+                },
+            });
+            return;
+        } else if (!regEmail.test(signInUser.email)) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: '有効なメールアドレスを入力してください',
+                },
+            });
+            return;
+        } else if (signInUser.password === '') {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'password',
+                    message: 'パスワードが未入力です',
+                },
+            });
+            return;
+        } else if (!regPass.test(signInUser.password)) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'password',
+                    message:
+                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
+                },
+            });
+            return;
+        } else if (
+            !state.users.filter((user) => user.email === signInUser.email)
+                .length
+        ) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'このメールアドレスは登録されていません',
+                },
+            });
+            return;
+        } else if (
+            signInUser.password !==
+            state.users.filter((user) => user.email === signInUser.email)[0]
+                .password
+        ) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'password',
+                    message: 'パスワードが一致しません',
+                },
+            });
+            return;
+        }
+
         dispatch({
             type: 'user_signin',
             payload: signInUser,
         });
-        Router.push(`./${state.currentUser.userId}`);
+        Router.push(
+            `./${
+                state.users.filter((user) => user.email === signInUser.email)[0]
+                    .userId
+            }`
+        );
     };
     return (
         <form className={classes.root} noValidate autoComplete="off">
@@ -44,6 +114,7 @@ const SignIn: FC = () => {
                 fullWidth
                 id="standard-basic"
                 label="メールアドレス"
+                error={state.error.errorPart === 'email' ? true : false}
                 value={signInUser.email}
                 onChange={(e) =>
                     setSignInUser({
@@ -57,6 +128,7 @@ const SignIn: FC = () => {
                 id="standard-basic"
                 label="パスワード"
                 type="password"
+                error={state.error.errorPart === 'password' ? true : false}
                 value={signInUser.password}
                 onChange={(e) =>
                     setSignInUser({
