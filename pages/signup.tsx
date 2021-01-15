@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -88,19 +90,31 @@ const SignUp: FC = () => {
             return;
         }
 
-        const currentUserId =
-            state.users
-                .filter((user) => !isNaN(user.userId))
-                .reduce((a, b) => (a.userId > b.userId ? a : b)).userId + 1;
-
-        dispatch({
-            type: 'user_signup',
-            payload: {
+        db.collection('users')
+            .add({
                 ...signUpUser,
-                userId: currentUserId,
-            },
-        });
-        Router.push('/register');
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            })
+            .then((docRef) => {
+                dispatch({
+                    type: 'user_signup',
+                    payload: {
+                        ...signUpUser,
+                        userId: docRef.id,
+                    },
+                });
+
+                Router.push('/register');
+            })
+            .catch((error) => {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        message: 'すみません…何らかのエラーが発生しました><',
+                    },
+                });
+                return;
+            });
     };
 
     return (

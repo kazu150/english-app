@@ -21,7 +21,7 @@ type Props = {
 };
 
 export type User = {
-    userId: number;
+    userId: string;
     userName: string;
     email: string;
     initialTime: number;
@@ -57,7 +57,7 @@ type ContextType = State & {
 
 const initialState: State = {
     currentUser: {
-        userId: null,
+        userId: '',
         userName: '',
         email: '',
         initialTime: null,
@@ -73,7 +73,7 @@ const initialState: State = {
     },
     users: [
         {
-            userId: 0,
+            userId: '1',
             userName: 'dummy1',
             email: 'a@a.a',
             initialTime: 10,
@@ -88,7 +88,7 @@ const initialState: State = {
             ],
         },
         {
-            userId: 1,
+            userId: '2',
             userName: 'dummy2',
             email: 'b@b.b',
             initialTime: 100,
@@ -103,7 +103,7 @@ const initialState: State = {
             ],
         },
         {
-            userId: 2,
+            userId: '3',
             userName: 'dummy2',
             email: 'c@b.b',
             initialTime: 100,
@@ -183,7 +183,7 @@ export const MyApp: FC<Props> = (props) => {
                     },
                     users: [...state.users, action.payload],
                 };
-            case 'user_register':
+            case 'user_update':
                 return {
                     ...state,
                     currentUser: {

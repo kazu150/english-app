@@ -9,6 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,9 +28,7 @@ const Register: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [registerData, setRegisterData] = useState({
-        userId: state.currentUser.userId,
         userName: '',
-        email: state.currentUser.email,
         initialTime: '0',
         service: 'DMM英会話',
         userLog: [
@@ -52,7 +52,7 @@ const Register: FC = () => {
         }
     });
 
-    const onSubmitButtonClick = () => {
+    const onSubmitButtonClick = async () => {
         if (registerData.userName === '') {
             dispatch({
                 type: 'error_show',
@@ -76,14 +76,33 @@ const Register: FC = () => {
             return;
         }
 
-        dispatch({
-            type: 'user_register',
-            payload: {
+        db.collection('users')
+            .doc(state.currentUser.userId)
+            .update({
                 ...registerData,
                 initialTime: Number(registerData.initialTime),
-            },
-        });
-        Router.push(`/${state.currentUser.userId}`);
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            })
+            .then((docRef) => {
+                dispatch({
+                    type: 'user_update',
+                    payload: {
+                        ...registerData,
+                        initialTime: Number(registerData.initialTime),
+                    },
+                });
+
+                Router.push(`/${state.currentUser.userId}`);
+            })
+            .catch((error) => {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        message: 'すみません…何らかのエラーが発生しました><',
+                    },
+                });
+                return;
+            });
     };
 
     return (
