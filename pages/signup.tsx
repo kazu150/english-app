@@ -99,6 +99,13 @@ const SignUp: FC = () => {
                 ...signUpUser,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
+            // await db
+            //     .collection('users')
+            //     .doc(newUser.id)
+            //     .collection('studyLog')
+            //     .add({
+            //         name: 'initialLog',
+            //     });
 
             dispatch({
                 type: 'user_signup',

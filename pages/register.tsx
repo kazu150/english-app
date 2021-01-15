@@ -91,33 +91,41 @@ const Register: FC = () => {
             return;
         }
 
-        db.collection('users')
-            .doc(state.currentUser.userId)
-            .update({
-                ...registerData,
-                initialTime: Number(registerData.initialTime),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            })
-            .then((docRef) => {
-                dispatch({
-                    type: 'user_update',
-                    payload: {
-                        ...registerData,
-                        initialTime: Number(registerData.initialTime),
-                    },
+        try {
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .update({
+                    ...registerData,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 });
 
-                Router.push(`/${state.currentUser.userId}`);
-            })
-            .catch((error) => {
-                dispatch({
-                    type: 'error_show',
-                    payload: {
-                        message: 'すみません…何らかのエラーが発生しました><',
-                    },
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .collection('studyLog')
+                .add({
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                    initialTime: Number(registerData.initialTime),
                 });
-                return;
+
+            dispatch({
+                type: 'user_update',
+                payload: {
+                    ...registerData,
+                },
             });
+
+            Router.push(`/${state.currentUser.userId}`);
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
     };
 
     return (

@@ -44,7 +44,7 @@ const MyPage: FC = () => {
                     <p>（今後作成）全ユーザーの第XX位/Y人！</p>
                     <p>（今後作成）今月の英会話時間；XX分</p>
                     <p>（今後作成）全ユーザーの第X位/Y人！</p>
-                    <p>
+                    {/* <p>
                         Total英会話時間；
                         {state.currentUser.initialTime +
                             state.currentUser.userLog
@@ -100,7 +100,7 @@ const MyPage: FC = () => {
                             ).length
                         }
                         位/{state.users.length}人！
-                    </p>
+                    </p> */}
                     <br />
                     <p>（今後作成）総合 第X位！</p>
                     <Link href="./submit">

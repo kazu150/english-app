@@ -299,16 +299,27 @@ export const MyApp: FC<Props> = (props) => {
                                 </Typography>
                             </Link>
                             {state.currentUser.userId ? (
-                                <Link href="./">
-                                    <Button
-                                        onClick={() =>
-                                            dispatch({ type: 'user_signout' })
-                                        }
-                                        color="inherit"
+                                <>
+                                    <Link
+                                        href={`./${state.currentUser.userId}`}
                                     >
-                                        ログアウト
-                                    </Button>
-                                </Link>
+                                        <Button color="inherit">
+                                            マイページ
+                                        </Button>
+                                    </Link>
+                                    <Link href="./">
+                                        <Button
+                                            onClick={() =>
+                                                dispatch({
+                                                    type: 'user_signout',
+                                                })
+                                            }
+                                            color="inherit"
+                                        >
+                                            ログアウト
+                                        </Button>
+                                    </Link>
+                                </>
                             ) : (
                                 <>
                                     <Link href="./signin">
