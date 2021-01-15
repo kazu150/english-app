@@ -27,6 +27,7 @@ export type User = {
     initialTime: number;
     service: string;
     userLog?: UserLog;
+    password?: string;
 };
 
 type UserLog = {
@@ -78,6 +79,7 @@ const initialState: State = {
             email: 'a@a.a',
             initialTime: 10,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
@@ -93,6 +95,7 @@ const initialState: State = {
             email: 'b@b.b',
             initialTime: 100,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
@@ -104,10 +107,11 @@ const initialState: State = {
         },
         {
             userId: '3',
-            userName: 'dummy2',
+            userName: 'dummy3',
             email: 'c@b.b',
             initialTime: 100,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
