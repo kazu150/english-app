@@ -222,22 +222,22 @@ export const MyApp: FC<Props> = (props) => {
             case 'study_register':
                 return {
                     ...state,
-                    users: [
-                        ...state.users.filter(
-                            (user) => user.email !== state.currentUser.email
-                        ),
-                        {
-                            ...state.users.filter(
-                                (user) => user.email === state.currentUser.email
-                            )[0],
-                            ...state.users
-                                .filter(
-                                    (user) =>
-                                        user.email === state.currentUser.email
-                                )[0]
-                                .userLog.push(action.payload),
-                        },
-                    ],
+                    // users: [
+                    //     ...state.users.filter(
+                    //         (user) => user.email !== state.currentUser.email
+                    //     ),
+                    //     {
+                    //         ...state.users.filter(
+                    //             (user) => user.email === state.currentUser.email
+                    //         )[0],
+                    //         ...state.users
+                    //             .filter(
+                    //                 (user) =>
+                    //                     user.email === state.currentUser.email
+                    //             )[0]
+                    //             .userLog.push(action.payload),
+                    //     },
+                    // ],
                 };
             case 'study_delete':
                 return {};

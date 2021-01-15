@@ -68,12 +68,27 @@ const Submit: FC = () => {
         });
     }, []);
 
-    const onResultSubmit = () => {
-        dispatch({
-            type: 'study_register',
-            payload: result,
-        });
-        Router.push(`/${state.currentUser.userName}`);
+    const onResultSubmit = async () => {
+        try {
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .collection('studyLog')
+                .add({
+                    ...result,
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            dispatch({ type: 'study_register' });
+            Router.push(`/${state.currentUser.userName}`);
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
     };
 
     return (
