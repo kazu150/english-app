@@ -79,7 +79,7 @@ const Submit: FC = () => {
                     date: firebase.firestore.FieldValue.serverTimestamp(),
                 });
             dispatch({ type: 'study_register' });
-            Router.push(`/${state.currentUser.userName}`);
+            Router.push(`/${state.currentUser.userId}`);
         } catch (error) {
             dispatch({
                 type: 'error_show',
