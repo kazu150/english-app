@@ -151,7 +151,8 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     title: {
-        flexGrow: 1,
+        marginRight: 'auto',
+        cursor: 'pointer',
     },
     body: {
         width: '90%',
@@ -209,11 +210,7 @@ export const MyApp: FC<Props> = (props) => {
             case 'user_signin':
                 return {
                     ...state,
-                    currentUser: {
-                        ...state.users.filter(
-                            (user) => user.email === action.payload.email
-                        )[0],
-                    },
+                    currentUser: { ...action.payload },
                 };
             case 'user_changepass':
                 return {};
@@ -293,9 +290,14 @@ export const MyApp: FC<Props> = (props) => {
                             >
                                 <MenuIcon />
                             </IconButton>
-                            <Typography variant="h6" className={classes.title}>
-                                英語アプリ
-                            </Typography>
+                            <Link href="./">
+                                <Typography
+                                    variant="h6"
+                                    className={classes.title}
+                                >
+                                    英語アプリ
+                                </Typography>
+                            </Link>
                             {state.currentUser.userId ? (
                                 <Link href="./">
                                     <Button
