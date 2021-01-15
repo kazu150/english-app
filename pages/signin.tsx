@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
+import { db } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -31,7 +32,7 @@ const SignIn: FC = () => {
     });
     const { state, dispatch } = useContext(MyContext);
 
-    const onSignInButtonClick = (e) => {
+    const onSignInButtonClick = async (e) => {
         e.preventDefault();
         if (signInUser.email === '') {
             dispatch({
@@ -97,16 +98,26 @@ const SignIn: FC = () => {
             return;
         }
 
-        dispatch({
-            type: 'user_signin',
-            payload: signInUser,
-        });
-        Router.push(
-            `./${
-                state.users.filter((user) => user.email === signInUser.email)[0]
-                    .userId
-            }`
-        );
+        try {
+            const userRef = await db
+                .collection('users')
+                .where('email', '==', signInUser.email)
+                .get();
+
+            dispatch({
+                type: 'user_signin',
+                payload: userRef.docs[0].data(),
+            });
+            Router.push(`./${userRef.docs[0].id}`);
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
     };
     return (
         <form className={classes.root} noValidate autoComplete="off">
