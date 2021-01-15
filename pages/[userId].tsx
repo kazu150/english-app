@@ -1,28 +1,41 @@
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import Router from 'next/router';
+import { db } from '../firebase';
 
 const MyPage: FC = () => {
     const { dispatch, state } = useContext(MyContext);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (
-            !state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length
-        ) {
-            Router.push('/');
-        }
+        const f = async () => {
+            if (!state.currentUser.userId) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            }
+
+            const docRef = await db
+                .collection('users')
+                .doc(state.currentUser.userId.toString())
+                .get();
+            if (!docRef.exists) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        f();
     });
 
     return (
         <>
-            {!state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length ? (
+            {!isLoggedIn ? (
                 ''
             ) : (
                 <div>

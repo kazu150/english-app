@@ -11,6 +11,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 type Result = {
     service: string;
@@ -32,16 +34,31 @@ const Submit: FC = () => {
         count: 1,
         nationality: 'OTHERS',
     });
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (
-            !state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length
-        ) {
-            Router.push('/');
-        }
+        const f = async () => {
+            if (!state.currentUser.userId) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            }
+
+            const docRef = await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .get();
+
+            if (!docRef.exists) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        f();
     });
 
     useEffect(() => {
@@ -58,11 +75,10 @@ const Submit: FC = () => {
         });
         Router.push(`/${state.currentUser.userName}`);
     };
+
     return (
         <>
-            {!state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length ? (
+            {!isLoggedIn ? (
                 ''
             ) : (
                 <div>

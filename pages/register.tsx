@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const Register: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [registerData, setRegisterData] = useState({
         userName: '',
         initialTime: '0',
@@ -43,13 +44,27 @@ const Register: FC = () => {
 
     useEffect(() => {
         // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (
-            !state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length
-        ) {
-            Router.push('/');
-        }
+        const f = async () => {
+            if (!state.currentUser.userId) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            }
+
+            const docRef = await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .get();
+
+            if (!docRef.exists) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        f();
     });
 
     const onSubmitButtonClick = async () => {
@@ -107,9 +122,7 @@ const Register: FC = () => {
 
     return (
         <>
-            {!state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length ? (
+            {!isLoggedIn ? (
                 ''
             ) : (
                 <form className={classes.root} noValidate autoComplete="off">

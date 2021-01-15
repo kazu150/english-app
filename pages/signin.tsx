@@ -71,31 +71,6 @@ const SignIn: FC = () => {
                 },
             });
             return;
-        } else if (
-            !state.users.filter((user) => user.email === signInUser.email)
-                .length
-        ) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'このメールアドレスは登録されていません',
-                },
-            });
-            return;
-        } else if (
-            signInUser.password !==
-            state.users.filter((user) => user.email === signInUser.email)[0]
-                .password
-        ) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'password',
-                    message: 'パスワードが一致しません',
-                },
-            });
-            return;
         }
 
         try {
@@ -104,12 +79,39 @@ const SignIn: FC = () => {
                 .where('email', '==', signInUser.email)
                 .get();
 
+            if (!userRef.docs.length) {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        errorPart: 'email',
+                        message: 'このメールアドレスは登録されていません',
+                    },
+                });
+                return;
+            } else if (
+                signInUser.password !== userRef.docs[0].data().password
+            ) {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        errorPart: 'password',
+                        message: 'パスワードが一致しません',
+                    },
+                });
+                return;
+            }
+
             dispatch({
                 type: 'user_signin',
-                payload: userRef.docs[0].data(),
+                payload: {
+                    ...userRef.docs[0].data(),
+                    userId: userRef.docs[0].id,
+                },
             });
             Router.push(`./${userRef.docs[0].id}`);
         } catch (error) {
+            // TODO デバグ用
+            console.log(error);
             dispatch({
                 type: 'error_show',
                 payload: {
