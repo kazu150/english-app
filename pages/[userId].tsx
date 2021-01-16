@@ -32,6 +32,8 @@ const MyPage: FC = () => {
             }
         };
         f();
+
+        return () => f();
     });
 
     useEffect(() => {
@@ -58,6 +60,8 @@ const MyPage: FC = () => {
             setTotalStudyTime(sum);
         };
         getTotalStudyTime();
+
+        return () => getTotalStudyTime();
     });
 
     return (

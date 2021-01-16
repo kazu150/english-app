@@ -65,6 +65,8 @@ const Register: FC = () => {
             }
         };
         f();
+
+        return () => f();
     });
 
     const onSubmitButtonClick = async () => {

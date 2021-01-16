@@ -61,6 +61,8 @@ const Submit: FC = () => {
             }
         };
         f();
+
+        return () => f();
     });
 
     const onResultSubmit = async () => {
@@ -86,28 +88,15 @@ const Submit: FC = () => {
         }
     };
 
-    const handleTotalTime = (newValue) => {
-        // if (newValue.service) {
-        //     setResult({
-        //         ...result,
-        //         service: newValue.service as string,
-        //     });
-        //     console.log(newValue.service);
-        // } else if (newValue.count) {
-        //     setResult({
-        //         ...result,
-        //         count: Number(newValue.count),
-        //     });
-        //     console.log(newValue.count);
-        // }
-
-        const calculatedTime =
-            state.services.filter(
-                (service) => service.name === result.service
-            )[0]?.timePerLesson * result.count;
-
-        setResult({ ...result, time: calculatedTime });
-    };
+    useEffect(() => {
+        setResult({
+            ...result,
+            time:
+                state.services.filter(
+                    (service) => service.name === result.service
+                )[0]?.timePerLesson * result.count,
+        });
+    }, [result.service, result.count]);
 
     return (
         <>
@@ -127,15 +116,22 @@ const Submit: FC = () => {
                                 ...result,
                                 service: e.target.value as string,
                             });
-                            handleTotalTime({
-                                service: e.target.value as string,
-                            });
                         }}
                     >
-                        <MenuItem value="DMM英会話">DMM英会話</MenuItem>
-                        <MenuItem value="レアジョブ">レアジョブ</MenuItem>
+                        <MenuItem value="DMM英会話">
+                            DMM英会話
+                            {state.currentUser.service === 'DMM英会話' &&
+                                '（デフォルト設定）'}
+                        </MenuItem>
+                        <MenuItem value="レアジョブ">
+                            レアジョブ
+                            {state.currentUser.service === 'レアジョブ' &&
+                                '（デフォルト設定）'}
+                        </MenuItem>
                         <MenuItem value="ネイティブキャンプ">
                             ネイティブキャンプ
+                            {state.currentUser.service ===
+                                'ネイティブキャンプ' && '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
                     <p>
@@ -157,9 +153,6 @@ const Submit: FC = () => {
                                 setResult({
                                     ...result,
                                     count: Number(e.target.value),
-                                });
-                                handleTotalTime({
-                                    count: e.target.value as string,
                                 });
                             }}
                         >
