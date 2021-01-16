@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,7 +30,7 @@ const SignUp: FC = () => {
         passwordConfirm: '',
     });
 
-    const onSignUpSubmit = () => {
+    const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
             dispatch({
                 type: 'error_show',
@@ -65,17 +67,6 @@ const SignUp: FC = () => {
                 },
             });
             return;
-        } else if (
-            state.users.filter((user) => user.email === signUpUser.email).length
-        ) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'このメールアドレスはすでに使われています',
-                },
-            });
-            return;
         } else if (!regPass.test(signUpUser.password)) {
             dispatch({
                 type: 'error_show',
@@ -88,19 +79,45 @@ const SignUp: FC = () => {
             return;
         }
 
-        const currentUserId =
-            state.users
-                .filter((user) => !isNaN(user.userId))
-                .reduce((a, b) => (a.userId > b.userId ? a : b)).userId + 1;
+        const isUsedEmail = await db
+            .collection('users')
+            .where('email', '==', signUpUser.email)
+            .get();
+        if (isUsedEmail.docs.length) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    errorPart: 'email',
+                    message: 'このメールアドレスはすでに使われています',
+                },
+            });
+            return;
+        }
 
-        dispatch({
-            type: 'user_signup',
-            payload: {
+        try {
+            const newUser = await db.collection('users').add({
                 ...signUpUser,
-                userId: currentUserId,
-            },
-        });
-        Router.push('/register');
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            dispatch({
+                type: 'user_signup',
+                payload: {
+                    ...signUpUser,
+                    userId: newUser.id,
+                },
+            });
+
+            Router.push('/register');
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
     };
 
     return (

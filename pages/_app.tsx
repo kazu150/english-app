@@ -21,12 +21,13 @@ type Props = {
 };
 
 export type User = {
-    userId: number;
+    userId: string;
     userName: string;
     email: string;
     initialTime: number;
     service: string;
     userLog?: UserLog;
+    password?: string;
 };
 
 type UserLog = {
@@ -57,7 +58,7 @@ type ContextType = State & {
 
 const initialState: State = {
     currentUser: {
-        userId: null,
+        userId: '',
         userName: '',
         email: '',
         initialTime: null,
@@ -73,11 +74,12 @@ const initialState: State = {
     },
     users: [
         {
-            userId: 0,
+            userId: '1',
             userName: 'dummy1',
             email: 'a@a.a',
             initialTime: 10,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
@@ -88,11 +90,12 @@ const initialState: State = {
             ],
         },
         {
-            userId: 1,
+            userId: '2',
             userName: 'dummy2',
             email: 'b@b.b',
             initialTime: 100,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
@@ -103,11 +106,12 @@ const initialState: State = {
             ],
         },
         {
-            userId: 2,
-            userName: 'dummy2',
+            userId: '3',
+            userName: 'dummy3',
             email: 'c@b.b',
             initialTime: 100,
             service: 'DMM英会話',
+            password: 'aaaa1111',
             userLog: [
                 {
                     date: 20200101,
@@ -147,7 +151,8 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     title: {
-        flexGrow: 1,
+        marginRight: 'auto',
+        cursor: 'pointer',
     },
     body: {
         width: '90%',
@@ -169,9 +174,6 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
-    // TODO デバグ用なので最後に削除します
-    React.useEffect(() => console.log(state));
-
     const reducer = (state, action) => {
         switch (action.type) {
             case 'user_signup':
@@ -183,7 +185,7 @@ export const MyApp: FC<Props> = (props) => {
                     },
                     users: [...state.users, action.payload],
                 };
-            case 'user_register':
+            case 'user_update':
                 return {
                     ...state,
                     currentUser: {
@@ -205,11 +207,7 @@ export const MyApp: FC<Props> = (props) => {
             case 'user_signin':
                 return {
                     ...state,
-                    currentUser: {
-                        ...state.users.filter(
-                            (user) => user.email === action.payload.email
-                        )[0],
-                    },
+                    currentUser: { ...action.payload },
                 };
             case 'user_changepass':
                 return {};
@@ -221,22 +219,22 @@ export const MyApp: FC<Props> = (props) => {
             case 'study_register':
                 return {
                     ...state,
-                    users: [
-                        ...state.users.filter(
-                            (user) => user.email !== state.currentUser.email
-                        ),
-                        {
-                            ...state.users.filter(
-                                (user) => user.email === state.currentUser.email
-                            )[0],
-                            ...state.users
-                                .filter(
-                                    (user) =>
-                                        user.email === state.currentUser.email
-                                )[0]
-                                .userLog.push(action.payload),
-                        },
-                    ],
+                    // users: [
+                    //     ...state.users.filter(
+                    //         (user) => user.email !== state.currentUser.email
+                    //     ),
+                    //     {
+                    //         ...state.users.filter(
+                    //             (user) => user.email === state.currentUser.email
+                    //         )[0],
+                    //         ...state.users
+                    //             .filter(
+                    //                 (user) =>
+                    //                     user.email === state.currentUser.email
+                    //             )[0]
+                    //             .userLog.push(action.payload),
+                    //     },
+                    // ],
                 };
             case 'study_delete':
                 return {};
@@ -289,20 +287,36 @@ export const MyApp: FC<Props> = (props) => {
                             >
                                 <MenuIcon />
                             </IconButton>
-                            <Typography variant="h6" className={classes.title}>
-                                英語アプリ
-                            </Typography>
+                            <Link href="./">
+                                <Typography
+                                    variant="h6"
+                                    className={classes.title}
+                                >
+                                    英語アプリ
+                                </Typography>
+                            </Link>
                             {state.currentUser.userId ? (
-                                <Link href="./">
-                                    <Button
-                                        onClick={() =>
-                                            dispatch({ type: 'user_signout' })
-                                        }
-                                        color="inherit"
+                                <>
+                                    <Link
+                                        href={`./${state.currentUser.userId}`}
                                     >
-                                        ログアウト
-                                    </Button>
-                                </Link>
+                                        <Button color="inherit">
+                                            マイページ
+                                        </Button>
+                                    </Link>
+                                    <Link href="./">
+                                        <Button
+                                            onClick={() =>
+                                                dispatch({
+                                                    type: 'user_signout',
+                                                })
+                                            }
+                                            color="inherit"
+                                        >
+                                            ログアウト
+                                        </Button>
+                                    </Link>
+                                </>
                             ) : (
                                 <>
                                     <Link href="./signin">

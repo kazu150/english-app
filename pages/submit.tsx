@@ -11,11 +11,14 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 type Result = {
     service: string;
     count: number;
     nationality: string;
+    time: number;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -28,41 +31,76 @@ const Submit: FC = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
-        service: '',
+        service: state.currentUser.service,
         count: 1,
         nationality: 'OTHERS',
+        time: 0,
     });
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (
-            !state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length
-        ) {
-            Router.push('/');
-        }
+        const f = async () => {
+            if (!state.currentUser.userId) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            }
+
+            const docRef = await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .get();
+
+            if (!docRef.exists) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        f();
+
+        return () => f();
     });
+
+    const onResultSubmit = async () => {
+        try {
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .collection('studyLog')
+                .add({
+                    ...result,
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            dispatch({ type: 'study_register' });
+            Router.push(`/${state.currentUser.userId}`);
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
+    };
 
     useEffect(() => {
         setResult({
             ...result,
-            service: state.currentUser.service,
+            time:
+                state.services.filter(
+                    (service) => service.name === result.service
+                )[0]?.timePerLesson * result.count,
         });
-    }, []);
+    }, [result.service, result.count]);
 
-    const onResultSubmit = () => {
-        dispatch({
-            type: 'study_register',
-            payload: result,
-        });
-        Router.push(`/${state.currentUser.userName}`);
-    };
     return (
         <>
-            {!state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length ? (
+            {!isLoggedIn ? (
                 ''
             ) : (
                 <div>
@@ -73,17 +111,27 @@ const Submit: FC = () => {
                         labelId="service"
                         id="service"
                         value={result.service}
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setResult({
                                 ...result,
                                 service: e.target.value as string,
-                            })
-                        }
+                            });
+                        }}
                     >
-                        <MenuItem value="DMM英会話">DMM英会話</MenuItem>
-                        <MenuItem value="レアジョブ">レアジョブ</MenuItem>
+                        <MenuItem value="DMM英会話">
+                            DMM英会話
+                            {state.currentUser.service === 'DMM英会話' &&
+                                '（デフォルト設定）'}
+                        </MenuItem>
+                        <MenuItem value="レアジョブ">
+                            レアジョブ
+                            {state.currentUser.service === 'レアジョブ' &&
+                                '（デフォルト設定）'}
+                        </MenuItem>
                         <MenuItem value="ネイティブキャンプ">
                             ネイティブキャンプ
+                            {state.currentUser.service ===
+                                'ネイティブキャンプ' && '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
                     <p>
@@ -101,12 +149,12 @@ const Submit: FC = () => {
                             aria-label="count"
                             name="count1"
                             value={result.count}
-                            onChange={(e) =>
+                            onChange={(e) => {
                                 setResult({
                                     ...result,
                                     count: Number(e.target.value),
-                                })
-                            }
+                                });
+                            }}
                         >
                             <FormControlLabel
                                 value={1}
@@ -144,13 +192,7 @@ const Submit: FC = () => {
                         <MenuItem value="AUS">オーストラリア</MenuItem>
                         <MenuItem value="OTHERS">その他・未選択</MenuItem>
                     </Select>
-                    <p>
-                        合計：
-                        {state.services.filter(
-                            (service) => service.name === result.service
-                        )[0]?.timePerLesson * result.count}
-                        分
-                    </p>
+                    <p>合計： {result.time}分</p>
                     <Button
                         className={classes.button}
                         fullWidth

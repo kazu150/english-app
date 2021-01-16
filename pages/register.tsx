@@ -9,6 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { db } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -25,10 +27,9 @@ const useStyles = makeStyles((theme) => ({
 const Register: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [registerData, setRegisterData] = useState({
-        userId: state.currentUser.userId,
         userName: '',
-        email: state.currentUser.email,
         initialTime: '0',
         service: 'DMM英会話',
         userLog: [
@@ -43,16 +44,32 @@ const Register: FC = () => {
 
     useEffect(() => {
         // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (
-            !state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length
-        ) {
-            Router.push('/');
-        }
+        const f = async () => {
+            if (!state.currentUser.userId) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            }
+
+            const docRef = await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .get();
+
+            if (!docRef.exists) {
+                Router.push('/');
+                dispatch({ type: 'user_signout' });
+                return;
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        f();
+
+        return () => f();
     });
 
-    const onSubmitButtonClick = () => {
+    const onSubmitButtonClick = async () => {
         if (registerData.userName === '') {
             dispatch({
                 type: 'error_show',
@@ -76,21 +93,46 @@ const Register: FC = () => {
             return;
         }
 
-        dispatch({
-            type: 'user_register',
-            payload: {
-                ...registerData,
-                initialTime: Number(registerData.initialTime),
-            },
-        });
-        Router.push(`/${state.currentUser.userId}`);
+        try {
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .update({
+                    ...registerData,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .collection('studyLog')
+                .add({
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                    initialTime: Number(registerData.initialTime),
+                });
+
+            dispatch({
+                type: 'user_update',
+                payload: {
+                    ...registerData,
+                },
+            });
+
+            Router.push(`/${state.currentUser.userId}`);
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: 'すみません…何らかのエラーが発生しました><',
+                },
+            });
+            return;
+        }
     };
 
     return (
         <>
-            {!state.users.filter(
-                (user) => user.userId === state.currentUser.userId
-            ).length ? (
+            {!isLoggedIn ? (
                 ''
             ) : (
                 <form className={classes.root} noValidate autoComplete="off">
