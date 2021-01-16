@@ -18,6 +18,7 @@ type Result = {
     service: string;
     count: number;
     nationality: string;
+    time: number;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -30,9 +31,10 @@ const Submit: FC = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
-        service: '',
+        service: state.currentUser.service,
         count: 1,
         nationality: 'OTHERS',
+        time: 0,
     });
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -61,13 +63,6 @@ const Submit: FC = () => {
         f();
     });
 
-    useEffect(() => {
-        setResult({
-            ...result,
-            service: state.currentUser.service,
-        });
-    }, []);
-
     const onResultSubmit = async () => {
         try {
             await db
@@ -91,6 +86,29 @@ const Submit: FC = () => {
         }
     };
 
+    const handleTotalTime = (newValue) => {
+        // if (newValue.service) {
+        //     setResult({
+        //         ...result,
+        //         service: newValue.service as string,
+        //     });
+        //     console.log(newValue.service);
+        // } else if (newValue.count) {
+        //     setResult({
+        //         ...result,
+        //         count: Number(newValue.count),
+        //     });
+        //     console.log(newValue.count);
+        // }
+
+        const calculatedTime =
+            state.services.filter(
+                (service) => service.name === result.service
+            )[0]?.timePerLesson * result.count;
+
+        setResult({ ...result, time: calculatedTime });
+    };
+
     return (
         <>
             {!isLoggedIn ? (
@@ -104,12 +122,15 @@ const Submit: FC = () => {
                         labelId="service"
                         id="service"
                         value={result.service}
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setResult({
                                 ...result,
                                 service: e.target.value as string,
-                            })
-                        }
+                            });
+                            handleTotalTime({
+                                service: e.target.value as string,
+                            });
+                        }}
                     >
                         <MenuItem value="DMM英会話">DMM英会話</MenuItem>
                         <MenuItem value="レアジョブ">レアジョブ</MenuItem>
@@ -132,12 +153,15 @@ const Submit: FC = () => {
                             aria-label="count"
                             name="count1"
                             value={result.count}
-                            onChange={(e) =>
+                            onChange={(e) => {
                                 setResult({
                                     ...result,
                                     count: Number(e.target.value),
-                                })
-                            }
+                                });
+                                handleTotalTime({
+                                    count: e.target.value as string,
+                                });
+                            }}
                         >
                             <FormControlLabel
                                 value={1}
@@ -175,13 +199,7 @@ const Submit: FC = () => {
                         <MenuItem value="AUS">オーストラリア</MenuItem>
                         <MenuItem value="OTHERS">その他・未選択</MenuItem>
                     </Select>
-                    <p>
-                        合計：
-                        {state.services.filter(
-                            (service) => service.name === result.service
-                        )[0]?.timePerLesson * result.count}
-                        分
-                    </p>
+                    <p>合計： {result.time}分</p>
                     <Button
                         className={classes.button}
                         fullWidth

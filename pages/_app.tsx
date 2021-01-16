@@ -174,9 +174,6 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
-    // TODO デバグ用なので最後に削除します
-    React.useEffect(() => console.log(state));
-
     const reducer = (state, action) => {
         switch (action.type) {
             case 'user_signup':
