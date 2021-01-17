@@ -36,33 +36,12 @@ const Submit: FC = () => {
         nationality: 'OTHERS',
         time: 0,
     });
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        const f = async () => {
-            if (!state.currentUser.userId) {
-                Router.push('/');
-                dispatch({ type: 'user_signout' });
-                return;
-            }
-
-            const docRef = await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .get();
-
-            if (!docRef.exists) {
-                Router.push('/');
-                dispatch({ type: 'user_signout' });
-                return;
-            } else {
-                setIsLoggedIn(true);
-            }
-        };
-        f();
-
-        return () => f();
+        if (state.currentUser.userId === '') {
+            Router.push('/');
+            dispatch({ type: 'user_signout' });
+        }
     });
 
     const onResultSubmit = async () => {
@@ -100,7 +79,7 @@ const Submit: FC = () => {
 
     return (
         <>
-            {!isLoggedIn ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <div>

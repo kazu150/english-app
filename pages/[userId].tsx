@@ -32,8 +32,6 @@ const MyPage: FC = () => {
             }
         };
         f();
-
-        return () => f();
     });
 
     useEffect(() => {
@@ -56,12 +54,11 @@ const MyPage: FC = () => {
                 .reduce((prev, current) => {
                     return prev + current;
                 }, 0);
+            // TODO ↑ここで、無駄にPOST通信走らせてる？計算をDBでやって結果だけ抽出する方が良いのかな
 
             setTotalStudyTime(sum);
         };
         getTotalStudyTime();
-
-        return () => getTotalStudyTime();
     });
 
     return (
