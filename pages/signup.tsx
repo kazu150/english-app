@@ -5,8 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { db } from '../firebase';
-import firebase from 'firebase/app';
+import { db, auth } from '../firebase';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -95,16 +94,21 @@ const SignUp: FC = () => {
         }
 
         try {
-            const newUser = await db.collection('users').add({
-                ...signUpUser,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
+            const data = await auth.createUserWithEmailAndPassword(
+                signUpUser.email,
+                signUpUser.password
+            );
 
+            // const newUser = await db.collection('users').add({
+            //     ...signUpUser,
+            //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            // });
+            console.log(data.user.uid);
             dispatch({
                 type: 'user_signup',
                 payload: {
                     ...signUpUser,
-                    userId: newUser.id,
+                    userId: data.user.uid,
                 },
             });
 
@@ -113,7 +117,7 @@ const SignUp: FC = () => {
             dispatch({
                 type: 'error_show',
                 payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
+                    message: `エラー内容：${error.message}`,
                 },
             });
             return;
