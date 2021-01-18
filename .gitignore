@@ -35,4 +35,4 @@ yarn-error.log*
 
 
 # 手動追加
-firebase.ts
+.env
