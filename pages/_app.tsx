@@ -14,6 +14,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
+import { auth } from '../firebase';
 
 type Props = {
     Component?: FC;
@@ -262,6 +263,23 @@ export const MyApp: FC<Props> = (props) => {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            dispatch({
+                type: 'user_signout',
+            });
+        } catch (error) {
+            dispatch({
+                type: 'error_show',
+                payload: {
+                    message: `エラー内容：${error.message}`,
+                },
+            });
+            return;
+        }
+    };
+
     const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
@@ -306,11 +324,7 @@ export const MyApp: FC<Props> = (props) => {
                                     </Link>
                                     <Link href="./">
                                         <Button
-                                            onClick={() =>
-                                                dispatch({
-                                                    type: 'user_signout',
-                                                })
-                                            }
+                                            onClick={handleLogout}
                                             color="inherit"
                                         >
                                             ログアウト

@@ -103,7 +103,7 @@ const SignUp: FC = () => {
             //     ...signUpUser,
             //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             // });
-            console.log(data.user.uid);
+
             dispatch({
                 type: 'user_signup',
                 payload: {
