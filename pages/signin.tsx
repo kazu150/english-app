@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -74,48 +74,53 @@ const SignIn: FC = () => {
         }
 
         try {
-            const userRef = await db
-                .collection('users')
-                .where('email', '==', signInUser.email)
-                .get();
+            // const userRef = await db
+            //     .collection('users')
+            //     .where('email', '==', signInUser.email)
+            //     .get();
 
-            if (!userRef.docs.length) {
-                dispatch({
-                    type: 'error_show',
-                    payload: {
-                        errorPart: 'email',
-                        message: 'このメールアドレスは登録されていません',
-                    },
-                });
-                return;
-            } else if (
-                signInUser.password !== userRef.docs[0].data().password
-            ) {
-                dispatch({
-                    type: 'error_show',
-                    payload: {
-                        errorPart: 'password',
-                        message: 'パスワードが一致しません',
-                    },
-                });
-                return;
-            }
+            // if (!userRef.docs.length) {
+            //     dispatch({
+            //         type: 'error_show',
+            //         payload: {
+            //             errorPart: 'email',
+            //             message: 'このメールアドレスは登録されていません',
+            //         },
+            //     });
+            //     return;
+            // } else if (
+            //     signInUser.password !== userRef.docs[0].data().password
+            // ) {
+            //     dispatch({
+            //         type: 'error_show',
+            //         payload: {
+            //             errorPart: 'password',
+            //             message: 'パスワードが一致しません',
+            //         },
+            //     });
+            //     return;
+            // }
+
+            const data = await auth.signInWithEmailAndPassword(
+                signInUser.email,
+                signInUser.password
+            );
+
+            console.log(data.user.uid);
 
             dispatch({
                 type: 'user_signin',
                 payload: {
-                    ...userRef.docs[0].data(),
-                    userId: userRef.docs[0].id,
+                    // ...userRef.docs[0].data(),
+                    userId: data.user.uid,
                 },
             });
-            Router.push(`./${userRef.docs[0].id}`);
+            // Router.push(`./${userRef.docs[0].id}`);
         } catch (error) {
-            // TODO デバグ用
-            console.log(error);
             dispatch({
                 type: 'error_show',
                 payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
+                    message: `エラー内容：${error.message}`,
                 },
             });
             return;
