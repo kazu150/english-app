@@ -33,7 +33,7 @@ const SignUp: FC = () => {
     const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'email',
                     message: 'メールアドレスが未入力です',
@@ -42,7 +42,7 @@ const SignUp: FC = () => {
             return;
         } else if (signUpUser.password === '') {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'password',
                     message: 'パスワードが未入力です',
@@ -51,7 +51,7 @@ const SignUp: FC = () => {
             return;
         } else if (signUpUser.password !== signUpUser.passwordConfirm) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'passwordConfirm',
                     message: 'パスワードが一致しません',
@@ -60,7 +60,7 @@ const SignUp: FC = () => {
             return;
         } else if (!regEmail.test(signUpUser.email)) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'email',
                     message: '有効なメールアドレスを入力してください',
@@ -69,7 +69,7 @@ const SignUp: FC = () => {
             return;
         } else if (!regPass.test(signUpUser.password)) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'password',
                     message:
@@ -114,7 +114,7 @@ const SignUp: FC = () => {
             await batch.commit();
 
             dispatch({
-                type: 'user_signup',
+                type: 'userSignup',
                 payload: {
                     email: signUpUser.email,
                     userId: data.user.uid,
@@ -124,7 +124,7 @@ const SignUp: FC = () => {
             Router.push('/settings');
         } catch (error) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     message: `エラー内容：${error.message}`,
                 },

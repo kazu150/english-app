@@ -47,7 +47,7 @@ const Settings: FC = () => {
         const f = async () => {
             if (!state.currentUser.userId) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
+                dispatch({ type: 'userSignout' });
                 return;
             }
 
@@ -58,7 +58,7 @@ const Settings: FC = () => {
 
             if (!docRef.exists) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
+                dispatch({ type: 'userSignout' });
                 return;
             } else {
                 setIsLoggedIn(true);
@@ -72,7 +72,7 @@ const Settings: FC = () => {
     const onSubmitButtonClick = async () => {
         if (settingsData.userName === '') {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'userName',
                     message: 'ユーザー名を入力してください',
@@ -84,7 +84,7 @@ const Settings: FC = () => {
             isNaN(Number(settingsData.initialTime))
         ) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'initialTime',
                     message: '正しい学習時間を入力してください',
@@ -112,7 +112,7 @@ const Settings: FC = () => {
                 });
 
             dispatch({
-                type: 'user_update',
+                type: 'userUpdate',
                 payload: {
                     ...settingsData,
                 },
@@ -121,7 +121,7 @@ const Settings: FC = () => {
             Router.push(`/${state.currentUser.userId}`);
         } catch (error) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     message: 'すみません…何らかのエラーが発生しました><',
                 },

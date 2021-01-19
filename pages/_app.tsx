@@ -15,6 +15,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
 import { auth } from '../firebase';
+import { reducer } from '../utils/reducer';
 
 type Props = {
     Component?: FC;
@@ -57,7 +58,7 @@ type ContextType = State & {
     dispatch?: any;
 };
 
-const initialState: State = {
+export const initialState: State = {
     currentUser: {
         userId: '',
         userName: '',
@@ -175,103 +176,13 @@ export const MyApp: FC<Props> = (props) => {
         }
     }, []);
 
-    const reducer = (state, action) => {
-        switch (action.type) {
-            case 'user_signup':
-                return {
-                    ...state,
-                    currentUser: {
-                        ...state.currentUser,
-                        ...action.payload,
-                    },
-                    users: [...state.users, action.payload],
-                };
-            case 'user_update':
-                return {
-                    ...state,
-                    currentUser: {
-                        ...state.currentUser,
-                        ...action.payload,
-                    },
-                    users: [
-                        ...state.users.filter(
-                            (user) => user.email !== state.currentUser.email
-                        ),
-                        {
-                            ...state.users.filter(
-                                (user) => user.email === state.currentUser.email
-                            )[0],
-                            ...action.payload,
-                        },
-                    ],
-                };
-            case 'user_signin':
-                return {
-                    ...state,
-                    currentUser: { ...action.payload },
-                };
-            case 'user_changepass':
-                return {};
-            case 'user_signout':
-                return {
-                    ...state,
-                    currentUser: initialState.currentUser,
-                };
-            case 'study_settings':
-                return {
-                    ...state,
-                    // users: [
-                    //     ...state.users.filter(
-                    //         (user) => user.email !== state.currentUser.email
-                    //     ),
-                    //     {
-                    //         ...state.users.filter(
-                    //             (user) => user.email === state.currentUser.email
-                    //         )[0],
-                    //         ...state.users
-                    //             .filter(
-                    //                 (user) =>
-                    //                     user.email === state.currentUser.email
-                    //             )[0]
-                    //             .userLog.push(action.payload),
-                    //     },
-                    // ],
-                };
-            case 'study_delete':
-                return {};
-            case 'study_modify':
-                return {};
-            case 'error_show':
-                return {
-                    ...state,
-                    error: {
-                        isOpened: true,
-                        ...action.payload,
-                    },
-                };
-            case 'error_close':
-                return {
-                    ...state,
-                    error: {
-                        isOpened: false,
-                        message: '',
-                        errorPart: '',
-                    },
-                };
-            default:
-                return {};
-        }
-    };
-
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            dispatch({
-                type: 'user_signout',
-            });
+            dispatch({ type: 'userSignout' });
         } catch (error) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     message: `エラー内容：${error.message}`,
                 },
@@ -355,14 +266,12 @@ export const MyApp: FC<Props> = (props) => {
                                 horizontal: 'center',
                             }}
                             open={state.error.isOpened}
-                            onClose={() => dispatch({ type: 'error_close' })}
+                            onClose={() => dispatch({ type: 'errorClose' })}
                         >
                             <MuiAlert
                                 elevation={6}
                                 severity="error"
-                                onClose={() =>
-                                    dispatch({ type: 'error_close' })
-                                }
+                                onClose={() => dispatch({ type: 'errorClose' })}
                                 variant="filled"
                             >
                                 {state.error.message}

@@ -14,14 +14,14 @@ const MyPage: FC = () => {
         // ログインユーザ判定し、falseの場合は弾いてログインページへ
         if (!state.currentUser.userId) {
             Router.push('/');
-            dispatch({ type: 'user_signout' });
+            dispatch({ type: 'userSignout' });
             return;
         }
 
         const checkLogInStatus = auth.onAuthStateChanged((user) => {
             if (!user) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
+                dispatch({ type: 'userSignout' });
             } else {
                 setIsLoggedIn(true);
             }

@@ -36,7 +36,7 @@ const SignIn: FC = () => {
         e.preventDefault();
         if (signInUser.email === '') {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'email',
                     message: 'メールアドレスが未入力です',
@@ -45,7 +45,7 @@ const SignIn: FC = () => {
             return;
         } else if (!regEmail.test(signInUser.email)) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'email',
                     message: '有効なメールアドレスを入力してください',
@@ -54,7 +54,7 @@ const SignIn: FC = () => {
             return;
         } else if (signInUser.password === '') {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'password',
                     message: 'パスワードが未入力です',
@@ -63,7 +63,7 @@ const SignIn: FC = () => {
             return;
         } else if (!regPass.test(signInUser.password)) {
             dispatch({
-                type: 'error_show',
+                type: 'errorOther',
                 payload: {
                     errorPart: 'password',
                     message:
@@ -80,7 +80,7 @@ const SignIn: FC = () => {
             );
 
             dispatch({
-                type: 'user_signin',
+                type: 'userSignin',
                 payload: {
                     // ...userRef.docs[0].data(),
                     userId: data.user.uid,
@@ -90,7 +90,7 @@ const SignIn: FC = () => {
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
                 dispatch({
-                    type: 'error_show',
+                    type: 'errorOther',
                     payload: {
                         errorPart: 'email',
                         message: 'このメールアドレスは登録されていません',
@@ -99,7 +99,7 @@ const SignIn: FC = () => {
                 return;
             } else if (error.code === 'auth/wrong-password') {
                 dispatch({
-                    type: 'error_show',
+                    type: 'errorOther',
                     payload: {
                         errorPart: 'password',
                         message: 'パスワードが一致しません',
@@ -108,7 +108,7 @@ const SignIn: FC = () => {
                 return;
             } else {
                 dispatch({
-                    type: 'error_show',
+                    type: 'errorOther',
                     payload: {
                         message: `エラー内容：${error.message}`,
                     },
