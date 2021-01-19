@@ -32,50 +32,19 @@ const SignUp: FC = () => {
 
     const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'email',
-                    message: 'メールアドレスが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyMail' });
             return;
         } else if (signUpUser.password === '') {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'password',
-                    message: 'パスワードが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyPassword' });
             return;
         } else if (signUpUser.password !== signUpUser.passwordConfirm) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'passwordConfirm',
-                    message: 'パスワードが一致しません',
-                },
-            });
+            dispatch({ type: 'errorUnmatchPassword' });
             return;
         } else if (!regEmail.test(signUpUser.email)) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'email',
-                    message: '有効なメールアドレスを入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidEmail' });
             return;
         } else if (!regPass.test(signUpUser.password)) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'password',
-                    message:
-                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidPassword' });
             return;
         }
 
@@ -125,9 +94,7 @@ const SignUp: FC = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: {
-                    message: `エラー内容：${error.message}`,
-                },
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }

@@ -122,9 +122,7 @@ const Settings: FC = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
-                },
+                payload: 'すみません…何らかのエラーが発生しました><',
             });
             return;
         }

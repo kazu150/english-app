@@ -109,9 +109,7 @@ const SignIn: FC = () => {
             } else {
                 dispatch({
                     type: 'errorOther',
-                    payload: {
-                        message: `エラー内容：${error.message}`,
-                    },
+                    payload: `エラー内容：${error.message}`,
                 });
             }
 
