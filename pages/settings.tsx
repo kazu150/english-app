@@ -24,11 +24,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Register: FC = () => {
+const Settings: FC = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [registerData, setRegisterData] = useState({
+    const [settingsData, setSettingsData] = useState({
         userName: '',
         initialTime: '0',
         service: 'DMM英会話',
@@ -70,7 +70,7 @@ const Register: FC = () => {
     });
 
     const onSubmitButtonClick = async () => {
-        if (registerData.userName === '') {
+        if (settingsData.userName === '') {
             dispatch({
                 type: 'error_show',
                 payload: {
@@ -80,8 +80,8 @@ const Register: FC = () => {
             });
             return;
         } else if (
-            Number(registerData.initialTime) < 0 ||
-            isNaN(Number(registerData.initialTime))
+            Number(settingsData.initialTime) < 0 ||
+            isNaN(Number(settingsData.initialTime))
         ) {
             dispatch({
                 type: 'error_show',
@@ -98,7 +98,7 @@ const Register: FC = () => {
                 .collection('users')
                 .doc(state.currentUser.userId)
                 .update({
-                    ...registerData,
+                    ...settingsData,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 });
 
@@ -108,13 +108,13 @@ const Register: FC = () => {
                 .collection('studyLog')
                 .add({
                     date: firebase.firestore.FieldValue.serverTimestamp(),
-                    initialTime: Number(registerData.initialTime),
+                    initialTime: Number(settingsData.initialTime),
                 });
 
             dispatch({
                 type: 'user_update',
                 payload: {
-                    ...registerData,
+                    ...settingsData,
                 },
             });
 
@@ -143,10 +143,10 @@ const Register: FC = () => {
                         error={
                             state.error.errorPart === 'userName' ? true : false
                         }
-                        value={registerData.userName}
+                        value={settingsData.userName}
                         onChange={(e) =>
-                            setRegisterData({
-                                ...registerData,
+                            setSettingsData({
+                                ...settingsData,
                                 userName: e.target.value,
                             })
                         }
@@ -167,10 +167,10 @@ const Register: FC = () => {
                                 ? true
                                 : false
                         }
-                        value={registerData.initialTime}
+                        value={settingsData.initialTime}
                         onChange={(e) =>
-                            setRegisterData({
-                                ...registerData,
+                            setSettingsData({
+                                ...settingsData,
                                 initialTime: e.target.value,
                             })
                         }
@@ -180,10 +180,10 @@ const Register: FC = () => {
                         <RadioGroup
                             aria-label="service"
                             name="service"
-                            value={registerData.service}
+                            value={settingsData.service}
                             onChange={(e) =>
-                                setRegisterData({
-                                    ...registerData,
+                                setSettingsData({
+                                    ...settingsData,
                                     service: e.target.value,
                                 })
                             }
@@ -214,4 +214,4 @@ const Register: FC = () => {
     );
 };
 
-export default Register;
+export default Settings;

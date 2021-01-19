@@ -79,44 +79,49 @@ const SignUp: FC = () => {
             return;
         }
 
-        const isUsedEmail = await db
-            .collection('users')
-            .where('email', '==', signUpUser.email)
-            .get();
-        if (isUsedEmail.docs.length) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'このメールアドレスはすでに使われています',
-                },
-            });
-            return;
-        }
-
         try {
             const data = await auth.createUserWithEmailAndPassword(
                 signUpUser.email,
                 signUpUser.password
             );
 
-            await db
-                .collection('users')
-                .doc(data.user.uid)
-                .set({
-                    ...signUpUser,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                });
+            const batch = firebase.firestore().batch();
+
+            batch.set(db.doc(`users/${data.user.uid}`), {
+                service: null,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            batch.set(
+                db.doc(`users/${data.user.uid}`).collection('studyLog').doc(),
+                {
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                    nationality: null,
+                    count: null,
+                    service: null,
+                }
+            );
+
+            batch.set(db.doc(`publicProfiles/${data.user.uid}`), {
+                name: null,
+                photoUrl: null,
+                studyTime: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            await batch.commit();
 
             dispatch({
                 type: 'user_signup',
                 payload: {
-                    ...signUpUser,
+                    email: signUpUser.email,
                     userId: data.user.uid,
                 },
             });
 
-            Router.push('/register');
+            Router.push('/settings');
         } catch (error) {
             dispatch({
                 type: 'error_show',

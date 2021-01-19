@@ -217,7 +217,7 @@ export const MyApp: FC<Props> = (props) => {
                     ...state,
                     currentUser: initialState.currentUser,
                 };
-            case 'study_register':
+            case 'study_settings':
                 return {
                     ...state,
                     // users: [
