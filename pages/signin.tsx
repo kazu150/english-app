@@ -74,66 +74,47 @@ const SignIn: FC = () => {
         }
 
         try {
-            console.log('a');
-            // const userRef = await db
-            //     .collection('users')
-            //     .where('email', '==', signInUser.email)
-            //     .get();
+            const data = await auth.signInWithEmailAndPassword(
+                signInUser.email,
+                signInUser.password
+            );
 
-            // if (!userRef.docs.length) {
-            //     dispatch({
-            //         type: 'error_show',
-            //         payload: {
-            //             errorPart: 'email',
-            //             message: 'このメールアドレスは登録されていません',
-            //         },
-            //     });
-            //     return;
-            // } else if (
-            //     signInUser.password !== userRef.docs[0].data().password
-            // ) {
-            //     dispatch({
-            //         type: 'error_show',
-            //         payload: {
-            //             errorPart: 'password',
-            //             message: 'パスワードが一致しません',
-            //         },
-            //     });
-            //     return;
-            // }
-
-            const query = await db
-                .collection('users')
-                .where('email', '!=', 'aaaa@bbbb.cccc')
-                .get();
-            console.log(query);
-            query.docs.forEach(async (doc) => {
-                await doc.ref.delete();
-                console.log(doc.ref);
-            });
-
-            // const data = await auth.signInWithEmailAndPassword(
-            //     signInUser.email,
-            //     signInUser.password
-            // );
-
-            // console.log(data.user.uid);
-
-            // dispatch({
-            //     type: 'user_signin',
-            //     payload: {
-            //         // ...userRef.docs[0].data(),
-            //         userId: data.user.uid,
-            //     },
-            // });
-            // Router.push(`./${userRef.docs[0].id}`);
-        } catch (error) {
             dispatch({
-                type: 'error_show',
+                type: 'user_signin',
                 payload: {
-                    message: `エラー内容：${error.message}`,
+                    // ...userRef.docs[0].data(),
+                    userId: data.user.uid,
                 },
             });
+            Router.push(`./${data.user.uid}`);
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        errorPart: 'email',
+                        message: 'このメールアドレスは登録されていません',
+                    },
+                });
+                return;
+            } else if (error.code === 'auth/wrong-password') {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        errorPart: 'password',
+                        message: 'パスワードが一致しません',
+                    },
+                });
+                return;
+            } else {
+                dispatch({
+                    type: 'error_show',
+                    payload: {
+                        message: `エラー内容：${error.message}`,
+                    },
+                });
+            }
+
             return;
         }
     };
