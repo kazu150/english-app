@@ -71,25 +71,13 @@ const Settings: FC = () => {
 
     const onSubmitButtonClick = async () => {
         if (settingsData.userName === '') {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'userName',
-                    message: 'ユーザー名を入力してください',
-                },
-            });
+            dispatch({ type: 'errorEmptyUserName' });
             return;
         } else if (
             Number(settingsData.initialTime) < 0 ||
             isNaN(Number(settingsData.initialTime))
         ) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'initialTime',
-                    message: '正しい学習時間を入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidInitialTime' });
             return;
         }
 
@@ -122,7 +110,7 @@ const Settings: FC = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: 'すみません…何らかのエラーが発生しました><',
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }
