@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
 import { db, auth } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -99,10 +100,13 @@ const SignUp: FC = () => {
                 signUpUser.password
             );
 
-            // const newUser = await db.collection('users').add({
-            //     ...signUpUser,
-            //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            // });
+            await db
+                .collection('users')
+                .doc(data.user.uid)
+                .set({
+                    ...signUpUser,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
 
             dispatch({
                 type: 'user_signup',

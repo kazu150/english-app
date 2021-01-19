@@ -74,6 +74,7 @@ const SignIn: FC = () => {
         }
 
         try {
+            console.log('a');
             // const userRef = await db
             //     .collection('users')
             //     .where('email', '==', signInUser.email)
@@ -101,20 +102,30 @@ const SignIn: FC = () => {
             //     return;
             // }
 
-            const data = await auth.signInWithEmailAndPassword(
-                signInUser.email,
-                signInUser.password
-            );
-
-            console.log(data.user.uid);
-
-            dispatch({
-                type: 'user_signin',
-                payload: {
-                    // ...userRef.docs[0].data(),
-                    userId: data.user.uid,
-                },
+            const query = await db
+                .collection('users')
+                .where('email', '!=', 'aaaa@bbbb.cccc')
+                .get();
+            console.log(query);
+            query.docs.forEach(async (doc) => {
+                await doc.ref.delete();
+                console.log(doc.ref);
             });
+
+            // const data = await auth.signInWithEmailAndPassword(
+            //     signInUser.email,
+            //     signInUser.password
+            // );
+
+            // console.log(data.user.uid);
+
+            // dispatch({
+            //     type: 'user_signin',
+            //     payload: {
+            //         // ...userRef.docs[0].data(),
+            //         userId: data.user.uid,
+            //     },
+            // });
             // Router.push(`./${userRef.docs[0].id}`);
         } catch (error) {
             dispatch({
