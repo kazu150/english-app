@@ -35,41 +35,16 @@ const SignIn: FC = () => {
     const onSignInButtonClick = async (e) => {
         e.preventDefault();
         if (signInUser.email === '') {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'email',
-                    message: 'メールアドレスが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyMail' });
             return;
         } else if (!regEmail.test(signInUser.email)) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'email',
-                    message: '有効なメールアドレスを入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidEmail' });
             return;
         } else if (signInUser.password === '') {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'password',
-                    message: 'パスワードが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyPassword' });
             return;
         } else if (!regPass.test(signInUser.password)) {
-            dispatch({
-                type: 'errorOther',
-                payload: {
-                    errorPart: 'password',
-                    message:
-                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidPassword' });
             return;
         }
 
@@ -89,31 +64,18 @@ const SignIn: FC = () => {
             Router.push(`./${data.user.uid}`);
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
-                dispatch({
-                    type: 'errorOther',
-                    payload: {
-                        errorPart: 'email',
-                        message: 'このメールアドレスは登録されていません',
-                    },
-                });
+                dispatch({ type: 'errorUnregisteredPassword' });
                 return;
             } else if (error.code === 'auth/wrong-password') {
-                dispatch({
-                    type: 'errorOther',
-                    payload: {
-                        errorPart: 'password',
-                        message: 'パスワードが一致しません',
-                    },
-                });
+                dispatch({ type: 'errorUnmatchPassword' });
                 return;
             } else {
                 dispatch({
                     type: 'errorOther',
                     payload: `エラー内容：${error.message}`,
                 });
+                return;
             }
-
-            return;
         }
     };
     return (

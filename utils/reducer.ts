@@ -112,6 +112,15 @@ export const reducer = (state, action) => {
                         'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
                 },
             };
+        case 'errorUnregisteredPassword':
+            return {
+                ...state,
+                error: {
+                    isOpened: true,
+                    errorPart: 'password',
+                    message: 'このメールアドレスは登録されていません',
+                },
+            };
         case 'errorOther':
             return {
                 ...state,
