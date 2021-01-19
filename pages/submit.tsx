@@ -80,7 +80,7 @@ const Submit: FC = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: 'すみません…何らかのエラーが発生しました><',
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }

@@ -130,6 +130,15 @@ export const reducer = (state, action) => {
                     message: 'ユーザー名を入力してください',
                 },
             };
+        case 'errorInvalidInitialTime':
+            return {
+                ...state,
+                error: {
+                    isOpened: true,
+                    errorPart: 'initialTime',
+                    message: '正しい学習時間を入力してください',
+                },
+            };
         case 'errorOther':
             return {
                 ...state,
