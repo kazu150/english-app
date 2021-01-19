@@ -43,7 +43,7 @@ const Submit: FC = () => {
         const f = async () => {
             if (!state.currentUser.userId) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
+                dispatch({ type: 'userSignout' });
                 return;
             }
 
@@ -54,7 +54,7 @@ const Submit: FC = () => {
 
             if (!docRef.exists) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
+                dispatch({ type: 'userSignout' });
                 return;
             } else {
                 setIsLoggedIn(true);
@@ -79,10 +79,8 @@ const Submit: FC = () => {
             Router.push(`/${state.currentUser.userId}`);
         } catch (error) {
             dispatch({
-                type: 'error_show',
-                payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
-                },
+                type: 'errorOther',
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }

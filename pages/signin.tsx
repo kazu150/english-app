@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -35,90 +35,47 @@ const SignIn: FC = () => {
     const onSignInButtonClick = async (e) => {
         e.preventDefault();
         if (signInUser.email === '') {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'メールアドレスが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyMail' });
             return;
         } else if (!regEmail.test(signInUser.email)) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: '有効なメールアドレスを入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidEmail' });
             return;
         } else if (signInUser.password === '') {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'password',
-                    message: 'パスワードが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyPassword' });
             return;
         } else if (!regPass.test(signInUser.password)) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'password',
-                    message:
-                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidPassword' });
             return;
         }
 
         try {
-            const userRef = await db
-                .collection('users')
-                .where('email', '==', signInUser.email)
-                .get();
+            const data = await auth.signInWithEmailAndPassword(
+                signInUser.email,
+                signInUser.password
+            );
 
-            if (!userRef.docs.length) {
-                dispatch({
-                    type: 'error_show',
-                    payload: {
-                        errorPart: 'email',
-                        message: 'このメールアドレスは登録されていません',
-                    },
-                });
+            dispatch({
+                type: 'userSignin',
+                payload: {
+                    // ...userRef.docs[0].data(),
+                    userId: data.user.uid,
+                },
+            });
+            Router.push(`./${data.user.uid}`);
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                dispatch({ type: 'errorUnregisteredPassword' });
                 return;
-            } else if (
-                signInUser.password !== userRef.docs[0].data().password
-            ) {
+            } else if (error.code === 'auth/wrong-password') {
+                dispatch({ type: 'errorUnmatchPassword' });
+                return;
+            } else {
                 dispatch({
-                    type: 'error_show',
-                    payload: {
-                        errorPart: 'password',
-                        message: 'パスワードが一致しません',
-                    },
+                    type: 'errorOther',
+                    payload: `エラー内容：${error.message}`,
                 });
                 return;
             }
-
-            dispatch({
-                type: 'user_signin',
-                payload: {
-                    ...userRef.docs[0].data(),
-                    userId: userRef.docs[0].id,
-                },
-            });
-            Router.push(`./${userRef.docs[0].id}`);
-        } catch (error) {
-            // TODO デバグ用
-            console.log(error);
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
-                },
-            });
-            return;
         }
     };
     return (

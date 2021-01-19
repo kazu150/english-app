@@ -3,7 +3,7 @@ import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import Router from 'next/router';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 const MyPage: FC = () => {
     const { dispatch, state } = useContext(MyContext);
@@ -11,57 +11,45 @@ const MyPage: FC = () => {
     const [totalStudyTime, setTotalStudyTime] = useState(0);
 
     useEffect(() => {
-        // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        const f = async () => {
-            if (!state.currentUser.userId) {
-                Router.push('/');
-                dispatch({ type: 'user_signout' });
-                return;
-            }
+        // ログインユーザ判定し、falseの場合は弾いてログインページへ
+        if (!state.currentUser.userId) {
+            Router.push('/');
+            dispatch({ type: 'userSignout' });
+            return;
+        }
 
-            const docRef = await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .get();
-            if (!docRef.exists) {
+        const checkLogInStatus = auth.onAuthStateChanged((user) => {
+            if (!user) {
                 Router.push('/');
-                dispatch({ type: 'user_signout' });
-                return;
+                dispatch({ type: 'userSignout' });
             } else {
                 setIsLoggedIn(true);
             }
-        };
-        f();
+        });
 
-        return () => f();
-    });
-
-    useEffect(() => {
+        // studyTimeを表示
         const getTotalStudyTime = async () => {
-            if (!state.currentUser.userId) {
-                return;
-            }
-
             const snapshot = await db
                 .collection('users')
                 .doc(state.currentUser.userId)
-                .collection('studyLog')
                 .get();
 
-            const sum = snapshot.docs
-                .map((doc) => {
-                    return doc.data().time;
-                })
-                .filter((time) => time) //仮に時間の記録がないdocがあったとき用のfilter
-                .reduce((prev, current) => {
-                    return prev + current;
-                }, 0);
+            // const sum = snapshot.docs
+            //     .map((doc) => {
+            //         return doc.data().time;
+            //     })
+            //     .filter((time) => time) //仮に時間の記録がないdocがあったとき用のfilter
+            //     .reduce((prev, current) => {
+            //         return prev + current;
+            //     }, 0);
 
-            setTotalStudyTime(sum);
+            // setTotalStudyTime(sum);
         };
-        getTotalStudyTime();
 
-        return () => getTotalStudyTime();
+        return () => {
+            checkLogInStatus();
+            getTotalStudyTime();
+        };
     });
 
     return (

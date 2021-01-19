@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,89 +32,69 @@ const SignUp: FC = () => {
 
     const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'メールアドレスが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyMail' });
             return;
         } else if (signUpUser.password === '') {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'password',
-                    message: 'パスワードが未入力です',
-                },
-            });
+            dispatch({ type: 'errorEmptyPassword' });
             return;
         } else if (signUpUser.password !== signUpUser.passwordConfirm) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'passwordConfirm',
-                    message: 'パスワードが一致しません',
-                },
-            });
+            dispatch({ type: 'errorUnmatchPassword' });
             return;
         } else if (!regEmail.test(signUpUser.email)) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: '有効なメールアドレスを入力してください',
-                },
-            });
+            dispatch({ type: 'errorInvalidEmail' });
             return;
         } else if (!regPass.test(signUpUser.password)) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'password',
-                    message:
-                        'パスワードは半角英数字の組み合わせ8-15文字で入力してください',
-                },
-            });
-            return;
-        }
-
-        const isUsedEmail = await db
-            .collection('users')
-            .where('email', '==', signUpUser.email)
-            .get();
-        if (isUsedEmail.docs.length) {
-            dispatch({
-                type: 'error_show',
-                payload: {
-                    errorPart: 'email',
-                    message: 'このメールアドレスはすでに使われています',
-                },
-            });
+            dispatch({ type: 'errorInvalidPassword' });
             return;
         }
 
         try {
-            const newUser = await db.collection('users').add({
-                ...signUpUser,
+            const data = await auth.createUserWithEmailAndPassword(
+                signUpUser.email,
+                signUpUser.password
+            );
+
+            const batch = firebase.firestore().batch();
+
+            batch.set(db.doc(`users/${data.user.uid}`), {
+                service: null,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
 
+            batch.set(
+                db.doc(`users/${data.user.uid}`).collection('studyLog').doc(),
+                {
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                    nationality: null,
+                    count: null,
+                    service: null,
+                }
+            );
+
+            batch.set(db.doc(`publicProfiles/${data.user.uid}`), {
+                name: null,
+                photoUrl: null,
+                studyTime: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            await batch.commit();
+
             dispatch({
-                type: 'user_signup',
+                type: 'userSignup',
                 payload: {
-                    ...signUpUser,
-                    userId: newUser.id,
+                    email: signUpUser.email,
+                    userId: data.user.uid,
                 },
             });
 
-            Router.push('/register');
+            Router.push('/settings');
         } catch (error) {
             dispatch({
-                type: 'error_show',
-                payload: {
-                    message: 'すみません…何らかのエラーが発生しました><',
-                },
+                type: 'errorOther',
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }
