@@ -11,7 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
 type Result = {
@@ -39,30 +39,25 @@ const Submit: FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        const f = async () => {
-            if (!state.currentUser.userId) {
+        // ログインユーザ判定し、falseの場合は弾いてログインページへ
+        if (!state.currentUser.userId) {
+            Router.push('/');
+            dispatch({ type: 'userSignout' });
+            return;
+        }
+
+        const checkLogInStatus = auth.onAuthStateChanged((user) => {
+            if (user.uid !== state.currentUser.userId) {
                 Router.push('/');
                 dispatch({ type: 'userSignout' });
-                return;
-            }
-
-            const docRef = await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .get();
-
-            if (!docRef.exists) {
-                Router.push('/');
-                dispatch({ type: 'userSignout' });
-                return;
             } else {
                 setIsLoggedIn(true);
             }
-        };
-        f();
+        });
 
-        return () => f();
+        return () => {
+            checkLogInStatus();
+        };
     });
 
     const onResultSubmit = async () => {
@@ -72,10 +67,14 @@ const Submit: FC = () => {
                 .doc(state.currentUser.userId)
                 .collection('studyLog')
                 .add({
-                    ...result,
                     date: firebase.firestore.FieldValue.serverTimestamp(),
+                    nationality: result.nationality,
+                    count: result.count,
+                    service: result.service,
+                    time: result.time,
                 });
-            dispatch({ type: 'study_register' });
+
+            dispatch({ type: 'studyRegister' });
             Router.push(`/${state.currentUser.userId}`);
         } catch (error) {
             dispatch({

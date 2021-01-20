@@ -19,7 +19,7 @@ const MyPage: FC = () => {
         }
 
         const checkLogInStatus = auth.onAuthStateChanged((user) => {
-            if (!user) {
+            if (user.uid !== state.currentUser.userId) {
                 Router.push('/');
                 dispatch({ type: 'userSignout' });
             } else {
@@ -28,27 +28,16 @@ const MyPage: FC = () => {
         });
 
         // studyTimeを表示
-        const getTotalStudyTime = async () => {
-            const snapshot = await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .get();
-
-            // const sum = snapshot.docs
-            //     .map((doc) => {
-            //         return doc.data().time;
-            //     })
-            //     .filter((time) => time) //仮に時間の記録がないdocがあったとき用のfilter
-            //     .reduce((prev, current) => {
-            //         return prev + current;
-            //     }, 0);
-
-            // setTotalStudyTime(sum);
-        };
+        const showUserStatus = db
+            .collection('publicProfiles')
+            .doc(state.currentUser.userId)
+            .onSnapshot((snapshot) => {
+                setTotalStudyTime(snapshot.data().studyTime);
+            });
 
         return () => {
             checkLogInStatus();
-            getTotalStudyTime();
+            showUserStatus();
         };
     });
 

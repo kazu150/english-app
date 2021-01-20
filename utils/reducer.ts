@@ -42,6 +42,10 @@ export const reducer = (state, action) => {
                 ...state,
                 currentUser: initialState.currentUser,
             };
+        case 'studyRegister':
+            return {
+                ...state,
+            };
         case 'studySettings':
             return {
                 ...state,
