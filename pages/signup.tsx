@@ -58,19 +58,10 @@ const SignUp: FC = () => {
 
             batch.set(db.doc(`users/${data.user.uid}`), {
                 service: null,
+                initialTime: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
-
-            batch.set(
-                db.doc(`users/${data.user.uid}`).collection('studyLog').doc(),
-                {
-                    date: firebase.firestore.FieldValue.serverTimestamp(),
-                    nationality: null,
-                    count: null,
-                    service: null,
-                }
-            );
 
             batch.set(db.doc(`publicProfiles/${data.user.uid}`), {
                 name: null,

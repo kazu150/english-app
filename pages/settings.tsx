@@ -9,7 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,30 +43,25 @@ const Settings: FC = () => {
     });
 
     useEffect(() => {
-        // TODO この部分で、ログインユーザ判定し、falseの場合は弾いてログインページへ
-        const f = async () => {
-            if (!state.currentUser.userId) {
+        // ログインユーザ判定し、falseの場合は弾いてログインページへ
+        if (!state.currentUser.userId) {
+            Router.push('/');
+            dispatch({ type: 'userSignout' });
+            return;
+        }
+
+        const checkLogInStatus = auth.onAuthStateChanged((user) => {
+            if (user.uid !== state.currentUser.userId) {
                 Router.push('/');
                 dispatch({ type: 'userSignout' });
-                return;
-            }
-
-            const docRef = await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .get();
-
-            if (!docRef.exists) {
-                Router.push('/');
-                dispatch({ type: 'userSignout' });
-                return;
             } else {
                 setIsLoggedIn(true);
             }
-        };
-        f();
+        });
 
-        return () => f();
+        return () => {
+            checkLogInStatus();
+        };
     });
 
     const onSubmitButtonClick = async () => {
@@ -82,27 +77,27 @@ const Settings: FC = () => {
         }
 
         try {
-            await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .update({
-                    ...settingsData,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                });
+            const batch = firebase.firestore().batch();
 
-            await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .collection('studyLog')
-                .add({
-                    date: firebase.firestore.FieldValue.serverTimestamp(),
-                    initialTime: Number(settingsData.initialTime),
-                });
+            batch.update(db.doc(`users/${state.currentUser.userId}`), {
+                service: settingsData.service,
+                initialTime: settingsData.initialTime,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            batch.update(db.doc(`publicProfiles/${state.currentUser.userId}`), {
+                name: settingsData.userName,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+
+            await batch.commit();
 
             dispatch({
                 type: 'userUpdate',
                 payload: {
-                    ...settingsData,
+                    service: settingsData.service,
+                    initialTime: settingsData.initialTime,
+                    name: settingsData.userName,
                 },
             });
 
