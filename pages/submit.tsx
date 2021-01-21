@@ -138,6 +138,11 @@ const Submit: FC = () => {
                             {state.currentUser.service ===
                                 'ネイティブキャンプ' && '（デフォルト設定）'}
                         </MenuItem>
+                        <MenuItem value="キャンブリー">
+                            キャンブリー
+                            {state.currentUser.service === 'キャンブリー' &&
+                                '（デフォルト設定）'}
+                        </MenuItem>
                     </Select>
                     <p>一回の英会話時間： {result.defaultTime}分</p>
                     <FormControl component="fieldset">

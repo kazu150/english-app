@@ -69,6 +69,10 @@ const Settings: FC = () => {
         }
 
         try {
+            auth.currentUser.updateProfile({
+                displayName: settingsData.name,
+            });
+
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
