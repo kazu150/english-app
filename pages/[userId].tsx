@@ -48,10 +48,10 @@ const MyPage: FC = () => {
             ) : (
                 <div>
                     <h2>{state.currentUser.name}さんのマイページ</h2>
-                    <p>（今後作成）今週の英会話時間: X分</p>
+                    {/* <p>（今後作成）今週の英会話時間: X分</p>
                     <p>（今後作成）全ユーザーの第XX位/Y人！</p>
                     <p>（今後作成）今月の英会話時間: XX分</p>
-                    <p>（今後作成）全ユーザーの第X位/Y人！</p>
+                    <p>（今後作成）全ユーザーの第X位/Y人！</p> */}
                     <p>Total英会話時間: {totalStudyTime}分</p>
                     {/*<p>
                         全ユーザーの第
@@ -94,7 +94,7 @@ const MyPage: FC = () => {
                         位/{state.users.length}人！
                     </p> */}
                     <br />
-                    <p>（今後作成）総合 第X位！</p>
+                    {/* <p>（今後作成）総合 第X位！</p> */}
                     <Link href="./submit">
                         <Button fullWidth variant="contained">
                             英会話の実施を登録する

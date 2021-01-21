@@ -39,7 +39,7 @@ const Submit: FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // ログインユーザ判定し、falseの場合は弾いてログインページへ
+        // ログインユーザー判定し、falseの場合は弾いてログインページへ
         if (!state.currentUser.userId) {
             Router.push('/');
             dispatch({ type: 'userSignout' });

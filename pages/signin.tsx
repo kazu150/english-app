@@ -78,42 +78,45 @@ const SignIn: FC = () => {
         }
     };
     return (
-        <form className={classes.root} noValidate autoComplete="off">
-            <TextField
-                fullWidth
-                id="standard-basic"
-                label="メールアドレス"
-                error={state.error.errorPart === 'email' ? true : false}
-                value={signInUser.email}
-                onChange={(e) =>
-                    setSignInUser({
-                        ...signInUser,
-                        email: e.target.value,
-                    })
-                }
-            />
-            <TextField
-                fullWidth
-                id="standard-basic"
-                label="パスワード"
-                type="password"
-                error={state.error.errorPart === 'password' ? true : false}
-                value={signInUser.password}
-                onChange={(e) =>
-                    setSignInUser({
-                        ...signInUser,
-                        password: e.target.value,
-                    })
-                }
-            />
-            <Button
-                variant="contained"
-                type="submit"
-                onClick={onSignInButtonClick}
-            >
-                ログイン
-            </Button>
-        </form>
+        <>
+            <h2>ログイン</h2>
+            <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                    fullWidth
+                    id="standard-basic"
+                    label="メールアドレス"
+                    error={state.error.errorPart === 'email' ? true : false}
+                    value={signInUser.email}
+                    onChange={(e) =>
+                        setSignInUser({
+                            ...signInUser,
+                            email: e.target.value,
+                        })
+                    }
+                />
+                <TextField
+                    fullWidth
+                    id="standard-basic"
+                    label="パスワード"
+                    type="password"
+                    error={state.error.errorPart === 'password' ? true : false}
+                    value={signInUser.password}
+                    onChange={(e) =>
+                        setSignInUser({
+                            ...signInUser,
+                            password: e.target.value,
+                        })
+                    }
+                />
+                <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={onSignInButtonClick}
+                >
+                    ログイン
+                </Button>
+            </form>
+        </>
     );
 };
 

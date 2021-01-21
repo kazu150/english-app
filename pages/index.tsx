@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
+import { MyContext } from './_app';
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -13,36 +14,69 @@ const useStyles = makeStyles((theme) => ({
 
 const Home: FC = () => {
     const classes = useStyles();
+    const { state, dispatch } = useContext(MyContext);
 
     return (
         <div className={styles.button}>
             <Head>
-                <title>英語アプリ</title>
+                <title>オンライン英会話 応援アプリ</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <h1>英語アプリ</h1>
+                <h1>オンライン英会話 応援アプリ</h1>
                 <p>
-                    このサービスは、オンライン英会話のユーザーが、自分の英語力をチェックするためのものです。
+                    オンライン英会話を何十回もやっているが、なかなか英語力の伸びを実感できないあなた！
                 </p>
-                <Link href="./signup">
-                    <Button
-                        className={classes.button}
-                        fullWidth
-                        variant="contained"
-                    >
-                        新規ユーザ登録
-                    </Button>
-                </Link>
-                <Link href="./signin">
-                    <Button
-                        className={classes.button}
-                        fullWidth
-                        variant="contained"
-                    >
-                        ログイン
-                    </Button>
-                </Link>
+                <p>
+                    このアプリは、オンライン英会話の継続状況を記録し、自分の英語力の伸びを実感することができます。
+                </p>
+                <p>ぜひ一緒に、英会話を頑張りましょう！</p>
+                {state.currentUser.userId ? (
+                    <>
+                        <Link href={`./${state.currentUser.userId}`}>
+                            <Button
+                                className={classes.button}
+                                fullWidth
+                                variant="contained"
+                            >
+                                マイページへ
+                            </Button>
+                        </Link>
+                        <Link href="./">
+                            <Button
+                                className={classes.button}
+                                fullWidth
+                                variant="contained"
+                                onClick={() =>
+                                    dispatch({ type: 'userSignout' })
+                                }
+                            >
+                                ログアウト
+                            </Button>
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <Link href="./signup">
+                            <Button
+                                className={classes.button}
+                                fullWidth
+                                variant="contained"
+                            >
+                                新規ユーザー登録
+                            </Button>
+                        </Link>
+                        <Link href="./signin">
+                            <Button
+                                className={classes.button}
+                                fullWidth
+                                variant="contained"
+                            >
+                                ログイン
+                            </Button>
+                        </Link>
+                    </>
+                )}
             </main>
         </div>
     );
