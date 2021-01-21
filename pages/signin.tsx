@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -54,12 +54,28 @@ const SignIn: FC = () => {
                 signInUser.password
             );
 
+            const userInfo = await db
+                .collection('users')
+                .doc(data.user.uid)
+                .get();
+
+            const publicUserInfo = await db
+                .collection('publicProfiles')
+                .doc(data.user.uid)
+                .get();
+
             dispatch({
                 type: 'userSignin',
                 payload: {
                     userId: data.user.uid,
+                    name: data.user.displayName,
+                    initialTime: userInfo.data().initialTime,
+                    service: userInfo.data().service,
+                    studyTime: publicUserInfo.data().studyTime,
+                    photoUrl: publicUserInfo.data().photoUrl,
                 },
             });
+
             Router.push(`./${data.user.uid}`);
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
