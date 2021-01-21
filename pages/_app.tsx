@@ -1,4 +1,4 @@
-import React, { FC, useReducer, createContext, useEffect } from 'react';
+import React, { FC, useReducer, createContext } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -92,7 +92,6 @@ export const MyApp: FC<Props> = (props) => {
         }
     };
 
-    useEffect(() => console.log(auth.currentUser));
     const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
