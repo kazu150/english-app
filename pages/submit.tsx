@@ -18,7 +18,7 @@ type Result = {
     service: string;
     count: number;
     nationality: string;
-    time: number;
+    defaultTime: number;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +34,7 @@ const Submit: FC = () => {
         service: state.currentUser.service,
         count: 1,
         nationality: 'OTHERS',
-        time: 0,
+        defaultTime: 0,
     });
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -71,7 +71,7 @@ const Submit: FC = () => {
                     nationality: result.nationality,
                     count: result.count,
                     service: result.service,
-                    time: result.time,
+                    time: result.defaultTime * result.count,
                 });
 
             dispatch({ type: 'studyRegister' });
@@ -86,14 +86,22 @@ const Submit: FC = () => {
     };
 
     useEffect(() => {
-        setResult({
-            ...result,
-            time:
-                state.services.filter(
-                    (service) => service.name === result.service
-                )[0]?.timePerLesson * result.count,
-        });
-    }, [result.service, result.count]);
+        const watchServiceDefaultTime = db
+            .collection('services')
+            .where('serviceName', '==', result.service)
+            .onSnapshot((snapshots) => {
+                const defaultTime = snapshots.docs[0].data().defaultTime;
+
+                setResult({
+                    ...result,
+                    defaultTime,
+                });
+            });
+
+        return () => {
+            watchServiceDefaultTime();
+        };
+    }, [result.service]);
 
     return (
         <>
@@ -131,15 +139,7 @@ const Submit: FC = () => {
                                 'ネイティブキャンプ' && '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
-                    <p>
-                        一回の英会話時間：
-                        {
-                            state.services.filter(
-                                (service) => service.name === result.service
-                            )[0]?.timePerLesson
-                        }
-                        分
-                    </p>
+                    <p>一回の英会話時間： {result.defaultTime}分</p>
                     <FormControl component="fieldset">
                         <FormLabel component="legend">実施回数</FormLabel>
                         <RadioGroup
@@ -189,7 +189,7 @@ const Submit: FC = () => {
                         <MenuItem value="AUS">オーストラリア</MenuItem>
                         <MenuItem value="OTHERS">その他・未選択</MenuItem>
                     </Select>
-                    <p>合計： {result.time}分</p>
+                    <p>合計： {result.defaultTime * result.count}分</p>
                     <Button
                         className={classes.button}
                         fullWidth

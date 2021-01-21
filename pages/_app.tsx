@@ -15,7 +15,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
 import { auth } from '../firebase';
-import { reducer } from '../utils/reducer';
+import { reducer, Action } from '../utils/reducer';
+import { initialState } from '../utils/initialState';
 
 type Props = {
     Component?: FC;
@@ -24,28 +25,15 @@ type Props = {
 
 export type User = {
     userId: string;
-    userName: string;
-    email: string;
+    name: string;
     initialTime: number;
     service: string;
-    userLog?: UserLog;
-    password?: string;
+    studyTime: number;
+    photoUrl: string;
 };
 
-type UserLog = {
-    date: number;
-    nationality: string;
-    count: number;
-    service: string;
-}[];
-
-type State = {
-    currentUser?: User;
-    users?: User[];
-    services?: {
-        name: string;
-        timePerLesson: number;
-    }[];
+export type State = {
+    currentUser: User;
     error?: {
         isOpened: boolean;
         message: string;
@@ -53,102 +41,17 @@ type State = {
     };
 };
 
-type ContextType = State & {
-    state?: State;
-    dispatch?: any;
+type ContextType = {
+    state: State;
+    dispatch: React.Dispatch<Action>;
 };
 
-export const initialState: State = {
-    currentUser: {
-        userId: '',
-        userName: '',
-        email: '',
-        initialTime: null,
-        service: '',
-        userLog: [
-            {
-                date: 20200101,
-                nationality: 'US',
-                count: 1,
-                service: 'DMM英会話',
-            },
-        ],
-    },
-    users: [
-        {
-            userId: '1',
-            userName: 'dummy1',
-            email: 'a@a.a',
-            initialTime: 10,
-            service: 'DMM英会話',
-            password: 'aaaa1111',
-            userLog: [
-                {
-                    date: 20200101,
-                    nationality: 'US',
-                    count: 1,
-                    service: 'DMM英会話',
-                },
-            ],
-        },
-        {
-            userId: '2',
-            userName: 'dummy2',
-            email: 'b@b.b',
-            initialTime: 100,
-            service: 'DMM英会話',
-            password: 'aaaa1111',
-            userLog: [
-                {
-                    date: 20200101,
-                    nationality: 'US',
-                    count: 1,
-                    service: 'DMM英会話',
-                },
-            ],
-        },
-        {
-            userId: '3',
-            userName: 'dummy3',
-            email: 'c@b.b',
-            initialTime: 100,
-            service: 'DMM英会話',
-            password: 'aaaa1111',
-            userLog: [
-                {
-                    date: 20200101,
-                    nationality: 'US',
-                    count: 1,
-                    service: 'DMM英会話',
-                },
-            ],
-        },
-    ],
-    services: [
-        {
-            name: 'DMM英会話',
-            timePerLesson: 25,
-        },
-        {
-            name: 'レアジョブ',
-            timePerLesson: 30,
-        },
-        {
-            name: 'ネイティブキャンプ',
-            timePerLesson: 35,
-        },
-    ],
-    error: {
-        isOpened: false,
-        message: '',
-        errorPart: '',
-    },
-};
-
-export const MyContext = createContext<ContextType>(initialState);
+export const MyContext = createContext<ContextType>({
+    dispatch: null,
+    state: initialState,
+});
 
 const useStyles = makeStyles((theme) => ({
-    root: {},
     menuButton: {
         marginRight: theme.spacing(2),
     },
@@ -183,9 +86,7 @@ export const MyApp: FC<Props> = (props) => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: {
-                    message: `エラー内容：${error.message}`,
-                },
+                payload: `エラー内容：${error.message}`,
             });
             return;
         }

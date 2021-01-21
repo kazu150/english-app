@@ -2,7 +2,7 @@
 
 ## useReducerのデータ構造
 - currentUser
-  - userName
+  - name
   - email
   - initialTime
   - studyTime
@@ -12,7 +12,7 @@
 
 ## DB構造
 - users[]
-  - userName
+  - name
   - email
   - password
   - initialTime

@@ -47,7 +47,7 @@ const MyPage: FC = () => {
                 ''
             ) : (
                 <div>
-                    <h2>{state.currentUser.userName}さんのマイページ</h2>
+                    <h2>{state.currentUser.name}さんのマイページ</h2>
                     <p>（今後作成）今週の英会話時間: X分</p>
                     <p>（今後作成）全ユーザーの第XX位/Y人！</p>
                     <p>（今後作成）今月の英会話時間: XX分</p>
