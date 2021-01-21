@@ -91,54 +91,59 @@ const SignUp: FC = () => {
     };
 
     return (
-        <form className={classes.root} noValidate autoComplete="off">
-            <TextField
-                fullWidth
-                error={state.error.errorPart === 'email' ? true : false}
-                id="email"
-                label="メールアドレス"
-                value={signUpUser.email}
-                onChange={(e) =>
-                    setSignUpUser({
-                        ...signUpUser,
-                        email: e.target.value,
-                    })
-                }
-            />
-            <TextField
-                fullWidth
-                error={state.error.errorPart === 'password' ? true : false}
-                id="standard-basic"
-                label="パスワード"
-                type="password"
-                value={signUpUser.password}
-                onChange={(e) =>
-                    setSignUpUser({
-                        ...signUpUser,
-                        password: e.target.value,
-                    })
-                }
-            />
-            <TextField
-                fullWidth
-                error={
-                    state.error.errorPart === 'passwordConfirm' ? true : false
-                }
-                id="standard-basic"
-                label="パスワード(確認用)"
-                type="password"
-                value={signUpUser.passwordConfirm}
-                onChange={(e) =>
-                    setSignUpUser({
-                        ...signUpUser,
-                        passwordConfirm: e.target.value,
-                    })
-                }
-            />
-            <Button onClick={onSignUpSubmit} variant="contained">
-                会員登録
-            </Button>
-        </form>
+        <>
+            <h2>新規ユーザー登録</h2>
+            <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                    fullWidth
+                    error={state.error.errorPart === 'email' ? true : false}
+                    id="email"
+                    label="メールアドレス"
+                    value={signUpUser.email}
+                    onChange={(e) =>
+                        setSignUpUser({
+                            ...signUpUser,
+                            email: e.target.value,
+                        })
+                    }
+                />
+                <TextField
+                    fullWidth
+                    error={state.error.errorPart === 'password' ? true : false}
+                    id="standard-basic"
+                    label="パスワード"
+                    type="password"
+                    value={signUpUser.password}
+                    onChange={(e) =>
+                        setSignUpUser({
+                            ...signUpUser,
+                            password: e.target.value,
+                        })
+                    }
+                />
+                <TextField
+                    fullWidth
+                    error={
+                        state.error.errorPart === 'passwordConfirm'
+                            ? true
+                            : false
+                    }
+                    id="standard-basic"
+                    label="パスワード(確認用)"
+                    type="password"
+                    value={signUpUser.passwordConfirm}
+                    onChange={(e) =>
+                        setSignUpUser({
+                            ...signUpUser,
+                            passwordConfirm: e.target.value,
+                        })
+                    }
+                />
+                <Button onClick={onSignUpSubmit} variant="contained">
+                    会員登録
+                </Button>
+            </form>
+        </>
     );
 };
 

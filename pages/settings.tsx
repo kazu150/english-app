@@ -108,78 +108,90 @@ const Settings: FC = () => {
             {!isLoggedIn ? (
                 ''
             ) : (
-                <form className={classes.root} noValidate autoComplete="off">
-                    <TextField
-                        fullWidth
-                        id="name"
-                        label="ユーザー名"
-                        error={state.error.errorPart === 'name' ? true : false}
-                        value={settingsData.name}
-                        onChange={(e) =>
-                            setSettingsData({
-                                ...settingsData,
-                                name: e.target.value,
-                            })
-                        }
-                    />
-                    <TextField
-                        fullWidth
-                        id="initialTime"
-                        label="これまでの総会話時間（分）"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    分
-                                </InputAdornment>
-                            ),
-                        }}
-                        error={
-                            state.error.errorPart === 'initialTime'
-                                ? true
-                                : false
-                        }
-                        value={settingsData.initialTime}
-                        onChange={(e) =>
-                            setSettingsData({
-                                ...settingsData,
-                                initialTime: e.target.value,
-                            })
-                        }
-                    />
-                    <div>
-                        <FormLabel>利用サービス</FormLabel>
-                        <RadioGroup
-                            aria-label="service"
-                            name="service"
-                            value={settingsData.service}
+                <>
+                    <h2>ユーザー情報設定</h2>
+                    <form
+                        className={classes.root}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField
+                            fullWidth
+                            id="name"
+                            label="ユーザー名"
+                            error={
+                                state.error.errorPart === 'name' ? true : false
+                            }
+                            value={settingsData.name}
                             onChange={(e) =>
                                 setSettingsData({
                                     ...settingsData,
-                                    service: e.target.value,
+                                    name: e.target.value,
                                 })
                             }
+                        />
+                        <TextField
+                            fullWidth
+                            id="initialTime"
+                            label="これまでの総会話時間（分）"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        分
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={
+                                state.error.errorPart === 'initialTime'
+                                    ? true
+                                    : false
+                            }
+                            value={settingsData.initialTime}
+                            onChange={(e) =>
+                                setSettingsData({
+                                    ...settingsData,
+                                    initialTime: e.target.value,
+                                })
+                            }
+                        />
+                        <div>
+                            <FormLabel>利用サービス</FormLabel>
+                            <RadioGroup
+                                aria-label="service"
+                                name="service"
+                                value={settingsData.service}
+                                onChange={(e) =>
+                                    setSettingsData({
+                                        ...settingsData,
+                                        service: e.target.value,
+                                    })
+                                }
+                            >
+                                <FormControlLabel
+                                    value="DMM英会話"
+                                    control={<Radio />}
+                                    label="DMM英会話"
+                                />
+                                <FormControlLabel
+                                    value="レアジョブ"
+                                    control={<Radio />}
+                                    label="レアジョブ"
+                                />
+                                <FormControlLabel
+                                    value="ネイティブキャンプ"
+                                    control={<Radio />}
+                                    label="ネイティブキャンプ"
+                                />
+                            </RadioGroup>
+                        </div>
+                        <Button
+                            variant="contained"
+                            onClick={onSubmitButtonClick}
                         >
-                            <FormControlLabel
-                                value="DMM英会話"
-                                control={<Radio />}
-                                label="DMM英会話"
-                            />
-                            <FormControlLabel
-                                value="レアジョブ"
-                                control={<Radio />}
-                                label="レアジョブ"
-                            />
-                            <FormControlLabel
-                                value="ネイティブキャンプ"
-                                control={<Radio />}
-                                label="ネイティブキャンプ"
-                            />
-                        </RadioGroup>
-                    </div>
-                    <Button variant="contained" onClick={onSubmitButtonClick}>
-                        送信
-                    </Button>
-                </form>
+                            送信
+                        </Button>
+                    </form>
+                </>
             )}
         </>
     );
