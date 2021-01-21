@@ -15,7 +15,6 @@ export const reducer = (state: State, action: Action): State => {
                     ...state.currentUser,
                     ...action.payload,
                 },
-                // users: [...state.users, action.payload],
             };
         case 'userUpdate':
             return {
@@ -24,17 +23,6 @@ export const reducer = (state: State, action: Action): State => {
                     ...state.currentUser,
                     ...action.payload,
                 },
-                // users: [
-                //     ...state.users.filter(
-                //         (user) => user.email !== state.currentUser.email
-                //     ),
-                //     {
-                //         ...state.users.filter(
-                //             (user) => user.email === state.currentUser.email
-                //         )[0],
-                //         ...action.payload,
-                //     },
-                // ],
             };
         case 'userSignin':
             return {
@@ -54,29 +42,9 @@ export const reducer = (state: State, action: Action): State => {
                 currentUser: initialState.currentUser,
             };
         case 'studyRegister':
-            return {
-                ...state,
-            };
+            return { ...state };
         case 'studySettings':
-            return {
-                ...state,
-                // users: [
-                //     ...state.users.filter(
-                //         (user) => user.email !== state.currentUser.email
-                //     ),
-                //     {
-                //         ...state.users.filter(
-                //             (user) => user.email === state.currentUser.email
-                //         )[0],
-                //         ...state.users
-                //             .filter(
-                //                 (user) =>
-                //                     user.email === state.currentUser.email
-                //             )[0]
-                //             .userLog.push(action.payload),
-                //     },
-                // ],
-            };
+            return { ...state };
         case 'studyDelete':
             return { ...state };
         case 'studyModify':

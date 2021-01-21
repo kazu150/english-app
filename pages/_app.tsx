@@ -32,20 +32,8 @@ export type User = {
     photoUrl: string;
 };
 
-// type UserLog = {
-//     date: number;
-//     nationality: string;
-//     count: number;
-//     service: string;
-// }[];
-
 export type State = {
     currentUser: User;
-    // users?: User[];
-    // services?: {
-    //     name: string;
-    //     timePerLesson: number;
-    // }[];
     error?: {
         isOpened: boolean;
         message: string;
