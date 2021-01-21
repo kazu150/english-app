@@ -29,17 +29,9 @@ const Settings: FC = () => {
     const { state, dispatch } = useContext(MyContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [settingsData, setSettingsData] = useState({
-        userName: '',
+        name: '',
         initialTime: '0',
         service: 'DMM英会話',
-        userLog: [
-            {
-                date: 20200101,
-                nationality: 'US',
-                count: 1,
-                service: 'DMM英会話',
-            },
-        ],
     });
 
     useEffect(() => {
@@ -65,8 +57,8 @@ const Settings: FC = () => {
     });
 
     const onSubmitButtonClick = async () => {
-        if (settingsData.userName === '') {
-            dispatch({ type: 'errorEmptyUserName' });
+        if (settingsData.name === '') {
+            dispatch({ type: 'errorEmptyname' });
             return;
         } else if (
             Number(settingsData.initialTime) < 0 ||
@@ -86,7 +78,7 @@ const Settings: FC = () => {
             });
 
             batch.update(db.doc(`publicProfiles/${state.currentUser.userId}`), {
-                name: settingsData.userName,
+                name: settingsData.name,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
 
@@ -97,7 +89,7 @@ const Settings: FC = () => {
                 payload: {
                     service: settingsData.service,
                     initialTime: settingsData.initialTime,
-                    name: settingsData.userName,
+                    name: settingsData.name,
                 },
             });
 
@@ -119,16 +111,14 @@ const Settings: FC = () => {
                 <form className={classes.root} noValidate autoComplete="off">
                     <TextField
                         fullWidth
-                        id="userName"
+                        id="name"
                         label="ユーザー名"
-                        error={
-                            state.error.errorPart === 'userName' ? true : false
-                        }
-                        value={settingsData.userName}
+                        error={state.error.errorPart === 'name' ? true : false}
+                        value={settingsData.name}
                         onChange={(e) =>
                             setSettingsData({
                                 ...settingsData,
-                                userName: e.target.value,
+                                name: e.target.value,
                             })
                         }
                     />

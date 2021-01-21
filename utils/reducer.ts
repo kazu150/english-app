@@ -1,6 +1,12 @@
-import { initialState } from '../pages/_app';
+import { initialState } from './initialState';
+import { State } from '../pages/_app';
 
-export const reducer = (state, action) => {
+export type Action = {
+    type: string;
+    payload?: any;
+};
+
+export const reducer = (state: State, action: Action): State => {
     switch (action.type) {
         case 'userSignup':
             return {
@@ -9,7 +15,7 @@ export const reducer = (state, action) => {
                     ...state.currentUser,
                     ...action.payload,
                 },
-                users: [...state.users, action.payload],
+                // users: [...state.users, action.payload],
             };
         case 'userUpdate':
             return {
@@ -18,25 +24,30 @@ export const reducer = (state, action) => {
                     ...state.currentUser,
                     ...action.payload,
                 },
-                users: [
-                    ...state.users.filter(
-                        (user) => user.email !== state.currentUser.email
-                    ),
-                    {
-                        ...state.users.filter(
-                            (user) => user.email === state.currentUser.email
-                        )[0],
-                        ...action.payload,
-                    },
-                ],
+                // users: [
+                //     ...state.users.filter(
+                //         (user) => user.email !== state.currentUser.email
+                //     ),
+                //     {
+                //         ...state.users.filter(
+                //             (user) => user.email === state.currentUser.email
+                //         )[0],
+                //         ...action.payload,
+                //     },
+                // ],
             };
         case 'userSignin':
             return {
                 ...state,
-                currentUser: { ...action.payload },
+                currentUser: {
+                    ...state.currentUser,
+                    ...action.payload,
+                },
             };
         case 'userChangepass':
-            return {};
+            return {
+                ...state,
+            };
         case 'userSignout':
             return {
                 ...state,
@@ -67,9 +78,9 @@ export const reducer = (state, action) => {
                 // ],
             };
         case 'studyDelete':
-            return {};
+            return { ...state };
         case 'studyModify':
-            return {};
+            return { ...state };
         case 'errorEmptyMail':
             return {
                 ...state,
@@ -125,12 +136,12 @@ export const reducer = (state, action) => {
                     message: 'このメールアドレスは登録されていません',
                 },
             };
-        case 'errorEmptyUserName':
+        case 'errorEmptyname':
             return {
                 ...state,
                 error: {
                     isOpened: true,
-                    errorPart: 'userName',
+                    errorPart: 'name',
                     message: 'ユーザー名を入力してください',
                 },
             };
@@ -149,6 +160,7 @@ export const reducer = (state, action) => {
                 error: {
                     isOpened: true,
                     message: action.payload,
+                    errorPart: '',
                 },
             };
         case 'errorClose':
@@ -161,6 +173,6 @@ export const reducer = (state, action) => {
                 },
             };
         default:
-            return {};
+            return { ...state };
     }
 };

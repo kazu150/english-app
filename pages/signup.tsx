@@ -76,7 +76,6 @@ const SignUp: FC = () => {
             dispatch({
                 type: 'userSignup',
                 payload: {
-                    email: signUpUser.email,
                     userId: data.user.uid,
                 },
             });

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { db, auth } from '../firebase';
+import { auth } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -57,7 +57,6 @@ const SignIn: FC = () => {
             dispatch({
                 type: 'userSignin',
                 payload: {
-                    // ...userRef.docs[0].data(),
                     userId: data.user.uid,
                 },
             });
