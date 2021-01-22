@@ -14,9 +14,22 @@
   - Firestore
   - Cloud Functions
   - Firebase Authentication
-- Next.js
 - Vercel
+- Next.js
 - TypeScript
+
+## フロントエンド（reducer）にて管理するデータ構造
+- currentUser
+  - userId
+  - name
+  - initialTime
+  - englishService
+  - studyTime
+  - photoUrl
+- error
+  - isOpened
+  - message
+  - errorPart
 
 ## DBのデータ構成
 - usersコレクション (各ユーザーの情報のうち、各ユーザー自身しか閲覧できないもの)
@@ -46,22 +59,13 @@
 - nationalitiesコレクション (講師の国籍)
   - countryName: string (講師の出身国名)
 
-## フロントエンド（reducer）にて管理するデータ構造
-- currentUser
-  - userId
-  - name
-  - initialTime
-  - englishService
-  - studyTime
-  - photoUrl
-- error
-  - isOpened
-  - message
-  - errorPart
+## Firebase Authentication
+- displayNameを追加設定済
+- （今後）Eメール認証機能をつける
 
-## Cloud Functionsで管理している関数
+## Cloud Functions上の関数
 ▼sumUpStudyTimeOnChangeInitialTime  
 users>initialTimeを上書きした際、トータルの勉強時間を再計算し、publicProfiles>studyTimeを更新
 
-sumUpStudyTimeOnWriteStudyLog  
+▼sumUpStudyTimeOnWriteStudyLog  
 users>userLogの勉強記録を追加、上書き、削除した際、トータルの勉強時間を再計算し、publicProfiles>studyTimeを更新
