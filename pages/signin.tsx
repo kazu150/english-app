@@ -73,13 +73,14 @@ const SignIn: NextPage = () => {
                     userId: data.user.uid,
                     name: data.user.displayName,
                     initialTime: userInfo.data().initialTime,
-                    service: userInfo.data().service,
+                    englishService: userInfo.data().englishService.id,
                     studyTime: publicUserInfo.data().studyTime,
                     photoUrl: publicUserInfo.data().photoUrl,
                 },
             });
 
             Router.push(`./${data.user.uid}`);
+            return;
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
                 dispatch({ type: 'errorUnregisteredPassword' });

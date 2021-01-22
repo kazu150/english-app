@@ -23,6 +23,7 @@ const MyPage: NextPage = () => {
             if (user.uid !== state.currentUser.userId) {
                 Router.push('/');
                 dispatch({ type: 'userSignout' });
+                return;
             } else {
                 setIsLoggedIn(true);
             }

@@ -64,15 +64,15 @@ const SignUp: NextPage = () => {
             const batch = firebase.firestore().batch();
 
             batch.set(db.doc(`users/${data.user.uid}`), {
-                service: null,
+                englishService: null,
                 initialTime: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
 
             batch.set(db.doc(`publicProfiles/${data.user.uid}`), {
-                name: null,
-                photoUrl: null,
+                name: '',
+                photoUrl: '',
                 studyTime: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -88,6 +88,7 @@ const SignUp: NextPage = () => {
             });
 
             Router.push('/settings');
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',

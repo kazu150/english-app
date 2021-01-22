@@ -16,7 +16,7 @@ import firebase from 'firebase/app';
 type SettingsData = {
     name: string;
     initialTime: string;
-    service: string;
+    englishService: string;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const Settings: NextPage = () => {
     const [settingsData, setSettingsData] = useState<SettingsData>({
         name: '',
         initialTime: '0',
-        service: 'DMM英会話',
+        englishService: 'dmm',
     });
 
     useEffect(() => {
@@ -83,8 +83,10 @@ const Settings: NextPage = () => {
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
-                service: settingsData.service,
-                initialTime: settingsData.initialTime,
+                englishService: db.doc(
+                    `englishServices/${settingsData.englishService}`
+                ),
+                initialTime: Number(settingsData.initialTime),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
 
@@ -98,13 +100,14 @@ const Settings: NextPage = () => {
             dispatch({
                 type: 'userUpdate',
                 payload: {
-                    service: settingsData.service,
+                    englishService: settingsData.englishService,
                     initialTime: settingsData.initialTime,
                     name: settingsData.name,
                 },
             });
 
             Router.push(`/${state.currentUser.userId}`);
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',
@@ -168,30 +171,35 @@ const Settings: NextPage = () => {
                         <div>
                             <FormLabel>利用サービス</FormLabel>
                             <RadioGroup
-                                aria-label="service"
-                                name="service"
-                                value={settingsData.service}
+                                aria-label="englishService"
+                                name="englishService"
+                                value={settingsData.englishService}
                                 onChange={(e) =>
                                     setSettingsData({
                                         ...settingsData,
-                                        service: e.target.value,
+                                        englishService: e.target.value,
                                     })
                                 }
                             >
                                 <FormControlLabel
-                                    value="DMM英会話"
+                                    value="dmm"
                                     control={<Radio />}
                                     label="DMM英会話"
                                 />
                                 <FormControlLabel
-                                    value="レアジョブ"
+                                    value="rarejob"
                                     control={<Radio />}
                                     label="レアジョブ"
                                 />
                                 <FormControlLabel
-                                    value="ネイティブキャンプ"
+                                    value="nativeCamp"
                                     control={<Radio />}
                                     label="ネイティブキャンプ"
+                                />
+                                <FormControlLabel
+                                    value="cambly"
+                                    control={<Radio />}
+                                    label="キャンブリー"
                                 />
                             </RadioGroup>
                         </div>

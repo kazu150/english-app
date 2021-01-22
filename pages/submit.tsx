@@ -16,7 +16,7 @@ import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
 type Result = {
-    service: string;
+    englishService: string;
     count: number;
     nationality: string;
     defaultTime: number;
@@ -32,9 +32,9 @@ const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
-        service: state.currentUser.service,
+        englishService: state.currentUser.englishService,
         count: 1,
-        nationality: 'OTHERS',
+        nationality: 'others',
         defaultTime: 0,
     });
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,14 +69,17 @@ const Submit: NextPage = () => {
                 .collection('studyLog')
                 .add({
                     date: firebase.firestore.FieldValue.serverTimestamp(),
-                    nationality: result.nationality,
+                    nationality: db.doc(`nationalities/${result.nationality}`),
                     count: result.count,
-                    service: result.service,
+                    englishService: db.doc(
+                        `englishServices/${result.englishService}`
+                    ),
                     time: result.defaultTime * result.count,
                 });
 
             dispatch({ type: 'studyRegister' });
             Router.push(`/${state.currentUser.userId}`);
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',
@@ -87,12 +90,11 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        const watchServiceDefaultTime = db
-            .collection('services')
-            .where('serviceName', '==', result.service)
-            .onSnapshot((snapshots) => {
-                const defaultTime = snapshots.docs[0].data().defaultTime;
-
+        const watchEnglishServiceDefaultTime = db
+            .collection('englishServices')
+            .doc(result.englishService)
+            .onSnapshot((snapshot) => {
+                const defaultTime = snapshot.data().defaultTime;
                 setResult({
                     ...result,
                     defaultTime,
@@ -100,9 +102,9 @@ const Submit: NextPage = () => {
             });
 
         return () => {
-            watchServiceDefaultTime();
+            watchEnglishServiceDefaultTime();
         };
-    }, [result.service]);
+    }, [result.englishService]);
 
     return (
         <>
@@ -111,12 +113,12 @@ const Submit: NextPage = () => {
             ) : (
                 <div>
                     <h2>英会話をやりました！</h2>
-                    <InputLabel id="service">利用サービス</InputLabel>
+                    <InputLabel id="englishService">利用サービス</InputLabel>
                     <Select
                         fullWidth
-                        labelId="service"
-                        id="service"
-                        value={result.service}
+                        labelId="englishService"
+                        id="englishService"
+                        value={result.englishService}
                         onChange={(
                             e: React.ChangeEvent<{
                                 name?: string;
@@ -125,28 +127,28 @@ const Submit: NextPage = () => {
                         ) => {
                             setResult({
                                 ...result,
-                                service: e.target.value as string,
+                                englishService: e.target.value as string,
                             });
                         }}
                     >
-                        <MenuItem value="DMM英会話">
+                        <MenuItem value="dmm">
                             DMM英会話
-                            {state.currentUser.service === 'DMM英会話' &&
+                            {state.currentUser.englishService === 'dmm' &&
                                 '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="レアジョブ">
+                        <MenuItem value="rarejob">
                             レアジョブ
-                            {state.currentUser.service === 'レアジョブ' &&
+                            {state.currentUser.englishService === 'rarejob' &&
                                 '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="ネイティブキャンプ">
+                        <MenuItem value="nativeCamp">
                             ネイティブキャンプ
-                            {state.currentUser.service ===
-                                'ネイティブキャンプ' && '（デフォルト設定）'}
+                            {state.currentUser.englishService ===
+                                'nativeCamp' && '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="キャンブリー">
+                        <MenuItem value="cambly">
                             キャンブリー
-                            {state.currentUser.service === 'キャンブリー' &&
+                            {state.currentUser.englishService === 'cambly' &&
                                 '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
@@ -202,10 +204,11 @@ const Submit: NextPage = () => {
                             })
                         }
                     >
-                        <MenuItem value="US">アメリカ</MenuItem>
-                        <MenuItem value="UK">イギリス</MenuItem>
-                        <MenuItem value="AUS">オーストラリア</MenuItem>
-                        <MenuItem value="OTHERS">その他・未選択</MenuItem>
+                        <MenuItem value="us">アメリカ合衆国</MenuItem>
+                        <MenuItem value="uk">イギリス</MenuItem>
+                        <MenuItem value="aus">オーストラリア</MenuItem>
+                        <MenuItem value="ca">カナダ</MenuItem>
+                        <MenuItem value="others">その他・未選択</MenuItem>
                     </Select>
                     <p>合計： {result.defaultTime * result.count}分</p>
                     <Button
