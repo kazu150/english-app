@@ -16,11 +16,11 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow create, update: if isUserAuthenticated(uid)
-        && incomingData().size() <= 4
+        && incomingData().size() == 4
         && incomingData().createdAt <= request.time
         && incomingData().updatedAt == request.time
-        && ((!('initialTime' in incomingData())) || ((incomingData().initialTime is number) && (incomingData().initialTime >= 0) && (incomingData().initialTime < 1000000)))
-        && ((!('englishService' in incomingData())) || (incomingData().englishService == null) || (incomingData().englishService is path))
+        && (incomingData().initialTime is number) && (incomingData().initialTime >= 0) && (incomingData().initialTime < 1000000)
+        && ((incomingData().englishService == null) || (incomingData().englishService is path))
       allow read: if isUserAuthenticated(uid)
     }
 
@@ -29,18 +29,28 @@ service cloud.firestore {
         && incomingData().size() == 5
         && incomingData().date == request.time
         && incomingData().nationality is path
-        && incomingData().count is number && (incomingData().count >= 1) && (incomingData().count < 10)
+        && (incomingData().count is number) && (incomingData().count >= 1) && (incomingData().count < 10)
         && incomingData().englishService is path
-        && incomingData().time is number && (incomingData().time >= 1) && (incomingData().time < 250)
+        && (incomingData().time is number) && (incomingData().time >= 1) && (incomingData().time < 250)
       allow read: if isUserAuthenticated(uid);
     }
 
     match /publicProfiles/{uid} {
-      allow create, update: if isUserAuthenticated(uid);
+      allow create, update: if isUserAuthenticated(uid)
+        && incomingData().size() == 5
+        && ((incomingData().name is string) && (incomingData().name.size() < 20))
+        && ((incomingData().photoUrl is string) && (incomingData().photoUrl.size() < 100))
+        && (incomingData().studyTime is number) && (incomingData().studyTime >= 0) && (incomingData().studyTime <= 100000000)
+        && incomingData().createdAt <= request.time
+        && incomingData().updatedAt == request.time
       allow read: if isAuthenticated();
     }
 
     match /englishServices/{englishServiceId} {
+      allow read: if isAuthenticated();
+    }
+
+    match /nationalities/{nationality} {
       allow read: if isAuthenticated();
     }
 

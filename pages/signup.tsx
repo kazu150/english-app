@@ -71,8 +71,8 @@ const SignUp: NextPage = () => {
             });
 
             batch.set(db.doc(`publicProfiles/${data.user.uid}`), {
-                name: null,
-                photoUrl: null,
+                name: '',
+                photoUrl: '',
                 studyTime: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
