@@ -1,4 +1,5 @@
-import React, { FC, useContext } from 'react';
+import React, { useContext } from 'react';
+import { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Home: FC = () => {
+const Home: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
 

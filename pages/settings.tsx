@@ -1,4 +1,5 @@
-import React, { FC, useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { NextPage } from 'next';
 import Router from 'next/router';
 import { User, MyContext } from './_app';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +13,12 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
+type SettingsData = {
+    name: string;
+    initialTime: string;
+    service: string;
+};
+
 const useStyles = makeStyles((theme) => ({
     root: {
         '& > *': {
@@ -24,11 +31,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Settings: FC = () => {
+const Settings: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [settingsData, setSettingsData] = useState({
+    const [settingsData, setSettingsData] = useState<SettingsData>({
         name: '',
         initialTime: '0',
         service: 'DMM英会話',
