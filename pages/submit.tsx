@@ -91,7 +91,6 @@ const Submit: FC = () => {
             .where('serviceName', '==', result.service)
             .onSnapshot((snapshots) => {
                 const defaultTime = snapshots.docs[0].data().defaultTime;
-
                 setResult({
                     ...result,
                     defaultTime,

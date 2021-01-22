@@ -186,6 +186,11 @@ const Settings: FC = () => {
                                     control={<Radio />}
                                     label="ネイティブキャンプ"
                                 />
+                                <FormControlLabel
+                                    value="キャンブリー"
+                                    control={<Radio />}
+                                    label="キャンブリー"
+                                />
                             </RadioGroup>
                         </div>
                         <Button
