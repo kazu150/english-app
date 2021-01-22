@@ -34,7 +34,7 @@ const Submit: NextPage = () => {
     const [result, setResult] = useState<Result>({
         englishService: state.currentUser.englishService,
         count: 1,
-        nationality: 'OTHERS',
+        nationality: 'others',
         defaultTime: 0,
     });
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,9 +69,11 @@ const Submit: NextPage = () => {
                 .collection('studyLog')
                 .add({
                     date: firebase.firestore.FieldValue.serverTimestamp(),
-                    nationality: result.nationality,
+                    nationality: db.doc(`nationalities/${result.nationality}`),
                     count: result.count,
-                    englishService: result.englishService,
+                    englishService: db.doc(
+                        `englishServices/${result.englishService}`
+                    ),
                     time: result.defaultTime * result.count,
                 });
 
@@ -202,10 +204,11 @@ const Submit: NextPage = () => {
                             })
                         }
                     >
-                        <MenuItem value="US">アメリカ</MenuItem>
-                        <MenuItem value="UK">イギリス</MenuItem>
-                        <MenuItem value="AUS">オーストラリア</MenuItem>
-                        <MenuItem value="OTHERS">その他・未選択</MenuItem>
+                        <MenuItem value="us">アメリカ合衆国</MenuItem>
+                        <MenuItem value="uk">イギリス</MenuItem>
+                        <MenuItem value="aus">オーストラリア</MenuItem>
+                        <MenuItem value="ca">カナダ</MenuItem>
+                        <MenuItem value="others">その他・未選択</MenuItem>
                     </Select>
                     <p>合計： {result.defaultTime * result.count}分</p>
                     <Button

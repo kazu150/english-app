@@ -10,23 +10,34 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
+    function incomingData() {
+      return request.resource.data;
+    }
+
     match /users/{uid} {
       allow create, update: if isUserAuthenticated(uid)
-        && request.resource.data.size() <= 4
-        && request.resource.data.createdAt <= request.time
-        && request.resource.data.updatedAt == request.time
-        && ((!('initialTime' in request.resource.data)) || ((request.resource.data.initialTime is number) && (request.resource.data.initialTime >= 0) && (request.resource.data.initialTime < 1000000)))
-        && ((!('englishService' in request.resource.data)) || (request.resource.data.englishService == null) || (request.resource.data.englishService is path))
+        && incomingData().size() <= 4
+        && incomingData().createdAt <= request.time
+        && incomingData().updatedAt == request.time
+        && ((!('initialTime' in incomingData())) || ((incomingData().initialTime is number) && (incomingData().initialTime >= 0) && (incomingData().initialTime < 1000000)))
+        && ((!('englishService' in incomingData())) || (incomingData().englishService == null) || (incomingData().englishService is path))
       allow read: if isUserAuthenticated(uid)
     }
 
     match /users/{uid}/studyLog/{id} {
-      allow update, create, read: if isUserAuthenticated(uid);
+      allow update, create: if isUserAuthenticated(uid)
+        && incomingData().size() == 5
+        && incomingData().date == request.time
+        && incomingData().nationality is path
+        && incomingData().count is number && (incomingData().count >= 1) && (incomingData().count < 10)
+        && incomingData().englishService is path
+        && incomingData().time is number && (incomingData().time >= 1) && (incomingData().time < 250)
+      allow read: if isUserAuthenticated(uid);
     }
 
     match /publicProfiles/{uid} {
-      allow read: if isAuthenticated();
       allow create, update: if isUserAuthenticated(uid);
+      allow read: if isAuthenticated();
     }
 
     match /englishServices/{englishServiceId} {
