@@ -1,4 +1,5 @@
-import React, { FC, useReducer, createContext } from 'react';
+import React, { useReducer, createContext } from 'react';
+import { NextPage } from 'next';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -19,8 +20,8 @@ import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
 
 type Props = {
-    Component?: FC;
-    pageProps?: {};
+    Component: NextPage;
+    pageProps: {};
 };
 
 export type User = {
@@ -34,7 +35,7 @@ export type User = {
 
 export type State = {
     currentUser: User;
-    error?: {
+    error: {
         isOpened: boolean;
         message: string;
         errorPart: string;
@@ -67,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const MyApp: FC<Props> = (props) => {
+export const MyApp: NextPage<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
 

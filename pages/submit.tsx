@@ -1,4 +1,5 @@
-import React, { FC, useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { NextPage } from 'next';
 import { MyContext } from './_app';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Submit: FC = () => {
+const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
@@ -116,7 +117,12 @@ const Submit: FC = () => {
                         labelId="service"
                         id="service"
                         value={result.service}
-                        onChange={(e) => {
+                        onChange={(
+                            e: React.ChangeEvent<{
+                                name?: string;
+                                value: unknown;
+                            }>
+                        ) => {
                             setResult({
                                 ...result,
                                 service: e.target.value as string,
@@ -146,7 +152,9 @@ const Submit: FC = () => {
                             aria-label="count"
                             name="count1"
                             value={result.count}
-                            onChange={(e) => {
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ) => {
                                 setResult({
                                     ...result,
                                     count: Number(e.target.value),
@@ -177,7 +185,12 @@ const Submit: FC = () => {
                         labelId="nationality"
                         id="nationality"
                         value={result.nationality}
-                        onChange={(e) =>
+                        onChange={(
+                            e: React.ChangeEvent<{
+                                name?: string;
+                                value: unknown;
+                            }>
+                        ) =>
                             setResult({
                                 ...result,
                                 nationality: e.target.value as string,

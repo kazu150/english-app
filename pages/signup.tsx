@@ -1,4 +1,5 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { NextPage } from 'next';
 import Router from 'next/router';
 import { MyContext } from './_app';
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignUp: FC = () => {
+const SignUp: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
 
     const classes = useStyles();
@@ -98,7 +99,9 @@ const SignUp: FC = () => {
                 id="email"
                 label="メールアドレス"
                 value={signUpUser.email}
-                onChange={(e) =>
+                onChange={(
+                    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+                ) =>
                     setSignUpUser({
                         ...signUpUser,
                         email: e.target.value,
@@ -112,7 +115,9 @@ const SignUp: FC = () => {
                 label="パスワード"
                 type="password"
                 value={signUpUser.password}
-                onChange={(e) =>
+                onChange={(
+                    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+                ) =>
                     setSignUpUser({
                         ...signUpUser,
                         password: e.target.value,
@@ -128,7 +133,9 @@ const SignUp: FC = () => {
                 label="パスワード(確認用)"
                 type="password"
                 value={signUpUser.passwordConfirm}
-                onChange={(e) =>
+                onChange={(
+                    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+                ) =>
                     setSignUpUser({
                         ...signUpUser,
                         passwordConfirm: e.target.value,

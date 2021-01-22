@@ -1,4 +1,5 @@
-import React, { FC, useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { NextPage } from 'next';
 import Router from 'next/router';
 import { User, MyContext } from './_app';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Settings: FC = () => {
+const Settings: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);

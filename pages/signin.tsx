@@ -1,4 +1,5 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Router from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignIn: FC = () => {
+const SignIn: NextPage = () => {
     const classes = useStyles();
     const [signInUser, setSignInUser] = useState<SignInUser>({
         email: '',
@@ -32,7 +33,9 @@ const SignIn: FC = () => {
     });
     const { state, dispatch } = useContext(MyContext);
 
-    const onSignInButtonClick = async (e) => {
+    const onSignInButtonClick = async (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
         e.preventDefault();
         if (signInUser.email === '') {
             dispatch({ type: 'errorEmptyMail' });
@@ -85,7 +88,7 @@ const SignIn: FC = () => {
                 label="メールアドレス"
                 error={state.error.errorPart === 'email' ? true : false}
                 value={signInUser.email}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setSignInUser({
                         ...signInUser,
                         email: e.target.value,
@@ -99,7 +102,7 @@ const SignIn: FC = () => {
                 type="password"
                 error={state.error.errorPart === 'password' ? true : false}
                 value={signInUser.password}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setSignInUser({
                         ...signInUser,
                         password: e.target.value,

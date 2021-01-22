@@ -1,11 +1,12 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import Router from 'next/router';
 import { db, auth } from '../firebase';
 
-const MyPage: FC = () => {
+const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
