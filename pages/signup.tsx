@@ -9,6 +9,12 @@ import { regEmail, regPass } from '../utils/validate';
 import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
+type SignUpUser = {
+    email: string;
+    password: string;
+    passwordConfirm: string;
+};
+
 const useStyles = makeStyles((theme) => ({
     root: {
         '& > *': {
@@ -25,7 +31,7 @@ const SignUp: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
 
     const classes = useStyles();
-    const [signUpUser, setSignUpUser] = useState({
+    const [signUpUser, setSignUpUser] = useState<SignUpUser>({
         email: '',
         password: '',
         passwordConfirm: '',
