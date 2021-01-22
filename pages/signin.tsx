@@ -73,7 +73,7 @@ const SignIn: NextPage = () => {
                     userId: data.user.uid,
                     name: data.user.displayName,
                     initialTime: userInfo.data().initialTime,
-                    service: userInfo.data().service,
+                    englishService: userInfo.data().englishService,
                     studyTime: publicUserInfo.data().studyTime,
                     photoUrl: publicUserInfo.data().photoUrl,
                 },

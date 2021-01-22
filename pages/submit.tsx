@@ -16,7 +16,7 @@ import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
 
 type Result = {
-    service: string;
+    englishService: string;
     count: number;
     nationality: string;
     defaultTime: number;
@@ -32,7 +32,7 @@ const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
     const [result, setResult] = useState<Result>({
-        service: state.currentUser.service,
+        englishService: state.currentUser.englishService,
         count: 1,
         nationality: 'OTHERS',
         defaultTime: 0,
@@ -71,7 +71,7 @@ const Submit: NextPage = () => {
                     date: firebase.firestore.FieldValue.serverTimestamp(),
                     nationality: result.nationality,
                     count: result.count,
-                    service: result.service,
+                    englishService: result.englishService,
                     time: result.defaultTime * result.count,
                 });
 
@@ -87,9 +87,9 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        const watchServiceDefaultTime = db
-            .collection('services')
-            .where('serviceName', '==', result.service)
+        const watchenglishServiceDefaultTime = db
+            .collection('englishServices')
+            .where('englishServiceName', '==', result.englishService)
             .onSnapshot((snapshots) => {
                 const defaultTime = snapshots.docs[0].data().defaultTime;
                 setResult({
@@ -99,9 +99,9 @@ const Submit: NextPage = () => {
             });
 
         return () => {
-            watchServiceDefaultTime();
+            watchenglishServiceDefaultTime();
         };
-    }, [result.service]);
+    }, [result.englishService]);
 
     return (
         <>
@@ -110,12 +110,12 @@ const Submit: NextPage = () => {
             ) : (
                 <div>
                     <h2>英会話をやりました！</h2>
-                    <InputLabel id="service">利用サービス</InputLabel>
+                    <InputLabel id="englishService">利用サービス</InputLabel>
                     <Select
                         fullWidth
-                        labelId="service"
-                        id="service"
-                        value={result.service}
+                        labelId="englishService"
+                        id="englishService"
+                        value={result.englishService}
                         onChange={(
                             e: React.ChangeEvent<{
                                 name?: string;
@@ -124,29 +124,29 @@ const Submit: NextPage = () => {
                         ) => {
                             setResult({
                                 ...result,
-                                service: e.target.value as string,
+                                englishService: e.target.value as string,
                             });
                         }}
                     >
                         <MenuItem value="DMM英会話">
                             DMM英会話
-                            {state.currentUser.service === 'DMM英会話' &&
+                            {state.currentUser.englishService === 'DMM英会話' &&
                                 '（デフォルト設定）'}
                         </MenuItem>
                         <MenuItem value="レアジョブ">
                             レアジョブ
-                            {state.currentUser.service === 'レアジョブ' &&
-                                '（デフォルト設定）'}
+                            {state.currentUser.englishService ===
+                                'レアジョブ' && '（デフォルト設定）'}
                         </MenuItem>
                         <MenuItem value="ネイティブキャンプ">
                             ネイティブキャンプ
-                            {state.currentUser.service ===
+                            {state.currentUser.englishService ===
                                 'ネイティブキャンプ' && '（デフォルト設定）'}
                         </MenuItem>
                         <MenuItem value="キャンブリー">
                             キャンブリー
-                            {state.currentUser.service === 'キャンブリー' &&
-                                '（デフォルト設定）'}
+                            {state.currentUser.englishService ===
+                                'キャンブリー' && '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
                     <p>一回の英会話時間： {result.defaultTime}分</p>

@@ -5,7 +5,7 @@ export const initialState: State = {
         userId: '',
         name: '',
         initialTime: 0,
-        service: '',
+        englishService: '',
         studyTime: 0,
         photoUrl: '',
     },

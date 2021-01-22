@@ -64,7 +64,7 @@ const SignUp: NextPage = () => {
             const batch = firebase.firestore().batch();
 
             batch.set(db.doc(`users/${data.user.uid}`), {
-                service: null,
+                englishService: null,
                 initialTime: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),

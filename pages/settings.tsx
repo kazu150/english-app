@@ -16,7 +16,7 @@ import firebase from 'firebase/app';
 type SettingsData = {
     name: string;
     initialTime: string;
-    service: string;
+    englishService: string;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const Settings: NextPage = () => {
     const [settingsData, setSettingsData] = useState<SettingsData>({
         name: '',
         initialTime: '0',
-        service: 'DMM英会話',
+        englishService: 'DMM英会話',
     });
 
     useEffect(() => {
@@ -83,7 +83,7 @@ const Settings: NextPage = () => {
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
-                service: settingsData.service,
+                englishService: settingsData.englishService,
                 initialTime: settingsData.initialTime,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
@@ -98,7 +98,7 @@ const Settings: NextPage = () => {
             dispatch({
                 type: 'userUpdate',
                 payload: {
-                    service: settingsData.service,
+                    englishService: settingsData.englishService,
                     initialTime: settingsData.initialTime,
                     name: settingsData.name,
                 },
@@ -168,13 +168,13 @@ const Settings: NextPage = () => {
                         <div>
                             <FormLabel>利用サービス</FormLabel>
                             <RadioGroup
-                                aria-label="service"
-                                name="service"
-                                value={settingsData.service}
+                                aria-label="englishService"
+                                name="englishService"
+                                value={settingsData.englishService}
                                 onChange={(e) =>
                                     setSettingsData({
                                         ...settingsData,
-                                        service: e.target.value,
+                                        englishService: e.target.value,
                                     })
                                 }
                             >

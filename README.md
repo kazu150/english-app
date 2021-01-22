@@ -23,13 +23,13 @@
   - createdAt: Timestamp (ドキュメント作成日)
   - updatedAt: Timestamp (ドキュメント最終更新日)
   - initialTime: number (アプリ使用前にすでに何分間英語を学習していたか)
-  - service: string (メインで使う英会話サービス名)
+  - englishService: string (メインで使う英会話サービス名)
   
   - studyLogコレクション
     - count: number (今回何セット英会話学習をしたか)
     - date: Timestamp (ドキュメント作成日)
     - nationality (今回の英会話講師の国籍)
-    - service: string (今回利用した英会話サービス名)
+    - englishService: string (今回利用した英会話サービス名)
     - time: number (今回の英語学習時間(分))
 
 - publicProfilesコレクション (各ユーザーの情報のうち、全ユーザーに公開可能なもの)
@@ -39,8 +39,8 @@
   - photoUrl: string (ユーザーのアイコン画像ファイルUrl)
   - studyTime: number (これまでの総英語学習時間(分))
 
-- serviceコレクション (各英会話サービスの詳細情報)
-  - serviceName: string (各英会話サービスの名称)
+- englishServiceコレクション (各英会話サービスの詳細情報)
+  - englishServiceName: string (各英会話サービスの名称)
   - defaultTime: number (各英会話サービスの1回の授業時間(分))
 
 ## フロントエンド（reducer）にて管理するデータ構造
@@ -48,7 +48,7 @@
   - userId
   - name
   - initialTime
-  - service
+  - englishService
   - studyTime
   - photoUrl
 - error

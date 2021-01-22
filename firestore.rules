@@ -7,11 +7,24 @@ service cloud.firestore {
     }
 
     function isUserAuthenticated(uid){
-      return request.auth.uid == uid
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isValidUser(user) {
+      return user.size() == 4
+        && user.createdAt == request.time
+        && user.updatedAt == request.time
+        && 'initialTime' in user && user.initialTime is number
+        && 'englishService' in user && user.englishService is string
+
     }
 
     match /users/{uid} {
-      allow update, create, read: if isUserAuthenticated(uid);
+      allow update, create, read: if isUserAuthenticated(uid)
+        && isValidUser(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.initialTime >= 0;
     }
 
     match /users/{uid}/studyLog/{id} {
@@ -23,7 +36,7 @@ service cloud.firestore {
       allow create, update: if isUserAuthenticated(uid);
     }
 
-    match /services/{serviceId} {
+    match /englishServices/{englishServiceId} {
       allow read: if isAuthenticated();
     }
 

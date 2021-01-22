@@ -28,7 +28,7 @@ export type User = {
     userId: string;
     name: string;
     initialTime: number;
-    service: string;
+    englishService: string;
     studyTime: number;
     photoUrl: string;
 };
