@@ -98,7 +98,7 @@ export const MyApp: NextPage<Props> = (props) => {
     return (
         <React.Fragment>
             <Head>
-                <title>英語アプリ | Home</title>
+                <title>オンライン英会話 応援アプリ | Home</title>
                 <meta
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -123,7 +123,7 @@ export const MyApp: NextPage<Props> = (props) => {
                                     variant="h6"
                                     className={classes.title}
                                 >
-                                    英語アプリ
+                                    オンライン英会話 応援アプリ
                                 </Typography>
                             </Link>
                             {state.currentUser.userId ? (

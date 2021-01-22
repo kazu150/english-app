@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 
 type SignInUser = {
     email: string;
@@ -57,12 +57,28 @@ const SignIn: NextPage = () => {
                 signInUser.password
             );
 
+            const userInfo = await db
+                .collection('users')
+                .doc(data.user.uid)
+                .get();
+
+            const publicUserInfo = await db
+                .collection('publicProfiles')
+                .doc(data.user.uid)
+                .get();
+
             dispatch({
                 type: 'userSignin',
                 payload: {
                     userId: data.user.uid,
+                    name: data.user.displayName,
+                    initialTime: userInfo.data().initialTime,
+                    service: userInfo.data().service,
+                    studyTime: publicUserInfo.data().studyTime,
+                    photoUrl: publicUserInfo.data().photoUrl,
                 },
             });
+
             Router.push(`./${data.user.uid}`);
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
@@ -81,42 +97,45 @@ const SignIn: NextPage = () => {
         }
     };
     return (
-        <form className={classes.root} noValidate autoComplete="off">
-            <TextField
-                fullWidth
-                id="standard-basic"
-                label="メールアドレス"
-                error={state.error.errorPart === 'email' ? true : false}
-                value={signInUser.email}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setSignInUser({
-                        ...signInUser,
-                        email: e.target.value,
-                    })
-                }
-            />
-            <TextField
-                fullWidth
-                id="standard-basic"
-                label="パスワード"
-                type="password"
-                error={state.error.errorPart === 'password' ? true : false}
-                value={signInUser.password}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setSignInUser({
-                        ...signInUser,
-                        password: e.target.value,
-                    })
-                }
-            />
-            <Button
-                variant="contained"
-                type="submit"
-                onClick={onSignInButtonClick}
-            >
-                ログイン
-            </Button>
-        </form>
+        <>
+            <h2>ログイン</h2>
+            <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                    fullWidth
+                    id="standard-basic"
+                    label="メールアドレス"
+                    error={state.error.errorPart === 'email' ? true : false}
+                    value={signInUser.email}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setSignInUser({
+                            ...signInUser,
+                            email: e.target.value,
+                        })
+                    }
+                />
+                <TextField
+                    fullWidth
+                    id="standard-basic"
+                    label="パスワード"
+                    type="password"
+                    error={state.error.errorPart === 'password' ? true : false}
+                    value={signInUser.password}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setSignInUser({
+                            ...signInUser,
+                            password: e.target.value,
+                        })
+                    }
+                />
+                <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={onSignInButtonClick}
+                >
+                    ログイン
+                </Button>
+            </form>
+        </>
     );
 };
 

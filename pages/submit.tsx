@@ -40,7 +40,7 @@ const Submit: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // ログインユーザ判定し、falseの場合は弾いてログインページへ
+        // ログインユーザー判定し、falseの場合は弾いてログインページへ
         if (!state.currentUser.userId) {
             Router.push('/');
             dispatch({ type: 'userSignout' });
@@ -143,6 +143,11 @@ const Submit: NextPage = () => {
                             ネイティブキャンプ
                             {state.currentUser.service ===
                                 'ネイティブキャンプ' && '（デフォルト設定）'}
+                        </MenuItem>
+                        <MenuItem value="キャンブリー">
+                            キャンブリー
+                            {state.currentUser.service === 'キャンブリー' &&
+                                '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
                     <p>一回の英会話時間： {result.defaultTime}分</p>
