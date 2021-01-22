@@ -23,7 +23,7 @@
   - createdAt: Timestamp (ドキュメント作成日)
   - updatedAt: Timestamp (ドキュメント最終更新日)
   - initialTime: number (アプリ使用前にすでに何分間英語を学習していたか)
-  - englishService: string (メインで使う英会話サービス名)
+  - englishService: reference (メインで使う英会話サービス名)
   
   - studyLogコレクション
     - count: number (今回何セット英会話学習をしたか)

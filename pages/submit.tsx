@@ -77,6 +77,7 @@ const Submit: NextPage = () => {
 
             dispatch({ type: 'studyRegister' });
             Router.push(`/${state.currentUser.userId}`);
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',
@@ -87,11 +88,11 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        const watchenglishServiceDefaultTime = db
+        const watchEnglishServiceDefaultTime = db
             .collection('englishServices')
-            .where('englishServiceName', '==', result.englishService)
-            .onSnapshot((snapshots) => {
-                const defaultTime = snapshots.docs[0].data().defaultTime;
+            .doc(result.englishService)
+            .onSnapshot((snapshot) => {
+                const defaultTime = snapshot.data().defaultTime;
                 setResult({
                     ...result,
                     defaultTime,
@@ -99,7 +100,7 @@ const Submit: NextPage = () => {
             });
 
         return () => {
-            watchenglishServiceDefaultTime();
+            watchEnglishServiceDefaultTime();
         };
     }, [result.englishService]);
 
@@ -128,25 +129,25 @@ const Submit: NextPage = () => {
                             });
                         }}
                     >
-                        <MenuItem value="DMM英会話">
+                        <MenuItem value="dmm">
                             DMM英会話
-                            {state.currentUser.englishService === 'DMM英会話' &&
+                            {state.currentUser.englishService === 'dmm' &&
                                 '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="レアジョブ">
+                        <MenuItem value="rarejob">
                             レアジョブ
-                            {state.currentUser.englishService ===
-                                'レアジョブ' && '（デフォルト設定）'}
+                            {state.currentUser.englishService === 'rarejob' &&
+                                '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="ネイティブキャンプ">
+                        <MenuItem value="nativeCamp">
                             ネイティブキャンプ
                             {state.currentUser.englishService ===
-                                'ネイティブキャンプ' && '（デフォルト設定）'}
+                                'nativeCamp' && '（デフォルト設定）'}
                         </MenuItem>
-                        <MenuItem value="キャンブリー">
+                        <MenuItem value="cambly">
                             キャンブリー
-                            {state.currentUser.englishService ===
-                                'キャンブリー' && '（デフォルト設定）'}
+                            {state.currentUser.englishService === 'cambly' &&
+                                '（デフォルト設定）'}
                         </MenuItem>
                     </Select>
                     <p>一回の英会話時間： {result.defaultTime}分</p>

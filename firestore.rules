@@ -10,21 +10,14 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
-    function isValidUser(user) {
-      return user.size() == 4
-        && user.createdAt == request.time
-        && user.updatedAt == request.time
-        && 'initialTime' in user && user.initialTime is number
-        && 'englishService' in user && user.englishService is string
-
-    }
-
     match /users/{uid} {
-      allow update, create, read: if isUserAuthenticated(uid)
-        && isValidUser(request.resource.data)
-        && request.resource.data.createdAt == request.time
+      allow create, update: if isUserAuthenticated(uid)
+        && request.resource.data.size() <= 4
+        && request.resource.data.createdAt <= request.time
         && request.resource.data.updatedAt == request.time
-        && request.resource.data.initialTime >= 0;
+        && ((!('initialTime' in request.resource.data)) || ((request.resource.data.initialTime is number) && (request.resource.data.initialTime >= 0) && (request.resource.data.initialTime < 1000000)))
+        && ((!('englishService' in request.resource.data)) || (request.resource.data.englishService == null) || (request.resource.data.englishService is path))
+      allow read: if isUserAuthenticated(uid)
     }
 
     match /users/{uid}/studyLog/{id} {

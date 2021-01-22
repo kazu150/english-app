@@ -38,7 +38,7 @@ const Settings: NextPage = () => {
     const [settingsData, setSettingsData] = useState<SettingsData>({
         name: '',
         initialTime: '0',
-        englishService: 'DMM英会話',
+        englishService: 'dmm',
     });
 
     useEffect(() => {
@@ -83,8 +83,10 @@ const Settings: NextPage = () => {
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
-                englishService: settingsData.englishService,
-                initialTime: settingsData.initialTime,
+                englishService: db.doc(
+                    `englishServices/${settingsData.englishService}`
+                ),
+                initialTime: Number(settingsData.initialTime),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
 
@@ -105,6 +107,7 @@ const Settings: NextPage = () => {
             });
 
             Router.push(`/${state.currentUser.userId}`);
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',
@@ -179,22 +182,22 @@ const Settings: NextPage = () => {
                                 }
                             >
                                 <FormControlLabel
-                                    value="DMM英会話"
+                                    value="dmm"
                                     control={<Radio />}
                                     label="DMM英会話"
                                 />
                                 <FormControlLabel
-                                    value="レアジョブ"
+                                    value="rarejob"
                                     control={<Radio />}
                                     label="レアジョブ"
                                 />
                                 <FormControlLabel
-                                    value="ネイティブキャンプ"
+                                    value="nativeCamp"
                                     control={<Radio />}
                                     label="ネイティブキャンプ"
                                 />
                                 <FormControlLabel
-                                    value="キャンブリー"
+                                    value="cambly"
                                     control={<Radio />}
                                     label="キャンブリー"
                                 />

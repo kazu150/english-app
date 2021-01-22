@@ -88,6 +88,7 @@ const SignUp: NextPage = () => {
             });
 
             Router.push('/settings');
+            return;
         } catch (error) {
             dispatch({
                 type: 'errorOther',
