@@ -56,6 +56,8 @@ const SignUp: NextPage = () => {
         }
 
         try {
+            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
             const data = await auth.createUserWithEmailAndPassword(
                 signUpUser.email,
                 signUpUser.password

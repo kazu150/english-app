@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 import { MyContext } from './_app';
+import { auth } from '../firebase';
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -49,7 +50,19 @@ const Home: NextPage = () => {
                                 fullWidth
                                 variant="contained"
                                 onClick={() =>
-                                    dispatch({ type: 'userSignout' })
+                                    auth
+                                        .signOut()
+                                        .then(() => {
+                                            dispatch({ type: 'userSignout' });
+                                            return;
+                                        })
+                                        .catch((error) => {
+                                            dispatch({
+                                                type: 'errorOther',
+                                                payload: `エラー内容：${error.message}`,
+                                            });
+                                            return;
+                                        })
                                 }
                             >
                                 ログアウト

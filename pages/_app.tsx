@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from 'react';
+import React, { useReducer, createContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
@@ -15,7 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
 
@@ -72,12 +72,53 @@ export const MyApp: NextPage<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
 
-    React.useEffect(() => {
+    useEffect(() => {
         // Remove the server-side injected CSS.
         const jssStyles = document.querySelector('#jss-server-side');
         if (jssStyles) {
             jssStyles.parentElement.removeChild(jssStyles);
         }
+    }, []);
+
+    useEffect(() => {
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                console.log(user);
+                console.log(user.uid);
+                try {
+                    const userInfo = await db
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+                    console.log(userInfo.data());
+
+                    const publicUserInfo = await db
+                        .collection('publicProfiles')
+                        .doc(user.uid)
+                        .get();
+                    console.log(publicUserInfo);
+
+                    dispatch({
+                        type: 'userSignin',
+                        payload: {
+                            userId: user.uid,
+                            name: user.displayName,
+                            initialTime: userInfo.data().initialTime,
+                            englishService: userInfo.data().englishService.id,
+                            studyTime: publicUserInfo.data().studyTime,
+                            photoUrl: publicUserInfo.data().photoUrl,
+                        },
+                    });
+                } catch (error) {
+                    dispatch({
+                        type: 'errorOther',
+                        payload: `appエラー内容：${error.message}`,
+                    });
+                    return;
+                }
+            }
+        });
+        return () => {};
     }, []);
 
     const handleLogout = async () => {

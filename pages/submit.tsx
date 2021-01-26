@@ -43,14 +43,36 @@ const Submit: NextPage = () => {
         // ログインユーザー判定し、falseの場合は弾いてログインページへ
         if (!state.currentUser.userId) {
             Router.push('/');
-            dispatch({ type: 'userSignout' });
+            auth.signOut()
+                .then(() => {
+                    dispatch({ type: 'userSignout' });
+                    return;
+                })
+                .catch((error) => {
+                    dispatch({
+                        type: 'errorOther',
+                        payload: `エラー内容：${error.message}`,
+                    });
+                    return;
+                });
             return;
         }
 
         const checkLogInStatus = auth.onAuthStateChanged((user) => {
             if (user.uid !== state.currentUser.userId) {
                 Router.push('/');
-                dispatch({ type: 'userSignout' });
+                auth.signOut()
+                    .then(() => {
+                        dispatch({ type: 'userSignout' });
+                        return;
+                    })
+                    .catch((error) => {
+                        dispatch({
+                            type: 'errorOther',
+                            payload: `エラー内容：${error.message}`,
+                        });
+                        return;
+                    });
             } else {
                 setIsLoggedIn(true);
             }

@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
 import { auth, db } from '../firebase';
+import firebase from 'firebase/app';
 
 type SignInUser = {
     email: string;
@@ -52,20 +53,27 @@ const SignIn: NextPage = () => {
         }
 
         try {
+            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             const data = await auth.signInWithEmailAndPassword(
                 signInUser.email,
                 signInUser.password
             );
 
+            // IDトークン（JWT）取得
+            const token = await auth.currentUser.getIdToken(true);
+            localStorage.setItem('token', token);
+
             const userInfo = await db
                 .collection('users')
                 .doc(data.user.uid)
                 .get();
+            console.log(userInfo.data());
 
             const publicUserInfo = await db
                 .collection('publicProfiles')
                 .doc(data.user.uid)
                 .get();
+            console.log(publicUserInfo);
 
             dispatch({
                 type: 'userSignin',
@@ -91,7 +99,7 @@ const SignIn: NextPage = () => {
             } else {
                 dispatch({
                     type: 'errorOther',
-                    payload: `エラー内容：${error.message}`,
+                    payload: `signinエラー内容：${error.message}`,
                 });
                 return;
             }

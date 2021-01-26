@@ -4,6 +4,19 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 const db = admin.firestore();
 
+// export const checkAuthStatus = functions.https.onRequest((req, res) => {
+//     switch (req.method) {
+//         case 'GET':
+//             admin
+//                 .auth()
+//                 .verifyIdToken(req.body.idToken)
+//             break
+//         default:
+//             res.status(400).send("error")
+//             break
+//     }
+// });
+
 export const sumUpStudyTimeOnChangeInitialTime = functions
     .region('asia-northeast1')
     .firestore.document('users/{uid}')
