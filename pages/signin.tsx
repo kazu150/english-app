@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Router from 'next/router';
@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
 import { auth, db } from '../firebase';
+import firebase from 'firebase/app';
 
 type SignInUser = {
     email: string;
@@ -33,6 +34,15 @@ const SignIn: NextPage = () => {
     });
     const { state, dispatch } = useContext(MyContext);
 
+    useEffect(() => {
+        // ログインユーザ判定し、trueの場合はマイページへ
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                Router.push(`/${user.uid}`);
+            }
+        });
+    }, []);
+
     const onSignInButtonClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
@@ -52,6 +62,7 @@ const SignIn: NextPage = () => {
         }
 
         try {
+            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             const data = await auth.signInWithEmailAndPassword(
                 signInUser.email,
                 signInUser.password
@@ -91,12 +102,13 @@ const SignIn: NextPage = () => {
             } else {
                 dispatch({
                     type: 'errorOther',
-                    payload: `エラー内容：${error.message}`,
+                    payload: `signinエラー内容：${error.message}`,
                 });
                 return;
             }
         }
     };
+
     return (
         <>
             <h2>ログイン</h2>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import { MyContext } from './_app';
@@ -37,6 +37,15 @@ const SignUp: NextPage = () => {
         passwordConfirm: '',
     });
 
+    useEffect(() => {
+        // ログインユーザ判定し、trueの場合はマイページへ
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                Router.push(`/${user.uid}`);
+            }
+        });
+    }, []);
+
     const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
             dispatch({ type: 'errorEmptyMail' });
@@ -56,6 +65,8 @@ const SignUp: NextPage = () => {
         }
 
         try {
+            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
             const data = await auth.createUserWithEmailAndPassword(
                 signUpUser.email,
                 signUpUser.password

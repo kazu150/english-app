@@ -8,44 +8,27 @@ import { db, auth } from '../firebase';
 
 const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
 
     useEffect(() => {
-        // ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (!state.currentUser.userId) {
-            Router.push('/');
-            dispatch({ type: 'userSignout' });
-            return;
-        }
-
-        const checkLogInStatus = auth.onAuthStateChanged((user) => {
-            if (user.uid !== state.currentUser.userId) {
+        // ログインユーザ判定し、falseの場合はログインページへ
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
                 Router.push('/');
-                dispatch({ type: 'userSignout' });
-                return;
             } else {
-                setIsLoggedIn(true);
+                // studyTimeを表示
+                db.collection('publicProfiles')
+                    .doc(user.uid)
+                    .onSnapshot((snapshot) => {
+                        setTotalStudyTime(snapshot.data().studyTime);
+                    });
             }
         });
-
-        // studyTimeを表示
-        const showUserStatus = db
-            .collection('publicProfiles')
-            .doc(state.currentUser.userId)
-            .onSnapshot((snapshot) => {
-                setTotalStudyTime(snapshot.data().studyTime);
-            });
-
-        return () => {
-            checkLogInStatus();
-            showUserStatus();
-        };
     });
 
     return (
         <>
-            {!isLoggedIn ? (
+            {!state.currentUser.userId ? (
                 ''
             ) : (
                 <div>

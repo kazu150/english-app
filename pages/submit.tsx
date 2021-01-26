@@ -37,29 +37,39 @@ const Submit: NextPage = () => {
         nationality: 'others',
         defaultTime: 0,
     });
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // ログインユーザー判定し、falseの場合は弾いてログインページへ
-        if (!state.currentUser.userId) {
-            Router.push('/');
-            dispatch({ type: 'userSignout' });
-            return;
-        }
+        // ログインユーザ判定し、falseの場合はログインページへ
+        auth.onAuthStateChanged(async (user) => {
+            try {
+                if (!user) {
+                    Router.push('/');
+                } else {
+                    const userInfo = await db
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
 
-        const checkLogInStatus = auth.onAuthStateChanged((user) => {
-            if (user.uid !== state.currentUser.userId) {
-                Router.push('/');
-                dispatch({ type: 'userSignout' });
-            } else {
-                setIsLoggedIn(true);
+                    dispatch({
+                        type: 'userUpdate',
+                        payload: {
+                            englishService:
+                                userInfo.data().englishService.id || '',
+                        },
+                    });
+                    setResult({
+                        ...result,
+                        englishService: userInfo.data().englishService.id || '',
+                    });
+                }
+            } catch (error) {
+                dispatch({
+                    type: 'errorOther',
+                    payload: `エラー内容：${error.message}`,
+                });
             }
         });
-
-        return () => {
-            checkLogInStatus();
-        };
-    });
+    }, []);
 
     const onResultSubmit = async () => {
         try {
@@ -90,25 +100,22 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        const watchEnglishServiceDefaultTime = db
-            .collection('englishServices')
-            .doc(result.englishService)
-            .onSnapshot((snapshot) => {
-                const defaultTime = snapshot.data().defaultTime;
-                setResult({
-                    ...result,
-                    defaultTime,
+        if (result.englishService) {
+            db.collection('englishServices')
+                .doc(result.englishService)
+                .onSnapshot((snapshot) => {
+                    const defaultTime = snapshot.data().defaultTime;
+                    setResult({
+                        ...result,
+                        defaultTime,
+                    });
                 });
-            });
-
-        return () => {
-            watchEnglishServiceDefaultTime();
-        };
+        }
     }, [result.englishService]);
 
     return (
         <>
-            {!isLoggedIn ? (
+            {!state.currentUser.userId ? (
                 ''
             ) : (
                 <div>
@@ -185,7 +192,6 @@ const Submit: NextPage = () => {
                             />
                         </RadioGroup>
                     </FormControl>
-
                     <InputLabel id="nationality">会話相手の国籍</InputLabel>
                     <Select
                         fullWidth

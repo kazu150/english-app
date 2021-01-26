@@ -34,33 +34,10 @@ const useStyles = makeStyles((theme) => ({
 const Settings: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [settingsData, setSettingsData] = useState<SettingsData>({
         name: '',
         initialTime: '0',
         englishService: 'dmm',
-    });
-
-    useEffect(() => {
-        // ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (!state.currentUser.userId) {
-            Router.push('/');
-            dispatch({ type: 'userSignout' });
-            return;
-        }
-
-        const checkLogInStatus = auth.onAuthStateChanged((user) => {
-            if (user.uid !== state.currentUser.userId) {
-                Router.push('/');
-                dispatch({ type: 'userSignout' });
-            } else {
-                setIsLoggedIn(true);
-            }
-        });
-
-        return () => {
-            checkLogInStatus();
-        };
     });
 
     const onSubmitButtonClick = async () => {
@@ -119,7 +96,7 @@ const Settings: NextPage = () => {
 
     return (
         <>
-            {!isLoggedIn ? (
+            {!state.currentUser.userId ? (
                 ''
             ) : (
                 <>
