@@ -41,49 +41,49 @@ const Settings: NextPage = () => {
         englishService: 'dmm',
     });
 
-    useEffect(() => {
-        // ログインユーザ判定し、falseの場合は弾いてログインページへ
-        if (!state.currentUser.userId) {
-            Router.push('/');
-            auth.signOut()
-                .then(() => {
-                    dispatch({ type: 'userSignout' });
-                    return;
-                })
-                .catch((error) => {
-                    dispatch({
-                        type: 'errorOther',
-                        payload: `エラー内容：${error.message}`,
-                    });
-                    return;
-                });
-            return;
-        }
+    // useEffect(() => {
+    //     // ログインユーザ判定し、falseの場合は弾いてログインページへ
+    //     if (!state.currentUser.userId) {
+    //         Router.push('/');
+    //         auth.signOut()
+    //             .then(() => {
+    //                 dispatch({ type: 'userSignout' });
+    //                 return;
+    //             })
+    //             .catch((error) => {
+    //                 dispatch({
+    //                     type: 'errorOther',
+    //                     payload: `エラー内容：${error.message}`,
+    //                 });
+    //                 return;
+    //             });
+    //         return;
+    //     }
 
-        const checkLogInStatus = auth.onAuthStateChanged((user) => {
-            if (user.uid !== state.currentUser.userId) {
-                Router.push('/');
-                auth.signOut()
-                    .then(() => {
-                        dispatch({ type: 'userSignout' });
-                        return;
-                    })
-                    .catch((error) => {
-                        dispatch({
-                            type: 'errorOther',
-                            payload: `エラー内容：${error.message}`,
-                        });
-                        return;
-                    });
-            } else {
-                setIsLoggedIn(true);
-            }
-        });
+    //     const checkLogInStatus = auth.onAuthStateChanged((user) => {
+    //         if (user.uid !== state.currentUser.userId) {
+    //             Router.push('/');
+    //             auth.signOut()
+    //                 .then(() => {
+    //                     dispatch({ type: 'userSignout' });
+    //                     return;
+    //                 })
+    //                 .catch((error) => {
+    //                     dispatch({
+    //                         type: 'errorOther',
+    //                         payload: `エラー内容：${error.message}`,
+    //                     });
+    //                     return;
+    //                 });
+    //         } else {
+    //             setIsLoggedIn(true);
+    //         }
+    //     });
 
-        return () => {
-            checkLogInStatus();
-        };
-    });
+    //     return () => {
+    //         checkLogInStatus();
+    //     };
+    // });
 
     const onSubmitButtonClick = async () => {
         if (settingsData.name === '') {
@@ -141,7 +141,7 @@ const Settings: NextPage = () => {
 
     return (
         <>
-            {!isLoggedIn ? (
+            {!state.currentUser.userId ? (
                 ''
             ) : (
                 <>

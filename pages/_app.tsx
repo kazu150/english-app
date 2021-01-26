@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { auth, db } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
+import Router from 'next/router';
 
 type Props = {
     Component: NextPage;
@@ -83,20 +84,16 @@ export const MyApp: NextPage<Props> = (props) => {
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                console.log(user);
-                console.log(user.uid);
                 try {
                     const userInfo = await db
                         .collection('users')
                         .doc(user.uid)
                         .get();
-                    console.log(userInfo.data());
 
                     const publicUserInfo = await db
                         .collection('publicProfiles')
                         .doc(user.uid)
                         .get();
-                    console.log(publicUserInfo);
 
                     dispatch({
                         type: 'userSignin',
@@ -104,7 +101,8 @@ export const MyApp: NextPage<Props> = (props) => {
                             userId: user.uid,
                             name: user.displayName,
                             initialTime: userInfo.data().initialTime,
-                            englishService: userInfo.data().englishService.id,
+                            englishService:
+                                userInfo.data().englishService.id || '',
                             studyTime: publicUserInfo.data().studyTime,
                             photoUrl: publicUserInfo.data().photoUrl,
                         },
@@ -116,6 +114,20 @@ export const MyApp: NextPage<Props> = (props) => {
                     });
                     return;
                 }
+            } else {
+                Router.push('/');
+                auth.signOut()
+                    .then(() => {
+                        dispatch({ type: 'userSignout' });
+                        return;
+                    })
+                    .catch((error) => {
+                        dispatch({
+                            type: 'errorOther',
+                            payload: `エラー内容：${error.message}`,
+                        });
+                        return;
+                    });
             }
         });
         return () => {};

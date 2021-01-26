@@ -59,21 +59,15 @@ const SignIn: NextPage = () => {
                 signInUser.password
             );
 
-            // IDトークン（JWT）取得
-            const token = await auth.currentUser.getIdToken(true);
-            localStorage.setItem('token', token);
-
             const userInfo = await db
                 .collection('users')
                 .doc(data.user.uid)
                 .get();
-            console.log(userInfo.data());
 
             const publicUserInfo = await db
                 .collection('publicProfiles')
                 .doc(data.user.uid)
                 .get();
-            console.log(publicUserInfo);
 
             dispatch({
                 type: 'userSignin',
