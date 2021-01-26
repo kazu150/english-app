@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Router from 'next/router';
@@ -33,6 +33,15 @@ const SignIn: NextPage = () => {
         password: '',
     });
     const { state, dispatch } = useContext(MyContext);
+
+    useEffect(() => {
+        // ログインユーザ判定し、trueの場合はマイページへ
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                Router.push(`/${user.uid}`);
+            }
+        });
+    }, []);
 
     const onSignInButtonClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -99,6 +108,7 @@ const SignIn: NextPage = () => {
             }
         }
     };
+
     return (
         <>
             <h2>ログイン</h2>

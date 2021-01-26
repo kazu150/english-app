@@ -83,8 +83,8 @@ export const MyApp: NextPage<Props> = (props) => {
 
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                try {
+            try {
+                if (user) {
                     const userInfo = await db
                         .collection('users')
                         .doc(user.uid)
@@ -107,30 +107,19 @@ export const MyApp: NextPage<Props> = (props) => {
                             photoUrl: publicUserInfo.data().photoUrl,
                         },
                     });
-                } catch (error) {
-                    dispatch({
-                        type: 'errorOther',
-                        payload: `appエラー内容：${error.message}`,
-                    });
+                } else {
+                    await auth.signOut();
+                    dispatch({ type: 'userSignout' });
                     return;
                 }
-            } else {
-                Router.push('/');
-                auth.signOut()
-                    .then(() => {
-                        dispatch({ type: 'userSignout' });
-                        return;
-                    })
-                    .catch((error) => {
-                        dispatch({
-                            type: 'errorOther',
-                            payload: `エラー内容：${error.message}`,
-                        });
-                        return;
-                    });
+            } catch (error) {
+                dispatch({
+                    type: 'errorOther',
+                    payload: `appエラー内容：${error.message}`,
+                });
+                return;
             }
         });
-        return () => {};
     }, []);
 
     const handleLogout = async () => {

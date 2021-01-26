@@ -8,54 +8,22 @@ import { db, auth } from '../firebase';
 
 const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
 
     useEffect(() => {
-        //     // ログインユーザ判定し、falseの場合は弾いてログインページへ
-        //     if (!state.currentUser.userId) {
-        //         Router.push('/');
-        //         auth.signOut()
-        //             .then(() => {
-        //                 dispatch({ type: 'userSignout' });
-        //                 return;
-        //             })
-        //             .catch((error) => {
-        //                 dispatch({
-        //                     type: 'errorOther',
-        //                     payload: `エラー内容：${error.message}`,
-        //                 });
-        //                 return;
-        //             });
-        //     } else {
-        //         auth.onAuthStateChanged((user) => {
-        //             if (user.uid !== state.currentUser.userId) {
-        //                 Router.push('/');
-        //                 auth.signOut()
-        //                     .then(() => {
-        //                         dispatch({ type: 'userSignout' });
-        //                         return;
-        //                     })
-        //                     .catch((error) => {
-        //                         dispatch({
-        //                             type: 'errorOther',
-        //                             payload: `[userid]エラー内容：${error.message}`,
-        //                         });
-        //                         return;
-        //                     });
-        //             } else {
-        //                 setIsLoggedIn(true);
-        //             }
-        //         });
-
-        // studyTimeを表示
-        state.currentUser.userId &&
-            db
-                .collection('publicProfiles')
-                .doc(state.currentUser.userId)
-                .onSnapshot((snapshot) => {
-                    setTotalStudyTime(snapshot.data().studyTime);
-                });
+        // ログインユーザ判定し、falseの場合はログインページへ
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                Router.push('/');
+            } else {
+                // studyTimeを表示
+                db.collection('publicProfiles')
+                    .doc(user.uid)
+                    .onSnapshot((snapshot) => {
+                        setTotalStudyTime(snapshot.data().studyTime);
+                    });
+            }
+        });
     });
 
     return (

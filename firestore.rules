@@ -27,9 +27,7 @@ service cloud.firestore {
         && (incomingData().updatedAt != null) && (incomingData().updatedAt is timestamp) && (incomingData().updatedAt == request.time)
         && (incomingData().initialTime != null) && (incomingData().initialTime is number) && (incomingData().initialTime >= 0) && (incomingData().initialTime < 1000000)
         && ((incomingData().englishService == null) || (incomingData().englishService is path))
-      // allow read: if isUserAuthenticated(uid)
-      allow read: if true
-      
+      allow read: if isUserAuthenticated(uid)
     }
 
     match /users/{uid}/studyLog/{id} {
@@ -65,18 +63,15 @@ service cloud.firestore {
         && (incomingData().studyTime != null) && (incomingData().studyTime is number) && (incomingData().studyTime >= 0) && (incomingData().studyTime <= 100000000)
         && (incomingData().createdAt != null) && (incomingData().createdAt is timestamp) && (incomingData().createdAt <= request.time)
         && (incomingData().updatedAt != null) && (incomingData().updatedAt is timestamp) && (incomingData().updatedAt == request.time)
-      // allow read: if isAuthenticated();
-      allow read: if true;
+      allow read: if isAuthenticated();
     }
 
     match /englishServices/{englishServiceId} {
-      // allow read: if isAuthenticated();
-      allow read: if true;
+      allow read: if isAuthenticated();
     }
 
     match /nationalities/{nationality} {
-      // allow read: if isAuthenticated();
-      allow read: if true;
+      allow read: if isAuthenticated();
     }
 
   }
