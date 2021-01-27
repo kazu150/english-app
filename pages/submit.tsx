@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
     const classes = useStyles();
+    const [englishServices, setEnglishServices] = useState([]);
     const [result, setResult] = useState<Result>({
         englishService: state.currentUser.englishService,
         count: 1,
@@ -57,9 +58,27 @@ const Submit: NextPage = () => {
                                 userInfo.data().englishService.id || '',
                         },
                     });
+
+                    const querySnapshot = await db
+                        .collection('englishServices')
+                        .get();
+                    const services = querySnapshot.docs.map((postDoc) => {
+                        return {
+                            id: postDoc.id,
+                            defaultTime: postDoc.data().defaultTime,
+                            serviceName: postDoc.data().serviceName,
+                        };
+                    });
+                    setEnglishServices(services);
                     setResult({
                         ...result,
                         englishService: userInfo.data().englishService.id || '',
+                        defaultTime:
+                            services.filter(
+                                (service) =>
+                                    service.id ===
+                                    userInfo.data().englishService.id
+                            )[0]?.defaultTime || 0,
                     });
                 }
             } catch (error) {
@@ -99,24 +118,42 @@ const Submit: NextPage = () => {
         }
     };
 
-    useEffect(() => {
-        db.collection('englishServices')
-            .get()
-            .then((querySnapshot) => {
-                // querySnapshot.forEach();
-            });
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             const querySnapshot = await db
+    //                 .collection('englishServices')
+    //                 .get();
+    //             const services = querySnapshot.docs.map((postDoc) => {
+    //                 return {
+    //                     id: postDoc.id,
+    //                     defaultTime: postDoc.data().defaultTime,
+    //                     serviceName: postDoc.data().serviceName,
+    //                 };
+    //             });
+    //             setEnglishServices(services);
+    //             setResult({
+    //                 ...result,
+    //                 defaultTime:
+    //                     services.filter(
+    //                         (service) => service.id === result?.englishService
+    //                     )[0]?.defaultTime || 0,
+    //             });
+    //         } catch (err) {
+    //             console.log(`Error: ${JSON.stringify(err)}`);
+    //         }
+    //     })();
+    // }, []);
 
-        db.collection('englishServices')
-            .doc()
-            .get()
-            .then((services) => {
-                console.log(services);
-            });
-        // setResult({
-        //     ...result,
-        //     defaultTime,
-        // });
-    }, []);
+    useEffect(() => {
+        setResult({
+            ...result,
+            defaultTime:
+                englishServices.filter(
+                    (service) => service.id === result?.englishService
+                )[0]?.defaultTime || 0,
+        });
+    }, [result.englishService]);
 
     return (
         <>
