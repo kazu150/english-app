@@ -100,18 +100,23 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        if (result.englishService) {
-            db.collection('englishServices')
-                .doc(result.englishService)
-                .onSnapshot((snapshot) => {
-                    const defaultTime = snapshot.data().defaultTime;
-                    setResult({
-                        ...result,
-                        defaultTime,
-                    });
-                });
-        }
-    }, [result.englishService]);
+        db.collection('englishServices')
+            .get()
+            .then((querySnapshot) => {
+                // querySnapshot.forEach();
+            });
+
+        db.collection('englishServices')
+            .doc()
+            .get()
+            .then((services) => {
+                console.log(services);
+            });
+        // setResult({
+        //     ...result,
+        //     defaultTime,
+        // });
+    }, []);
 
     return (
         <>
