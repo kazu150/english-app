@@ -6,9 +6,12 @@ import Link from 'next/link';
 import Router from 'next/router';
 import { db, auth } from '../firebase';
 import CalendarBoard from '../components/CalendarBoard';
+import dayjs from 'dayjs';
+
 const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
+    const [studyLog, setStudyLog] = useState([]);
 
     useEffect(() => {
         // ログインユーザ判定し、falseの場合はログインページへ
@@ -26,6 +29,30 @@ const MyPage: NextPage = () => {
         });
     });
 
+    useEffect(() => {
+        (async () => {
+            try {
+                if (state.currentUser.userId !== '') {
+                    const studyLogs = await db
+                        .collection('users')
+                        .doc(state.currentUser.userId)
+                        .collection('studyLog')
+                        .get();
+                    setStudyLog(
+                        studyLogs.docs.map((log) => {
+                            return {
+                                ...log.data(),
+                                date: dayjs(log.data().date.toDate()),
+                            };
+                        })
+                    );
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+    }, [state.currentUser.userId]);
+
     return (
         <>
             {!state.currentUser.userId ? (
@@ -38,7 +65,7 @@ const MyPage: NextPage = () => {
                     <p>（今後作成）今月の英会話時間: XX分</p>
                     <p>（今後作成）全ユーザーの第X位/Y人！</p> */}
                     <p>Total英会話時間: {totalStudyTime}分</p>
-                    <CalendarBoard />
+                    <CalendarBoard studyLog={studyLog} />
                     {/*<p>
                         全ユーザーの第
                         {
