@@ -46,3 +46,8 @@ export const formatMonth = day => {
         month: day.month() + 1 
     }
 }
+
+export const getDate = (date) => {
+    return `${date.date.year()}年${date.date.month() + 1}月${date.date.date()}日`
+    
+}

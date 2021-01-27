@@ -13,6 +13,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import { getDate } from '../utils/calendar';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -81,13 +82,16 @@ export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
                 open={open}
             >
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Modal title
+                    {currentLogs.length && getDate(currentLogs[0])}
                 </DialogTitle>
                 <DialogContent dividers>
                     {currentLogs.map((log, index) => {
                         return (
                             <ul key={index}>
-                                <li>授業日時：{log.date.toString()}</li>
+                                <li>
+                                    授業日時：{log.date.hour()}時
+                                    {log.date.minute()}分
+                                </li>
                                 <li>授業回数：{log.count}回</li>
                                 <li>授業時間：{log.time}分</li>
                                 <li>

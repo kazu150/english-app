@@ -37,8 +37,6 @@ const Calendar = ({ studyLog }) => {
                                 open={open}
                                 setOpen={setOpen}
                                 setCurrentLogs={setCurrentLogs}
-                                // schedules={schedules}
-                                // onClickSchedule={openCurrentScheduleDialog}
                             />
                         </li>
                     );
