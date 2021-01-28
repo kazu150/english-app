@@ -35,9 +35,9 @@ const Settings: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
     const [settingsData, setSettingsData] = useState<SettingsData>({
-        name: '',
-        initialTime: '0',
-        englishService: 'dmm',
+        name: state.currentUser.name || '',
+        initialTime: state.currentUser.initialTime.toString() || '0',
+        englishService: state.currentUser.englishService || 'dmm',
     });
 
     useEffect(() => {
