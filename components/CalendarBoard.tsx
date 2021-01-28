@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import GridList from '@material-ui/core/GridList';
 import { createCalendar, isSameDay } from '../utils/calendar';
 import dayjs from 'dayjs';

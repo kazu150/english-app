@@ -30,6 +30,10 @@ const CalendarElement = ({ date, studyLog, open, setOpen, setCurrentLogs }) => {
             .map((log) => isSameDay(log.date, date) && log)
             .filter(Boolean);
         setLogsOnCurrentDate(log);
+        return () => {
+            log;
+            setLogsOnCurrentDate([]);
+        };
     }, [date, studyLog]);
 
     const format = isFirstDay(date) ? 'M月D日' : 'D';

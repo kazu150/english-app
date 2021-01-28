@@ -39,11 +39,12 @@ const SignUp: NextPage = () => {
 
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
-        auth.onAuthStateChanged(async (user) => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 Router.push(`/${user.uid}`);
             }
         });
+        return unsubscribe;
     }, []);
 
     const onSignUpSubmit = async () => {

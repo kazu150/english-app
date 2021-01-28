@@ -7,6 +7,7 @@ import Router from 'next/router';
 import { db, auth } from '../firebase';
 import CalendarBoard from '../components/CalendarBoard';
 import dayjs from 'dayjs';
+import { SignalCellularNullTwoTone, Unsubscribe } from '@material-ui/icons';
 
 const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
@@ -15,25 +16,37 @@ const MyPage: NextPage = () => {
 
     useEffect(() => {
         // ログインユーザ判定し、falseの場合はログインページへ
-        auth.onAuthStateChanged((user) => {
+        let showStudyTime = null;
+        const unsubscribe = auth.onAuthStateChanged((user) => {
             if (!user) {
+                console.log('!user');
                 Router.push('/');
             } else {
-                // studyTimeを表示
-                db.collection('publicProfiles')
+                console.log('user');
+                // 常に最新のstudyTimeを表示
+                showStudyTime = db
+                    .collection('publicProfiles')
                     .doc(user.uid)
                     .onSnapshot((snapshot) => {
                         setTotalStudyTime(snapshot.data().studyTime);
                     });
             }
         });
-    });
+        return () => {
+            console.log('unsubs');
+            // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
+            showStudyTime();
+            setTotalStudyTime(0);
+            unsubscribe();
+        };
+    }, []);
 
     useEffect(() => {
+        let studyLogs = null;
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
-                    const studyLogs = await db
+                    studyLogs = await db
                         .collection('users')
                         .doc(state.currentUser.userId)
                         .collection('studyLog')
@@ -51,6 +64,11 @@ const MyPage: NextPage = () => {
                 console.log(error);
             }
         })();
+        return () => {
+            // studyLogsに関数が代入されていた場合のみ発火
+            studyLogs && studyLogs;
+            setStudyLog([]);
+        };
     }, [state.currentUser.userId]);
 
     return (
@@ -66,46 +84,6 @@ const MyPage: NextPage = () => {
                     <p>（今後作成）全ユーザーの第X位/Y人！</p> */}
                     <p>Total英会話時間: {totalStudyTime}分</p>
                     <CalendarBoard studyLog={studyLog} />
-                    {/*<p>
-                        全ユーザーの第
-                        {
-                            state.users.filter(
-                                (user) =>
-                                    user.initialTime +
-                                        user.userLog
-                                            .map(
-                                                (log) =>
-                                                    log.count *
-                                                    state.services.filter(
-                                                        (service) =>
-                                                            service.name ===
-                                                            log.service
-                                                    )[0].timePerLesson
-                                            )
-                                            .reduce(
-                                                (sum, currentValue) =>
-                                                    sum + currentValue
-                                            ) -
-                                        user.initialTime -
-                                        state.currentUser.userLog
-                                            .map(
-                                                (log) =>
-                                                    log.count *
-                                                    state.services.filter(
-                                                        (service) =>
-                                                            service.name ===
-                                                            log.service
-                                                    )[0].timePerLesson
-                                            )
-                                            .reduce(
-                                                (sum, currentValue) =>
-                                                    sum + currentValue
-                                            ) >
-                                    0
-                            ).length
-                        }
-                        位/{state.users.length}人！
-                    </p> */}
                     <br />
                     {/* <p>（今後作成）総合 第X位！</p> */}
                     <Link href="./submit">

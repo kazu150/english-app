@@ -30,18 +30,22 @@ const useStyles = makeStyles((theme) => ({
 
 const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
-    const classes = useStyles();
-    const [englishServices, setEnglishServices] = useState([]);
-    const [result, setResult] = useState<Result>({
+    const initialResult: Result = {
         englishService: state.currentUser.englishService,
         count: 1,
         nationality: 'others',
         defaultTime: 0,
-    });
+    };
+    const classes = useStyles();
+    const [englishServices, setEnglishServices] = useState([]);
+    const [result, setResult] = useState<Result>(initialResult);
 
     useEffect(() => {
         // ログインユーザ判定し、falseの場合はログインページへ
-        auth.onAuthStateChanged(async (user) => {
+        // trueの場合はユーザー情報を出力
+        let querySnapshot = null;
+        let services = null;
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (!user) {
                     Router.push('/');
@@ -59,10 +63,10 @@ const Submit: NextPage = () => {
                         },
                     });
 
-                    const querySnapshot = await db
+                    querySnapshot = await db
                         .collection('englishServices')
                         .get();
-                    const services = querySnapshot.docs.map((postDoc) => {
+                    services = querySnapshot.docs.map((postDoc) => {
                         return {
                             id: postDoc.id,
                             defaultTime: postDoc.data().defaultTime,
@@ -88,6 +92,13 @@ const Submit: NextPage = () => {
                 });
             }
         });
+        return () => {
+            unsubscribe;
+            querySnapshot && querySnapshot;
+            services && services;
+            setEnglishServices([]);
+            setResult(initialResult);
+        };
     }, []);
 
     const onResultSubmit = async () => {
@@ -146,13 +157,15 @@ const Submit: NextPage = () => {
     // }, []);
 
     useEffect(() => {
-        setResult({
-            ...result,
-            defaultTime:
-                englishServices.filter(
-                    (service) => service.id === result?.englishService
-                )[0]?.defaultTime || 0,
-        });
+        const unsubscribe = () =>
+            setResult({
+                ...result,
+                defaultTime:
+                    englishServices.filter(
+                        (service) => service.id === result?.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        return () => unsubscribe;
     }, [result.englishService]);
 
     return (

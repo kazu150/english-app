@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import { User, MyContext } from './_app';

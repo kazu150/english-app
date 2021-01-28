@@ -82,15 +82,14 @@ export const MyApp: NextPage<Props> = (props) => {
     }, []);
 
     useEffect(() => {
+        let userInfo = null;
+        let publicUserInfo = null;
         auth.onAuthStateChanged(async (user) => {
             try {
                 if (user) {
-                    const userInfo = await db
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
+                    userInfo = await db.collection('users').doc(user.uid).get();
 
-                    const publicUserInfo = await db
+                    publicUserInfo = await db
                         .collection('publicProfiles')
                         .doc(user.uid)
                         .get();
@@ -102,7 +101,7 @@ export const MyApp: NextPage<Props> = (props) => {
                             name: user.displayName,
                             initialTime: userInfo.data().initialTime,
                             englishService:
-                                userInfo.data().englishService.id || '',
+                                userInfo.data().englishService?.id || '',
                             studyTime: publicUserInfo.data().studyTime,
                             photoUrl: publicUserInfo.data().photoUrl,
                         },
@@ -120,6 +119,10 @@ export const MyApp: NextPage<Props> = (props) => {
                 return;
             }
         });
+        return () => {
+            userInfo && userInfo;
+            publicUserInfo && publicUserInfo;
+        };
     }, []);
 
     const handleLogout = async () => {
