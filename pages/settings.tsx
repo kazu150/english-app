@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import { User, MyContext } from './_app';
@@ -39,6 +39,20 @@ const Settings: NextPage = () => {
         initialTime: '0',
         englishService: 'dmm',
     });
+
+    useEffect(() => {
+        // ログインユーザ判定し、falseの場合はログインページへ
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                console.log('!user');
+                Router.push('/');
+            }
+        });
+        return () => {
+            console.log('unsub!');
+            unsubscribe();
+        };
+    }, []);
 
     const onSubmitButtonClick = async () => {
         if (settingsData.name === '') {
@@ -88,7 +102,7 @@ const Settings: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `settingsエラー内容：${error.message}`,
             });
             return;
         }

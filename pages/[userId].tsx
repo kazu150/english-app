@@ -35,7 +35,7 @@ const MyPage: NextPage = () => {
         return () => {
             console.log('unsubs');
             // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
-            showStudyTime();
+            showStudyTime && showStudyTime();
             setTotalStudyTime(0);
             unsubscribe();
         };

@@ -41,7 +41,7 @@ const SignIn: NextPage = () => {
                 Router.push(`/${user.uid}`);
             }
         });
-        return unsubscribe;
+        return unsubscribe();
     }, []);
 
     const onSignInButtonClick = async (

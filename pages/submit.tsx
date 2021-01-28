@@ -48,8 +48,10 @@ const Submit: NextPage = () => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (!user) {
+                    console.log('submituser');
                     Router.push('/');
                 } else {
+                    console.log('submit!user');
                     const userInfo = await db
                         .collection('users')
                         .doc(user.uid)
@@ -62,6 +64,8 @@ const Submit: NextPage = () => {
                                 userInfo.data().englishService.id || '',
                         },
                     });
+                    console.log(querySnapshot);
+                    console.log(services);
 
                     querySnapshot = await db
                         .collection('englishServices')
@@ -88,12 +92,13 @@ const Submit: NextPage = () => {
             } catch (error) {
                 dispatch({
                     type: 'errorOther',
-                    payload: `エラー内容：${error.message}`,
+                    payload: `submitエラー内容：${error.message}`,
                 });
             }
         });
         return () => {
-            unsubscribe;
+            console.log('submitunsub');
+            unsubscribe();
             querySnapshot && querySnapshot;
             services && services;
             setEnglishServices([]);
@@ -123,7 +128,7 @@ const Submit: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `submit2エラー内容：${error.message}`,
             });
             return;
         }

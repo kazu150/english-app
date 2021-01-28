@@ -44,7 +44,7 @@ const SignUp: NextPage = () => {
                 Router.push(`/${user.uid}`);
             }
         });
-        return unsubscribe;
+        return unsubscribe();
     }, []);
 
     const onSignUpSubmit = async () => {
@@ -104,7 +104,7 @@ const SignUp: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `signupエラー内容：${error.message}`,
             });
             return;
         }
