@@ -30,21 +30,28 @@ const useStyles = makeStyles((theme) => ({
 
 const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
-    const classes = useStyles();
-    const [result, setResult] = useState<Result>({
+    const initialResult: Result = {
         englishService: state.currentUser.englishService,
         count: 1,
         nationality: 'others',
         defaultTime: 0,
-    });
+    };
+    const classes = useStyles();
+    const [englishServices, setEnglishServices] = useState([]);
+    const [result, setResult] = useState<Result>(initialResult);
 
     useEffect(() => {
         // ログインユーザ判定し、falseの場合はログインページへ
-        auth.onAuthStateChanged(async (user) => {
+        // trueの場合はユーザー情報を出力
+        let querySnapshot = null;
+        let services = null;
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (!user) {
+                    console.log('submituser');
                     Router.push('/');
                 } else {
+                    console.log('submit!user');
                     const userInfo = await db
                         .collection('users')
                         .doc(user.uid)
@@ -57,18 +64,46 @@ const Submit: NextPage = () => {
                                 userInfo.data().englishService.id || '',
                         },
                     });
+                    console.log(querySnapshot);
+                    console.log(services);
+
+                    querySnapshot = await db
+                        .collection('englishServices')
+                        .get();
+                    services = querySnapshot.docs.map((postDoc) => {
+                        return {
+                            id: postDoc.id,
+                            defaultTime: postDoc.data().defaultTime,
+                            serviceName: postDoc.data().serviceName,
+                        };
+                    });
+                    setEnglishServices(services);
                     setResult({
                         ...result,
                         englishService: userInfo.data().englishService.id || '',
+                        defaultTime:
+                            services.filter(
+                                (service) =>
+                                    service.id ===
+                                    userInfo.data().englishService.id
+                            )[0]?.defaultTime || 0,
                     });
                 }
             } catch (error) {
                 dispatch({
                     type: 'errorOther',
-                    payload: `エラー内容：${error.message}`,
+                    payload: `submitエラー内容：${error.message}`,
                 });
             }
         });
+        return () => {
+            console.log('submitunsub');
+            unsubscribe();
+            querySnapshot && querySnapshot;
+            services && services;
+            setEnglishServices([]);
+            setResult(initialResult);
+        };
     }, []);
 
     const onResultSubmit = async () => {
@@ -93,24 +128,49 @@ const Submit: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `submit2エラー内容：${error.message}`,
             });
             return;
         }
     };
 
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             const querySnapshot = await db
+    //                 .collection('englishServices')
+    //                 .get();
+    //             const services = querySnapshot.docs.map((postDoc) => {
+    //                 return {
+    //                     id: postDoc.id,
+    //                     defaultTime: postDoc.data().defaultTime,
+    //                     serviceName: postDoc.data().serviceName,
+    //                 };
+    //             });
+    //             setEnglishServices(services);
+    //             setResult({
+    //                 ...result,
+    //                 defaultTime:
+    //                     services.filter(
+    //                         (service) => service.id === result?.englishService
+    //                     )[0]?.defaultTime || 0,
+    //             });
+    //         } catch (err) {
+    //             console.log(`Error: ${JSON.stringify(err)}`);
+    //         }
+    //     })();
+    // }, []);
+
     useEffect(() => {
-        if (result.englishService) {
-            db.collection('englishServices')
-                .doc(result.englishService)
-                .onSnapshot((snapshot) => {
-                    const defaultTime = snapshot.data().defaultTime;
-                    setResult({
-                        ...result,
-                        defaultTime,
-                    });
-                });
-        }
+        const unsubscribe = () =>
+            setResult({
+                ...result,
+                defaultTime:
+                    englishServices.filter(
+                        (service) => service.id === result?.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        return () => unsubscribe;
     }, [result.englishService]);
 
     return (

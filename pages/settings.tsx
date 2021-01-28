@@ -40,6 +40,20 @@ const Settings: NextPage = () => {
         englishService: 'dmm',
     });
 
+    useEffect(() => {
+        // ログインユーザ判定し、falseの場合はログインページへ
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                console.log('!user');
+                Router.push('/');
+            }
+        });
+        return () => {
+            console.log('unsub!');
+            unsubscribe();
+        };
+    }, []);
+
     const onSubmitButtonClick = async () => {
         if (settingsData.name === '') {
             dispatch({ type: 'errorEmptyname' });
@@ -88,7 +102,7 @@ const Settings: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `settingsエラー内容：${error.message}`,
             });
             return;
         }

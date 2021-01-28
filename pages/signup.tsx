@@ -39,11 +39,12 @@ const SignUp: NextPage = () => {
 
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
-        auth.onAuthStateChanged(async (user) => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 Router.push(`/${user.uid}`);
             }
         });
+        return unsubscribe();
     }, []);
 
     const onSignUpSubmit = async () => {
@@ -103,7 +104,7 @@ const SignUp: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `signupエラー内容：${error.message}`,
             });
             return;
         }

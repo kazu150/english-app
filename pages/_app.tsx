@@ -82,15 +82,15 @@ export const MyApp: NextPage<Props> = (props) => {
     }, []);
 
     useEffect(() => {
-        auth.onAuthStateChanged(async (user) => {
+        let userInfo = null;
+        let publicUserInfo = null;
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (user) {
-                    const userInfo = await db
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
+                    console.log('appuser');
+                    userInfo = await db.collection('users').doc(user.uid).get();
 
-                    const publicUserInfo = await db
+                    publicUserInfo = await db
                         .collection('publicProfiles')
                         .doc(user.uid)
                         .get();
@@ -100,14 +100,15 @@ export const MyApp: NextPage<Props> = (props) => {
                         payload: {
                             userId: user.uid,
                             name: user.displayName,
-                            initialTime: userInfo.data().initialTime,
+                            initialTime: userInfo.data()?.initialTime || '',
                             englishService:
-                                userInfo.data().englishService.id || '',
-                            studyTime: publicUserInfo.data().studyTime,
-                            photoUrl: publicUserInfo.data().photoUrl,
+                                userInfo.data().englishService?.id || '',
+                            studyTime: publicUserInfo.data()?.studyTime || '',
+                            photoUrl: publicUserInfo.data()?.photoUrl || '',
                         },
                     });
                 } else {
+                    console.log('app!user');
                     await auth.signOut();
                     dispatch({ type: 'userSignout' });
                     return;
@@ -120,6 +121,12 @@ export const MyApp: NextPage<Props> = (props) => {
                 return;
             }
         });
+        return () => {
+            console.log('appunsub');
+            userInfo && userInfo;
+            publicUserInfo && publicUserInfo;
+            unsubscribe();
+        };
     }, []);
 
     const handleLogout = async () => {
@@ -129,7 +136,7 @@ export const MyApp: NextPage<Props> = (props) => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `エラー内容：${error.message}`,
+                payload: `app2エラー内容：${error.message}`,
             });
             return;
         }
