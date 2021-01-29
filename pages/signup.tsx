@@ -104,7 +104,7 @@ const SignUp: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `signupエラー内容：${error.message}`,
+                payload: `エラー内容：${error.message} [on signup]`,
             });
             return;
         }

@@ -59,7 +59,7 @@ const Home: NextPage = () => {
                                         .catch((error) => {
                                             dispatch({
                                                 type: 'errorOther',
-                                                payload: `indexエラー内容：${error.message}`,
+                                                payload: `エラー内容：${error.message} [on index]`,
                                             });
                                             return;
                                         })

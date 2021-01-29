@@ -103,7 +103,7 @@ const SignIn: NextPage = () => {
             } else {
                 dispatch({
                     type: 'errorOther',
-                    payload: `signinエラー内容：${error.message}`,
+                    payload: `エラー内容：${error.message} [on signin]`,
                 });
                 return;
             }
