@@ -21,10 +21,10 @@ const MyPage: NextPage = () => {
         let nationalitySnapshot = null;
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (!user) {
-                console.log('!user');
+                // console.log('!user');
                 Router.push('/');
             } else {
-                console.log('user');
+                // console.log('user');
                 // 常に最新のstudyTimeを表示
                 showStudyTime = db
                     .collection('publicProfiles')
@@ -35,12 +35,12 @@ const MyPage: NextPage = () => {
                 nationalitySnapshot = await db
                     .collection('nationalities')
                     .get();
-                console.log(nationalitySnapshot);
+                // console.log(nationalitySnapshot);
                 setNationalities(nationalitySnapshot.docs);
             }
         });
         return () => {
-            console.log('unsubs');
+            // console.log('unsubs');
             // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
             showStudyTime && showStudyTime();
             nationalitySnapshot && nationalitySnapshot;
@@ -71,7 +71,7 @@ const MyPage: NextPage = () => {
                     );
                 }
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         })();
         return () => {

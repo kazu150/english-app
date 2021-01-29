@@ -87,7 +87,7 @@ export const MyApp: NextPage<Props> = (props) => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (user) {
-                    console.log('appuser');
+                    // console.log('appuser');
                     userInfo = await db.collection('users').doc(user.uid).get();
 
                     publicUserInfo = await db
@@ -108,7 +108,7 @@ export const MyApp: NextPage<Props> = (props) => {
                         },
                     });
                 } else {
-                    console.log('app!user');
+                    // console.log('app!user');
                     await auth.signOut();
                     dispatch({ type: 'userSignout' });
                     return;
@@ -122,7 +122,7 @@ export const MyApp: NextPage<Props> = (props) => {
             }
         });
         return () => {
-            console.log('appunsub');
+            // console.log('appunsub');
             userInfo && userInfo;
             publicUserInfo && publicUserInfo;
             unsubscribe();

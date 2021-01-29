@@ -44,12 +44,12 @@ const Settings: NextPage = () => {
         // ログインユーザ判定し、falseの場合はログインページへ
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (!user) {
-                console.log('!user');
+                // console.log('!user');
                 Router.push('/');
             }
         });
         return () => {
-            console.log('unsub!');
+            // console.log('unsub!');
             unsubscribe();
         };
     }, []);
