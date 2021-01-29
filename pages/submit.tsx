@@ -92,7 +92,7 @@ const Submit: NextPage = () => {
             } catch (error) {
                 dispatch({
                     type: 'errorOther',
-                    payload: `submitエラー内容：${error.message}`,
+                    payload: `エラー内容：${error.message} [on submit 1]`,
                 });
             }
         });
@@ -128,7 +128,7 @@ const Submit: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `submit2エラー内容：${error.message}`,
+                payload: `エラー内容：${error.message} [on submit 2]`,
             });
             return;
         }

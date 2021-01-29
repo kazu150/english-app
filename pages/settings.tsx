@@ -102,7 +102,7 @@ const Settings: NextPage = () => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `settingsエラー内容：${error.message}`,
+                payload: `エラー内容：${error.message} [on settings]`,
             });
             return;
         }

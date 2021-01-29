@@ -116,7 +116,7 @@ export const MyApp: NextPage<Props> = (props) => {
             } catch (error) {
                 dispatch({
                     type: 'errorOther',
-                    payload: `appエラー内容：${error.message}`,
+                    payload: `エラー内容：${error.message} [on App 1]`,
                 });
                 return;
             }
@@ -136,7 +136,7 @@ export const MyApp: NextPage<Props> = (props) => {
         } catch (error) {
             dispatch({
                 type: 'errorOther',
-                payload: `app2エラー内容：${error.message}`,
+                payload: `エラー内容：${error.message} [on App 2]`,
             });
             return;
         }
