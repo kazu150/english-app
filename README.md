@@ -18,7 +18,7 @@
 - Next.js
 - TypeScript
 
-## フロントエンド（reducer）にて管理するデータ構造
+## フロントエンド（reducer）にて管理するデータ
 - currentUser
   - userId
   - name
@@ -31,14 +31,14 @@
   - message
   - errorPart
 
-## DBのデータ構成
+## DBのデータ構造
 - usersコレクション (各ユーザーの情報のうち、各ユーザー自身しか閲覧できないもの)
   - createdAt: Timestamp (ドキュメント作成日)
   - updatedAt: Timestamp (ドキュメント最終更新日)
   - initialTime: number (アプリ使用前にすでに何分間英語を学習していたか)
   - englishService: reference (メインで使う英会話サービス名)
   
-  - studyLogコレクション
+  - studyLogサブコレクション (各ユーザーの各回ごとの詳細な勉強ログ)
     - count: number (今回何セット英会話学習をしたか)
     - date: Timestamp (ドキュメント作成日)
     - nationality: reference (今回の英会話講師の国籍)
@@ -59,11 +59,17 @@
 - nationalitiesコレクション (講師の国籍)
   - countryName: string (講師の出身国名)
 
+## Firestore Security Rules
+- collectionごとに設定。
+- 認可部分は関数化
+- create,updateのバリデーションも設定済（null許容するか、型は正しいか、値は許容範囲か）
+
 ## Firebase Authentication
 - displayNameを追加設定済
-- （今後）Eメール認証機能をつける
+- （今後）Eメール認証機能をつけたい
 
 ## Cloud Functions上の関数
+※本来フロントで完結できる部分なので、後日フロント側に移設の予定  
 ▼sumUpStudyTimeOnChangeInitialTime  
 users>initialTimeを上書きした際、トータルの勉強時間を再計算し、publicProfiles>studyTimeを更新
 
