@@ -184,6 +184,9 @@ export const MyApp: NextPage<Props> = (props) => {
                                             マイページ
                                         </Button>
                                     </Link>
+                                    <Link href={`./settings`}>
+                                        <Button color="inherit">設定</Button>
+                                    </Link>
                                     <Link href="./">
                                         <Button
                                             onClick={handleLogout}

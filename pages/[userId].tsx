@@ -13,11 +13,13 @@ const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
     const [studyLog, setStudyLog] = useState([]);
+    const [nationalities, setNationalities] = useState([]);
 
     useEffect(() => {
         // ログインユーザ判定し、falseの場合はログインページへ
         let showStudyTime = null;
-        const unsubscribe = auth.onAuthStateChanged((user) => {
+        let nationalitySnapshot = null;
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 console.log('!user');
                 Router.push('/');
@@ -30,12 +32,19 @@ const MyPage: NextPage = () => {
                     .onSnapshot((snapshot) => {
                         setTotalStudyTime(snapshot.data().studyTime);
                     });
+                nationalitySnapshot = await db
+                    .collection('nationalities')
+                    .get();
+                console.log(nationalitySnapshot);
+                setNationalities(nationalitySnapshot.docs);
             }
         });
         return () => {
             console.log('unsubs');
             // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
             showStudyTime && showStudyTime();
+            nationalitySnapshot && nationalitySnapshot;
+            setNationalities([]);
             setTotalStudyTime(0);
             unsubscribe();
         };
@@ -51,6 +60,7 @@ const MyPage: NextPage = () => {
                         .doc(state.currentUser.userId)
                         .collection('studyLog')
                         .get();
+
                     setStudyLog(
                         studyLogs.docs.map((log) => {
                             return {
@@ -71,6 +81,33 @@ const MyPage: NextPage = () => {
         };
     }, [state.currentUser.userId]);
 
+    const handleTimeForEachNationality = (nationality) => {
+        let totalLogs = 0;
+
+        studyLog
+            .filter((log) => log.nationality.id === nationality)
+            .forEach((doc) => {
+                totalLogs += doc.time;
+            });
+        return <>{totalLogs}分</>;
+    };
+
+    const handleNationalities = () => {
+        return (
+            <>
+                {nationalities.length &&
+                    nationalities.map((nationality, index) => {
+                        return (
+                            <li key={index}>
+                                {nationality.data().countryName}:
+                                {handleTimeForEachNationality(nationality.id)}
+                            </li>
+                        );
+                    })}
+            </>
+        );
+    };
+
     return (
         <>
             {!state.currentUser.userId ? (
@@ -78,14 +115,20 @@ const MyPage: NextPage = () => {
             ) : (
                 <div>
                     <h2>{state.currentUser.name}さんのマイページ</h2>
-                    {/* <p>（今後作成）今週の英会話時間: X分</p>
-                    <p>（今後作成）全ユーザーの第XX位/Y人！</p>
-                    <p>（今後作成）今月の英会話時間: XX分</p>
-                    <p>（今後作成）全ユーザーの第X位/Y人！</p> */}
                     <p>Total英会話時間: {totalStudyTime}分</p>
+                    <p>
+                        会話相手の国籍：
+                        <br />
+                        {handleNationalities()}
+                    </p>
+                    <br />
+                    {/* <p>（今後作成したい）今週の英会話時間: X分</p>
+                    <p>（今後作成したい）全ユーザーの第XX位/Y人！</p>
+                    <p>（今後作成したい）今月の英会話時間: XX分</p>
+                    <p>（今後作成したい）全ユーザーの第X位/Y人！</p>
+                    <p>（今後作成したい）総合 第X位！</p> */}
                     <CalendarBoard studyLog={studyLog} />
                     <br />
-                    {/* <p>（今後作成）総合 第X位！</p> */}
                     <Link href="./submit">
                         <Button fullWidth variant="contained">
                             英会話の実施を登録する
