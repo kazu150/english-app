@@ -135,7 +135,7 @@ const Submit: NextPage = () => {
     };
 
     useEffect(() => {
-        const unsubscribe = () =>
+        const changeDefaultTime = () =>
             setResult({
                 ...result,
                 defaultTime:
@@ -143,7 +143,8 @@ const Submit: NextPage = () => {
                         (service) => service.id === result?.englishService
                     )[0]?.defaultTime || 0,
             });
-        return () => unsubscribe;
+        changeDefaultTime();
+        return () => changeDefaultTime();
     }, [result.englishService]);
 
     return (
