@@ -32,7 +32,7 @@ export const sumUpStudyTimeOnChangeInitialTime = functions
                             newInitialTime,
                     });
             } catch (error) {
-                console.log('エラー内容：', error);
+                // console.log('エラー内容：', error);
             }
         }
     });
@@ -68,6 +68,6 @@ export const sumUpStudyTimeOnWriteStudyLog = functions
                     studyTime: totalLogs + currentInitialTime,
                 });
         } catch (error) {
-            console.log('エラー内容：', error);
+            // console.log('エラー内容：', error);
         }
     });

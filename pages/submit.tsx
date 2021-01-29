@@ -48,10 +48,10 @@ const Submit: NextPage = () => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
                 if (!user) {
-                    console.log('submituser');
+                    // console.log('submituser');
                     Router.push('/');
                 } else {
-                    console.log('submit!user');
+                    // console.log('submit!user');
                     const userInfo = await db
                         .collection('users')
                         .doc(user.uid)
@@ -64,8 +64,8 @@ const Submit: NextPage = () => {
                                 userInfo.data().englishService.id || '',
                         },
                     });
-                    console.log(querySnapshot);
-                    console.log(services);
+                    // console.log(querySnapshot);
+                    // console.log(services);
 
                     querySnapshot = await db
                         .collection('englishServices')
@@ -97,7 +97,7 @@ const Submit: NextPage = () => {
             }
         });
         return () => {
-            console.log('submitunsub');
+            // console.log('submitunsub');
             unsubscribe();
             querySnapshot && querySnapshot;
             services && services;
@@ -133,33 +133,6 @@ const Submit: NextPage = () => {
             return;
         }
     };
-
-    // useEffect(() => {
-    //     (async () => {
-    //         try {
-    //             const querySnapshot = await db
-    //                 .collection('englishServices')
-    //                 .get();
-    //             const services = querySnapshot.docs.map((postDoc) => {
-    //                 return {
-    //                     id: postDoc.id,
-    //                     defaultTime: postDoc.data().defaultTime,
-    //                     serviceName: postDoc.data().serviceName,
-    //                 };
-    //             });
-    //             setEnglishServices(services);
-    //             setResult({
-    //                 ...result,
-    //                 defaultTime:
-    //                     services.filter(
-    //                         (service) => service.id === result?.englishService
-    //                     )[0]?.defaultTime || 0,
-    //             });
-    //         } catch (err) {
-    //             console.log(`Error: ${JSON.stringify(err)}`);
-    //         }
-    //     })();
-    // }, []);
 
     useEffect(() => {
         const unsubscribe = () =>
