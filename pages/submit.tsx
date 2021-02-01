@@ -30,81 +30,16 @@ const useStyles = makeStyles((theme) => ({
 
 const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
+    const [englishServices, setEnglishServices] = useState([]);
+    const [nationalities, setNationalities] = useState([]);
     const initialResult: Result = {
-        englishService: state.currentUser.englishService,
+        englishService: '',
         count: 1,
-        nationality: 'others',
+        nationality: '',
         defaultTime: 0,
     };
     const classes = useStyles();
-    const [englishServices, setEnglishServices] = useState([]);
     const [result, setResult] = useState<Result>(initialResult);
-
-    // useEffect(() => {
-    //     // ログインユーザ判定し、falseの場合はログインページへ
-    //     // trueの場合はユーザー情報を出力
-    //     let querySnapshot = null;
-    //     let services = null;
-    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-    //         try {
-    //             if (!user) {
-    //                 // console.log('submituser');
-    //                 Router.push('/');
-    //             } else {
-    //                 // console.log('submit!user');
-    //                 const userInfo = await db
-    //                     .collection('users')
-    //                     .doc(user.uid)
-    //                     .get();
-
-    //                 dispatch({
-    //                     type: 'userUpdate',
-    //                     payload: {
-    //                         englishService:
-    //                             userInfo.data().englishService.id || '',
-    //                     },
-    //                 });
-    //                 // console.log(querySnapshot);
-    //                 // console.log(services);
-
-    //                 querySnapshot = await db
-    //                     .collection('englishServices')
-    //                     .get();
-    //                 services = querySnapshot.docs.map((postDoc) => {
-    //                     return {
-    //                         id: postDoc.id,
-    //                         defaultTime: postDoc.data().defaultTime,
-    //                         serviceName: postDoc.data().serviceName,
-    //                     };
-    //                 });
-    //                 setEnglishServices(services);
-    //                 setResult({
-    //                     ...result,
-    //                     englishService: userInfo.data().englishService.id || '',
-    //                     defaultTime:
-    //                         services.filter(
-    //                             (service) =>
-    //                                 service.id ===
-    //                                 userInfo.data().englishService.id
-    //                         )[0]?.defaultTime || 0,
-    //                 });
-    //             }
-    //         } catch (error) {
-    //             dispatch({
-    //                 type: 'errorOther',
-    //                 payload: `エラー内容：${error.message} [on submit 1]`,
-    //             });
-    //         }
-    //     });
-    //     return () => {
-    //         // console.log('submitunsub');
-    //         unsubscribe();
-    //         querySnapshot && querySnapshot;
-    //         services && services;
-    //         setEnglishServices([]);
-    //         setResult(initialResult);
-    //     };
-    // }, []);
 
     useEffect(() => {
         (async () => {
@@ -112,10 +47,10 @@ const Submit: NextPage = () => {
                 // ログインユーザ判定し、trueの場合はマイページへ
                 if (state.currentUser.userId !== '') {
                     if (!englishServices.length) {
-                        const querySnapshot = await db
+                        const snapshot = await db
                             .collection('englishServices')
                             .get();
-                        const services = querySnapshot.docs.map((postDoc) => {
+                        const services = snapshot.docs.map((postDoc) => {
                             return {
                                 id: postDoc.id,
                                 defaultTime: postDoc.data().defaultTime,
@@ -123,10 +58,18 @@ const Submit: NextPage = () => {
                             };
                         });
                         setEnglishServices(services);
-                        setResult({
-                            ...result,
-                            englishService: state.currentUser.englishService,
+                    }
+                    if (!nationalities.length) {
+                        const snapshot = await db
+                            .collection('nationalities')
+                            .get();
+                        const nat = snapshot.docs.map((postDoc) => {
+                            return {
+                                id: postDoc.id,
+                                countryName: postDoc.data().countryName,
+                            };
                         });
+                        setNationalities(nat);
                     }
                 }
             } catch (error) {
@@ -138,6 +81,27 @@ const Submit: NextPage = () => {
         })();
         return () => {};
     }, [state.currentUser.userId]);
+
+    useEffect(() => {
+        setResult({
+            ...result,
+            englishService:
+                result.englishService !== ''
+                    ? result.englishService
+                    : state.currentUser.englishService,
+            defaultTime:
+                englishServices.filter(
+                    (service) => service.id === result?.englishService
+                )[0]?.defaultTime || 0,
+        });
+    }, [result.englishService, englishServices]);
+
+    useEffect(() => {
+        setResult({
+            ...result,
+            nationality: nationalities[0]?.id || '',
+        });
+    }, [nationalities]);
 
     const onResultSubmit = async () => {
         try {
@@ -166,19 +130,6 @@ const Submit: NextPage = () => {
             return;
         }
     };
-
-    useEffect(() => {
-        const changeDefaultTime = () =>
-            setResult({
-                ...result,
-                defaultTime:
-                    englishServices.filter(
-                        (service) => service.id === result?.englishService
-                    )[0]?.defaultTime || 0,
-            });
-        changeDefaultTime();
-        return () => changeDefaultTime();
-    }, [result.englishService, englishServices]);
 
     return (
         <>
@@ -266,11 +217,13 @@ const Submit: NextPage = () => {
                             })
                         }
                     >
-                        <MenuItem value="us">アメリカ合衆国</MenuItem>
-                        <MenuItem value="uk">イギリス</MenuItem>
-                        <MenuItem value="aus">オーストラリア</MenuItem>
-                        <MenuItem value="ca">カナダ</MenuItem>
-                        <MenuItem value="others">その他・未選択</MenuItem>
+                        {nationalities.map((nat, index) => {
+                            return (
+                                <MenuItem key={index} value={nat.id}>
+                                    {nat.countryName}
+                                </MenuItem>
+                            );
+                        })}
                     </Select>
                     <p>合計： {result.defaultTime * result.count}分</p>
                     <Button

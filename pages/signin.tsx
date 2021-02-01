@@ -34,15 +34,6 @@ const SignIn: NextPage = () => {
     });
     const { state, dispatch } = useContext(MyContext);
 
-    // useEffect(() => {
-    //     // ログインユーザ判定し、trueの場合はマイページへ
-    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-    //         if (user) {
-    //             Router.push(`/${user.uid}`);
-    //         }
-    //     });
-    //     return unsubscribe();
-    // }, []);
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
         if (state.currentUser.userId !== '') {
