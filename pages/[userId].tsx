@@ -51,11 +51,12 @@ const MyPage: NextPage = () => {
     // }, []);
 
     useEffect(() => {
-        let studyLogs = null;
+        let snapshot = null;
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
-                    db.collection('publicProfiles')
+                    snapshot = db
+                        .collection('publicProfiles')
                         .doc(state.currentUser.userId)
                         .onSnapshot((snapshot) => {
                             setTotalStudyTime(snapshot.data().studyTime);
@@ -69,7 +70,7 @@ const MyPage: NextPage = () => {
                         setNationalities(nationalitySnapshot.docs);
                     }
 
-                    studyLogs = await db
+                    const studyLogs = await db
                         .collection('users')
                         .doc(state.currentUser.userId)
                         .collection('studyLog')
@@ -89,9 +90,8 @@ const MyPage: NextPage = () => {
             }
         })();
         return () => {
-            // studyLogsに関数が代入されていた場合のみ発火
-            studyLogs && studyLogs;
-            setStudyLog([]);
+            // snapshotに関数が代入されていた場合のみ発火
+            snapshot && snapshot();
         };
     }, [state.currentUser.userId]);
 

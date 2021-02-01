@@ -178,7 +178,7 @@ const Submit: NextPage = () => {
             });
         changeDefaultTime();
         return () => changeDefaultTime();
-    }, [result.englishService]);
+    }, [result.englishService, englishServices]);
 
     return (
         <>
