@@ -40,20 +40,6 @@ const Settings: NextPage = () => {
         englishService: state.currentUser.englishService || 'dmm',
     });
 
-    useEffect(() => {
-        // ログインユーザ判定し、falseの場合はログインページへ
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (!user) {
-                // console.log('!user');
-                Router.push('/');
-            }
-        });
-        return () => {
-            // console.log('unsub!');
-            unsubscribe();
-        };
-    }, []);
-
     const onSubmitButtonClick = async () => {
         if (settingsData.name === '') {
             dispatch({ type: 'errorEmptyname' });
@@ -67,10 +53,14 @@ const Settings: NextPage = () => {
         }
 
         try {
-            auth.currentUser.updateProfile({
-                displayName: settingsData.name,
-            });
+            // Firebase Authentication側のdisplayNameを上書き
+            if (auth.currentUser.displayName !== settingsData.name) {
+                auth.currentUser.updateProfile({
+                    displayName: settingsData.name,
+                });
+            }
 
+            // Firestore側のユーザー情報のアップデート
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
@@ -110,7 +100,7 @@ const Settings: NextPage = () => {
 
     return (
         <>
-            {!state.currentUser.userId ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <>

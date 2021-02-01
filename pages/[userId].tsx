@@ -16,46 +16,27 @@ const MyPage: NextPage = () => {
     const [nationalities, setNationalities] = useState([]);
 
     useEffect(() => {
-        // ログインユーザ判定し、falseの場合はログインページへ
-        let showStudyTime = null;
-        let nationalitySnapshot = null;
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                // console.log('!user');
-                Router.push('/');
-            } else {
-                // console.log('user');
-                // 常に最新のstudyTimeを表示
-                showStudyTime = db
-                    .collection('publicProfiles')
-                    .doc(user.uid)
-                    .onSnapshot((snapshot) => {
-                        setTotalStudyTime(snapshot.data().studyTime);
-                    });
-                nationalitySnapshot = await db
-                    .collection('nationalities')
-                    .get();
-                // console.log(nationalitySnapshot);
-                setNationalities(nationalitySnapshot.docs);
-            }
-        });
-        return () => {
-            // console.log('unsubs');
-            // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
-            showStudyTime && showStudyTime();
-            nationalitySnapshot && nationalitySnapshot;
-            setNationalities([]);
-            setTotalStudyTime(0);
-            unsubscribe();
-        };
-    }, []);
-
-    useEffect(() => {
-        let studyLogs = null;
+        let snapshot = null;
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
-                    studyLogs = await db
+                    snapshot = db
+                        .collection('publicProfiles')
+                        .doc(state.currentUser.userId)
+                        .onSnapshot((snapshot) => {
+                            setTotalStudyTime(snapshot.data().studyTime);
+                        });
+
+                    // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
+                    if (!nationalities.length) {
+                        const nationalitySnapshot = await db
+                            .collection('nationalities')
+                            .get();
+                        // console.log(nationalitySnapshot);
+                        setNationalities(nationalitySnapshot.docs);
+                    }
+
+                    const studyLogs = await db
                         .collection('users')
                         .doc(state.currentUser.userId)
                         .collection('studyLog')
@@ -75,12 +56,12 @@ const MyPage: NextPage = () => {
             }
         })();
         return () => {
-            // studyLogsに関数が代入されていた場合のみ発火
-            studyLogs && studyLogs;
-            setStudyLog([]);
+            // snapshotに関数が代入されていた場合のみ発火
+            snapshot && snapshot();
         };
     }, [state.currentUser.userId]);
 
+    // 相手国籍ごとの会話時間を算出
     const handleTimeForEachNationality = (nationality) => {
         let totalLogs = 0;
 
@@ -92,6 +73,7 @@ const MyPage: NextPage = () => {
         return <>{totalLogs}分</>;
     };
 
+    // 相手国籍ごとの会話時間を表示
     const handleNationalities = () => {
         return (
             <>
@@ -110,7 +92,7 @@ const MyPage: NextPage = () => {
 
     return (
         <>
-            {!state.currentUser.userId ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <div>

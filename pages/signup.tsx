@@ -39,13 +39,11 @@ const SignUp: NextPage = () => {
 
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                Router.push(`/${user.uid}`);
-            }
-        });
-        return unsubscribe();
-    }, []);
+        if (state.currentUser.userId !== '') {
+            Router.push(`/${state.currentUser.userId}`);
+        }
+        return () => {};
+    }, [state.currentUser.userId]);
 
     const onSignUpSubmit = async () => {
         if (signUpUser.email === '') {
@@ -66,6 +64,7 @@ const SignUp: NextPage = () => {
         }
 
         try {
+            // ユーザーのログイン状態をどれだけ継続するか（LOCALの場合、ブラウザを閉じても情報が保持される）
             await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
             const data = await auth.createUserWithEmailAndPassword(
