@@ -7,13 +7,14 @@ import Router from 'next/router';
 import { db, auth } from '../firebase';
 import CalendarBoard from '../components/CalendarBoard';
 import dayjs from 'dayjs';
-import { SignalCellularNullTwoTone, Unsubscribe } from '@material-ui/icons';
+import useGetDataFromDb from '../custom/useGetDataFromDb';
 
 const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
     const [studyLog, setStudyLog] = useState([]);
-    const [nationalities, setNationalities] = useState([]);
+    // const [nationalities, setNationalities] = useState([]);
+    const nationalities = useGetDataFromDb('nationalities');
 
     useEffect(() => {
         let snapshot = null;
@@ -28,13 +29,13 @@ const MyPage: NextPage = () => {
                         });
 
                     // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
-                    if (!nationalities.length) {
-                        const nationalitySnapshot = await db
-                            .collection('nationalities')
-                            .get();
-                        // console.log(nationalitySnapshot);
-                        setNationalities(nationalitySnapshot.docs);
-                    }
+                    // if (!nationalities.length) {
+                    //     const nationalitySnapshot = await db
+                    //         .collection('nationalities')
+                    //         .get();
+                    //     // console.log(nationalitySnapshot);
+                    //     setNationalities(nationalitySnapshot.docs);
+                    // }
 
                     const studyLogs = await db
                         .collection('users')
@@ -81,7 +82,7 @@ const MyPage: NextPage = () => {
                     nationalities.map((nationality, index) => {
                         return (
                             <li key={index}>
-                                {nationality.data().countryName}:
+                                {nationality.countryName}:
                                 {handleTimeForEachNationality(nationality.id)}
                             </li>
                         );

@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
 import { db, auth } from '../firebase';
 import firebase from 'firebase/app';
+import useGetDataFromDb from '../custom/useGetDataFromDb';
 
 type Result = {
     englishService: string;
@@ -30,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Submit: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
-    const [englishServices, setEnglishServices] = useState([]);
-    const [nationalities, setNationalities] = useState([]);
+    const nationalities = useGetDataFromDb('nationalities');
+    const englishServices = useGetDataFromDb('englishServices');
     const initialResult: Result = {
         englishService: '',
         count: 1,
@@ -41,64 +42,25 @@ const Submit: NextPage = () => {
     const classes = useStyles();
     const [result, setResult] = useState<Result>(initialResult);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                // ログインユーザ判定し、trueの場合はマイページへ
-                if (state.currentUser.userId !== '') {
-                    // stateのenglishServicesの中身が無い場合は、サーバーからenglishServicesを取得
-                    if (!englishServices.length) {
-                        const snapshot = await db
-                            .collection('englishServices')
-                            .get();
-                        const services = snapshot.docs.map((postDoc) => {
-                            return {
-                                id: postDoc.id,
-                                defaultTime: postDoc.data().defaultTime,
-                                serviceName: postDoc.data().serviceName,
-                            };
-                        });
-                        setEnglishServices(services);
-                    }
-
-                    // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
-                    if (!nationalities.length) {
-                        const snapshot = await db
-                            .collection('nationalities')
-                            .get();
-                        const nat = snapshot.docs.map((postDoc) => {
-                            return {
-                                id: postDoc.id,
-                                countryName: postDoc.data().countryName,
-                            };
-                        });
-                        setNationalities(nat);
-                    }
-                }
-            } catch (error) {
-                dispatch({
-                    type: 'errorOther',
-                    payload: `エラー内容：${error.message} [on submit 1]`,
-                });
-            }
-        })();
-        return () => {};
-    }, [state.currentUser.userId]);
-
     // englishServicesの切り替えごとに、関係するstateを変更
     useEffect(() => {
         setResult({
             ...result,
             englishService:
-                result.englishService !== ''
-                    ? result.englishService
-                    : state.currentUser.englishService,
+                result.englishService === ''
+                    ? state.currentUser.englishService
+                    : result.englishService,
+
             defaultTime:
                 englishServices.filter(
                     (service) => service.id === result?.englishService
                 )[0]?.defaultTime || 0,
         });
-    }, [result.englishService, englishServices]);
+    }, [
+        state.currentUser.englishService,
+        result.englishService,
+        englishServices,
+    ]);
 
     // nationalitiesのロード時に、currrentUser内のnationalityを変更
     useEffect(() => {
