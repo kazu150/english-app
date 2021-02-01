@@ -123,6 +123,10 @@ const Submit: NextPage = () => {
                             };
                         });
                         setEnglishServices(services);
+                        setResult({
+                            ...result,
+                            englishService: state.currentUser.englishService,
+                        });
                     }
                 }
             } catch (error) {
