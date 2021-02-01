@@ -40,19 +40,19 @@ const Settings: NextPage = () => {
         englishService: state.currentUser.englishService || 'dmm',
     });
 
-    useEffect(() => {
-        // ログインユーザ判定し、falseの場合はログインページへ
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (!user) {
-                // console.log('!user');
-                Router.push('/');
-            }
-        });
-        return () => {
-            // console.log('unsub!');
-            unsubscribe();
-        };
-    }, []);
+    // useEffect(() => {
+    //     // ログインユーザ判定し、falseの場合はログインページへ
+    //     const unsubscribe = auth.onAuthStateChanged((user) => {
+    //         if (!user) {
+    //             // console.log('!user');
+    //             Router.push('/');
+    //         }
+    //     });
+    //     return () => {
+    //         // console.log('unsub!');
+    //         unsubscribe();
+    //     };
+    // }, []);
 
     const onSubmitButtonClick = async () => {
         if (settingsData.name === '') {
@@ -110,7 +110,7 @@ const Settings: NextPage = () => {
 
     return (
         <>
-            {!state.currentUser.userId ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <>

@@ -40,54 +40,90 @@ const Submit: NextPage = () => {
     const [englishServices, setEnglishServices] = useState([]);
     const [result, setResult] = useState<Result>(initialResult);
 
+    // useEffect(() => {
+    //     // ログインユーザ判定し、falseの場合はログインページへ
+    //     // trueの場合はユーザー情報を出力
+    //     let querySnapshot = null;
+    //     let services = null;
+    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         try {
+    //             if (!user) {
+    //                 // console.log('submituser');
+    //                 Router.push('/');
+    //             } else {
+    //                 // console.log('submit!user');
+    //                 const userInfo = await db
+    //                     .collection('users')
+    //                     .doc(user.uid)
+    //                     .get();
+
+    //                 dispatch({
+    //                     type: 'userUpdate',
+    //                     payload: {
+    //                         englishService:
+    //                             userInfo.data().englishService.id || '',
+    //                     },
+    //                 });
+    //                 // console.log(querySnapshot);
+    //                 // console.log(services);
+
+    //                 querySnapshot = await db
+    //                     .collection('englishServices')
+    //                     .get();
+    //                 services = querySnapshot.docs.map((postDoc) => {
+    //                     return {
+    //                         id: postDoc.id,
+    //                         defaultTime: postDoc.data().defaultTime,
+    //                         serviceName: postDoc.data().serviceName,
+    //                     };
+    //                 });
+    //                 setEnglishServices(services);
+    //                 setResult({
+    //                     ...result,
+    //                     englishService: userInfo.data().englishService.id || '',
+    //                     defaultTime:
+    //                         services.filter(
+    //                             (service) =>
+    //                                 service.id ===
+    //                                 userInfo.data().englishService.id
+    //                         )[0]?.defaultTime || 0,
+    //                 });
+    //             }
+    //         } catch (error) {
+    //             dispatch({
+    //                 type: 'errorOther',
+    //                 payload: `エラー内容：${error.message} [on submit 1]`,
+    //             });
+    //         }
+    //     });
+    //     return () => {
+    //         // console.log('submitunsub');
+    //         unsubscribe();
+    //         querySnapshot && querySnapshot;
+    //         services && services;
+    //         setEnglishServices([]);
+    //         setResult(initialResult);
+    //     };
+    // }, []);
+
     useEffect(() => {
-        // ログインユーザ判定し、falseの場合はログインページへ
-        // trueの場合はユーザー情報を出力
-        let querySnapshot = null;
-        let services = null;
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        (async () => {
             try {
-                if (!user) {
-                    // console.log('submituser');
-                    Router.push('/');
-                } else {
-                    // console.log('submit!user');
-                    const userInfo = await db
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
-
-                    dispatch({
-                        type: 'userUpdate',
-                        payload: {
-                            englishService:
-                                userInfo.data().englishService.id || '',
-                        },
-                    });
-                    // console.log(querySnapshot);
-                    // console.log(services);
-
-                    querySnapshot = await db
-                        .collection('englishServices')
-                        .get();
-                    services = querySnapshot.docs.map((postDoc) => {
-                        return {
-                            id: postDoc.id,
-                            defaultTime: postDoc.data().defaultTime,
-                            serviceName: postDoc.data().serviceName,
-                        };
-                    });
-                    setEnglishServices(services);
-                    setResult({
-                        ...result,
-                        englishService: userInfo.data().englishService.id || '',
-                        defaultTime:
-                            services.filter(
-                                (service) =>
-                                    service.id ===
-                                    userInfo.data().englishService.id
-                            )[0]?.defaultTime || 0,
-                    });
+                // ログインユーザ判定し、trueの場合はマイページへ
+                if (state.currentUser.userId !== '') {
+                    if (!englishServices.length) {
+                        const querySnapshot = await db
+                            .collection('englishServices')
+                            .get();
+                        const services = querySnapshot.docs.map((postDoc) => {
+                            return {
+                                id: postDoc.id,
+                                defaultTime: postDoc.data().defaultTime,
+                                serviceName: postDoc.data().serviceName,
+                            };
+                        });
+                        setEnglishServices(services);
+                    }
                 }
             } catch (error) {
                 dispatch({
@@ -95,16 +131,9 @@ const Submit: NextPage = () => {
                     payload: `エラー内容：${error.message} [on submit 1]`,
                 });
             }
-        });
-        return () => {
-            // console.log('submitunsub');
-            unsubscribe();
-            querySnapshot && querySnapshot;
-            services && services;
-            setEnglishServices([]);
-            setResult(initialResult);
-        };
-    }, []);
+        })();
+        return () => {};
+    }, [state.currentUser.userId]);
 
     const onResultSubmit = async () => {
         try {
@@ -149,7 +178,7 @@ const Submit: NextPage = () => {
 
     return (
         <>
-            {!state.currentUser.userId ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <div>
@@ -172,26 +201,15 @@ const Submit: NextPage = () => {
                             });
                         }}
                     >
-                        <MenuItem value="dmm">
-                            DMM英会話
-                            {state.currentUser.englishService === 'dmm' &&
-                                '（デフォルト設定）'}
-                        </MenuItem>
-                        <MenuItem value="rarejob">
-                            レアジョブ
-                            {state.currentUser.englishService === 'rarejob' &&
-                                '（デフォルト設定）'}
-                        </MenuItem>
-                        <MenuItem value="nativeCamp">
-                            ネイティブキャンプ
-                            {state.currentUser.englishService ===
-                                'nativeCamp' && '（デフォルト設定）'}
-                        </MenuItem>
-                        <MenuItem value="cambly">
-                            キャンブリー
-                            {state.currentUser.englishService === 'cambly' &&
-                                '（デフォルト設定）'}
-                        </MenuItem>
+                        {englishServices.map((service, index) => {
+                            return (
+                                <MenuItem key={index} value={service.id}>
+                                    {service.serviceName}
+                                    {state.currentUser.englishService ===
+                                        `${service.id}` && '（デフォルト設定）'}
+                                </MenuItem>
+                            );
+                        })}
                     </Select>
                     <p>一回の英会話時間： {result.defaultTime}分</p>
                     <FormControl component="fieldset">

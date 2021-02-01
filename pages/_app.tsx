@@ -111,6 +111,7 @@ export const MyApp: NextPage<Props> = (props) => {
                     // console.log('app!user');
                     await auth.signOut();
                     dispatch({ type: 'userSignout' });
+                    Router.push('/');
                     return;
                 }
             } catch (error) {

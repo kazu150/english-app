@@ -34,15 +34,22 @@ const SignIn: NextPage = () => {
     });
     const { state, dispatch } = useContext(MyContext);
 
+    // useEffect(() => {
+    //     // ログインユーザ判定し、trueの場合はマイページへ
+    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         if (user) {
+    //             Router.push(`/${user.uid}`);
+    //         }
+    //     });
+    //     return unsubscribe();
+    // }, []);
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                Router.push(`/${user.uid}`);
-            }
-        });
-        return unsubscribe();
-    }, []);
+        if (state.currentUser.userId !== '') {
+            Router.push(`/${state.currentUser.userId}`);
+        }
+        return () => {};
+    }, [state.currentUser.userId]);
 
     const onSignInButtonClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>

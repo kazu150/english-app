@@ -15,46 +15,60 @@ const MyPage: NextPage = () => {
     const [studyLog, setStudyLog] = useState([]);
     const [nationalities, setNationalities] = useState([]);
 
-    useEffect(() => {
-        // ログインユーザ判定し、falseの場合はログインページへ
-        let showStudyTime = null;
-        let nationalitySnapshot = null;
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                // console.log('!user');
-                Router.push('/');
-            } else {
-                // console.log('user');
-                // 常に最新のstudyTimeを表示
-                showStudyTime = db
-                    .collection('publicProfiles')
-                    .doc(user.uid)
-                    .onSnapshot((snapshot) => {
-                        setTotalStudyTime(snapshot.data().studyTime);
-                    });
-                nationalitySnapshot = await db
-                    .collection('nationalities')
-                    .get();
-                // console.log(nationalitySnapshot);
-                setNationalities(nationalitySnapshot.docs);
-            }
-        });
-        return () => {
-            // console.log('unsubs');
-            // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
-            showStudyTime && showStudyTime();
-            nationalitySnapshot && nationalitySnapshot;
-            setNationalities([]);
-            setTotalStudyTime(0);
-            unsubscribe();
-        };
-    }, []);
+    // useEffect(() => {
+    //     // ログインユーザ判定し、falseの場合はログインページへ
+    //     let showStudyTime = null;
+    //     let nationalitySnapshot = null;
+    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         if (!user) {
+    //             // console.log('!user');
+    //             Router.push('/');
+    //         } else {
+    //             // console.log('user');
+    //             // 常に最新のstudyTimeを表示
+    //             showStudyTime = db
+    //                 .collection('publicProfiles')
+    //                 .doc(user.uid)
+    //                 .onSnapshot((snapshot) => {
+    //                     setTotalStudyTime(snapshot.data().studyTime);
+    //                 });
+    //             nationalitySnapshot = await db
+    //                 .collection('nationalities')
+    //                 .get();
+    //             // console.log(nationalitySnapshot);
+    //             setNationalities(nationalitySnapshot.docs);
+    //         }
+    //     });
+    //     return () => {
+    //         // console.log('unsubs');
+    //         // unsubscribeにonSnapshot関数が代入されていた場合のみ発火
+    //         showStudyTime && showStudyTime();
+    //         nationalitySnapshot && nationalitySnapshot;
+    //         setNationalities([]);
+    //         setTotalStudyTime(0);
+    //         unsubscribe();
+    //     };
+    // }, []);
 
     useEffect(() => {
         let studyLogs = null;
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
+                    db.collection('publicProfiles')
+                        .doc(state.currentUser.userId)
+                        .onSnapshot((snapshot) => {
+                            setTotalStudyTime(snapshot.data().studyTime);
+                        });
+
+                    if (!nationalities.length) {
+                        const nationalitySnapshot = await db
+                            .collection('nationalities')
+                            .get();
+                        // console.log(nationalitySnapshot);
+                        setNationalities(nationalitySnapshot.docs);
+                    }
+
                     studyLogs = await db
                         .collection('users')
                         .doc(state.currentUser.userId)
@@ -110,7 +124,7 @@ const MyPage: NextPage = () => {
 
     return (
         <>
-            {!state.currentUser.userId ? (
+            {state.currentUser.userId === '' ? (
                 ''
             ) : (
                 <div>
