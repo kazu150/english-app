@@ -61,6 +61,7 @@ const SignIn: NextPage = () => {
         }
 
         try {
+            // ユーザーのログイン状態をどれだけ継続するか（LOCALの場合、ブラウザを閉じても情報が保持される）
             await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             const data = await auth.signInWithEmailAndPassword(
                 signInUser.email,

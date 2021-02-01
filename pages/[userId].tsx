@@ -27,6 +27,7 @@ const MyPage: NextPage = () => {
                             setTotalStudyTime(snapshot.data().studyTime);
                         });
 
+                    // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
                     if (!nationalities.length) {
                         const nationalitySnapshot = await db
                             .collection('nationalities')
@@ -60,6 +61,7 @@ const MyPage: NextPage = () => {
         };
     }, [state.currentUser.userId]);
 
+    // 相手国籍ごとの会話時間を算出
     const handleTimeForEachNationality = (nationality) => {
         let totalLogs = 0;
 
@@ -71,6 +73,7 @@ const MyPage: NextPage = () => {
         return <>{totalLogs}分</>;
     };
 
+    // 相手国籍ごとの会話時間を表示
     const handleNationalities = () => {
         return (
             <>

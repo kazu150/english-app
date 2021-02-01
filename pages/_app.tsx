@@ -84,10 +84,12 @@ export const MyApp: NextPage<Props> = (props) => {
     useEffect(() => {
         let userInfo = null;
         let publicUserInfo = null;
+
+        // ユーザーのログイン状態を監視
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             try {
+                // ユーザーが検出されたら、signInの処理
                 if (user) {
-                    // console.log('appuser');
                     userInfo = await db.collection('users').doc(user.uid).get();
 
                     publicUserInfo = await db
@@ -107,8 +109,8 @@ export const MyApp: NextPage<Props> = (props) => {
                             photoUrl: publicUserInfo.data()?.photoUrl || '',
                         },
                     });
+                    // ユーザーが検出されなかったら、signOutの処理
                 } else {
-                    // console.log('app!user');
                     await auth.signOut();
                     dispatch({ type: 'userSignout' });
                     Router.push('/');
@@ -123,7 +125,6 @@ export const MyApp: NextPage<Props> = (props) => {
             }
         });
         return () => {
-            // console.log('appunsub');
             userInfo && userInfo;
             publicUserInfo && publicUserInfo;
             unsubscribe();

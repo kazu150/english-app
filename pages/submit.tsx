@@ -46,6 +46,7 @@ const Submit: NextPage = () => {
             try {
                 // ログインユーザ判定し、trueの場合はマイページへ
                 if (state.currentUser.userId !== '') {
+                    // stateのenglishServicesの中身が無い場合は、サーバーからenglishServicesを取得
                     if (!englishServices.length) {
                         const snapshot = await db
                             .collection('englishServices')
@@ -59,6 +60,8 @@ const Submit: NextPage = () => {
                         });
                         setEnglishServices(services);
                     }
+
+                    // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
                     if (!nationalities.length) {
                         const snapshot = await db
                             .collection('nationalities')
@@ -82,6 +85,7 @@ const Submit: NextPage = () => {
         return () => {};
     }, [state.currentUser.userId]);
 
+    // englishServicesの切り替えごとに、関係するstateを変更
     useEffect(() => {
         setResult({
             ...result,
@@ -96,6 +100,7 @@ const Submit: NextPage = () => {
         });
     }, [result.englishService, englishServices]);
 
+    // nationalitiesのロード時に、currrentUser内のnationalityを変更
     useEffect(() => {
         setResult({
             ...result,

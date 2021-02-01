@@ -53,10 +53,14 @@ const Settings: NextPage = () => {
         }
 
         try {
-            auth.currentUser.updateProfile({
-                displayName: settingsData.name,
-            });
+            // Firebase Authentication側のdisplayNameを上書き
+            if (auth.currentUser.displayName !== settingsData.name) {
+                auth.currentUser.updateProfile({
+                    displayName: settingsData.name,
+                });
+            }
 
+            // Firestore側のユーザー情報のアップデート
             const batch = firebase.firestore().batch();
 
             batch.update(db.doc(`users/${state.currentUser.userId}`), {
