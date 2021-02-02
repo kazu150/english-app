@@ -32,10 +32,7 @@ describe("Firestoreのテスト", () => {
         }
     );
 
-    //条件(projectIdとauth情報）をの指定を関数化
-    //auth : {uid:'alice'}
-    //auth : {uid:'alice', admin:true} admin
-    //auth : null 未認証
+    // 認証する
     function authedApp(auth) {
         return firebase.initializeTestApp({
             projectId: project_id,
@@ -46,10 +43,16 @@ describe("Firestoreのテスト", () => {
 
     describe("usersコレクションのルールテスト", () => {
 
-        test("userの読取り", async () => {
+        test("ログイン中のuserの読取り", async () => {
             //条件（uidやprojectId)を指定してdbを生成
             const db = authedApp({ uid: "c05cDZITKVZH5930b6FotWsYLvF3"});
             await firebase.assertSucceeds(db.collection('users').doc('c05cDZITKVZH5930b6FotWsYLvF3').get());
+        })
+
+        test("ログイン中でないuserの読取り", async () => {
+            //条件（uidやprojectId)を指定してdbを生成
+            const db = authedApp({ uid: "c05cDZITKVZH5930b6FotWsYLvF3"});
+            await firebase.assertFails(db.collection('users').doc('d05cDZITKVZH5930b6FotWsYLvF3').get());
         })
 
         test("user,publicProfilesの新規登録", async () => {
@@ -189,6 +192,45 @@ describe("Firestoreのテスト", () => {
             }));
         })
 
+        test("studyLogの上書き", async () => {
+            //条件（uidやprojectId)を指定してdbを生成
+            const db = authedApp({ uid: "c05cDZITKVZH5930b6FotWsYLvF3"});
+            const log = await db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').add({
+                date: firebase.firestore.FieldValue.serverTimestamp(),
+                nationality: db.doc(`nationalities/us`),
+                count: 1,
+                englishService: db.doc(
+                    `englishServices/dmm`
+                ),
+                time: 25,
+            })
+            await firebase.assertSucceeds(db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').doc(log.id).update({
+                nationality: db.doc(`nationalities/us`),
+            }));
+        })
+
+        test("間違ったデータでのstudyLogの上書き", async () => {
+            //条件（uidやprojectId)を指定してdbを生成
+            const db = authedApp({ uid: "c05cDZITKVZH5930b6FotWsYLvF3"});
+            const log = await db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').add({
+                date: firebase.firestore.FieldValue.serverTimestamp(),
+                nationality: db.doc(`nationalities/us`),
+                count: 1,
+                englishService: db.doc(
+                    `englishServices/dmm`
+                ),
+                time: 25
+            })
+            await firebase.assertFails(db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').doc(log.id).update({
+                nationality: db.doc(`nationalities/us`),
+                count: 1,
+                englishService: db.doc(
+                    `englishServices/dmm`
+                ),
+                time: 25,
+                hoge: 1
+            }));
+        })
 
     })
 

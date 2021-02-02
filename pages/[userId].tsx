@@ -28,15 +28,6 @@ const MyPage: NextPage = () => {
                             setTotalStudyTime(snapshot.data().studyTime);
                         });
 
-                    // stateのnationalitiesの中身が無い場合は、サーバーからnationalitiesを取得
-                    // if (!nationalities.length) {
-                    //     const nationalitySnapshot = await db
-                    //         .collection('nationalities')
-                    //         .get();
-                    //     // console.log(nationalitySnapshot);
-                    //     setNationalities(nationalitySnapshot.docs);
-                    // }
-
                     const studyLogs = await db
                         .collection('users')
                         .doc(state.currentUser.userId)
