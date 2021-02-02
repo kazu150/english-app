@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { NextPage } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 import { MyContext } from './_app';
 import { auth } from '../firebase';
+import { InsertDriveFile } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -14,10 +15,38 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Home: NextPage = () => {
+export const getStaticProps: GetStaticProps = async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const json = await response.json();
+    return {
+        props: {
+            allPostsData: json,
+        },
+    };
+};
+
+type Props = {
+    allPostsData: {
+        id: string;
+        title: string;
+        body: string;
+    }[];
+};
+
+// const Home: NextPage = ({ allPostsData }: Props) => {
+const Home = ({ allPostsData }: Props) => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
-
+    React.useEffect(() => {
+        //     (async () => {
+        //         const response = await fetch(
+        //             'https://jsonplaceholder.typicode.com/posts'
+        //         );
+        //         const json = await response.json();
+        //         console.log(json);
+        //     })();
+        console.log(allPostsData);
+    }, []);
     return (
         <div className={styles.button}>
             <Head>
@@ -26,6 +55,14 @@ const Home: NextPage = () => {
             </Head>
             <main>
                 <h1>オンライン英会話 応援アプリ</h1>
+                <div>
+                    {allPostsData.map((data) => (
+                        <>
+                            <h2>{data.title}</h2>
+                            <p>{data.body}</p>
+                        </>
+                    ))}
+                </div>
                 <p>
                     オンライン英会話を何十回もやっているが、なかなか英語力の伸びを実感できないあなた！
                 </p>
@@ -95,6 +132,27 @@ const Home: NextPage = () => {
         </div>
     );
 };
+
+// export async function getStaticProps() {
+//     const response = await fetch('https://api.example.com/posts');
+//     const json = await response.json();
+
+//     return {
+//         props: {
+//             posts: json.posts,
+//         },
+//     };
+// }
+
+// export async function getStaticProps() {
+//     const json = { hoge: 'huga', a: 'a' };
+
+//     return {
+//         props: {
+//             posts: json,
+//         },
+//     };
+// }
 
 export default Home;
 
