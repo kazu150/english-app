@@ -39,7 +39,7 @@ const SignUp: NextPage = () => {
 
     useEffect(() => {
         // ログインユーザ判定し、trueの場合はマイページへ
-        if (state.currentUser.userId !== '') {
+        if (signUpUser.email === '' && state.currentUser.userId !== '') {
             Router.push(`/${state.currentUser.userId}`);
         }
         return () => {};
