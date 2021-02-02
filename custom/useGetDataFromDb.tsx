@@ -23,7 +23,6 @@ const useGetDataFromDb = (collectionName) => {
         })();
     }, [state.currentUser.userId]);
 
-    console.log(dbData);
     return dbData;
 };
 
