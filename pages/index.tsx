@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Router from 'next/router';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 import { MyContext } from './_app';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -17,6 +19,56 @@ const useStyles = makeStyles((theme) => ({
 const Home: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
+
+    const handleGuestLogin = async () => {
+        try {
+            // ユーザーのログイン状態をどれだけ継続するか（SESSIONの場合、ブラウザを開いている間有効）
+            await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+            const data = await auth.signInWithEmailAndPassword(
+                'guest@guest.guest',
+                'guest123'
+            );
+
+            const userInfo = await db
+                .collection('users')
+                .doc(data.user.uid)
+                .get();
+
+            const publicUserInfo = await db
+                .collection('publicProfiles')
+                .doc(data.user.uid)
+                .get();
+
+            dispatch({
+                type: 'userSignin',
+                payload: {
+                    userId: data.user.uid,
+                    name: data.user.displayName,
+                    initialTime: userInfo.data().initialTime,
+                    englishService: userInfo.data().englishService.id,
+                    studyTime: publicUserInfo.data().studyTime,
+                    photoUrl: publicUserInfo.data().photoUrl,
+                },
+            });
+
+            Router.push(`./${data.user.uid}`);
+            return;
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                dispatch({ type: 'errorUnregisteredPassword' });
+                return;
+            } else if (error.code === 'auth/wrong-password') {
+                dispatch({ type: 'errorUnmatchPassword' });
+                return;
+            } else {
+                dispatch({
+                    type: 'errorOther',
+                    payload: `エラー内容：${error.message} [on guestSignin]`,
+                });
+                return;
+            }
+        }
+    };
 
     return (
         <div className={styles.button}>
@@ -89,6 +141,14 @@ const Home: NextPage = () => {
                                 ログイン
                             </Button>
                         </Link>
+                        <Button
+                            className={classes.button}
+                            fullWidth
+                            variant="contained"
+                            onClick={handleGuestLogin}
+                        >
+                            ゲストアカウントで利用する
+                        </Button>
                     </>
                 )}
             </main>
