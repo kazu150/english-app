@@ -1,6 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { MyContext } from '../pages/_app';
-import dayjs from 'dayjs';
+import React, { useState, useEffect } from 'react';
 import { isSameDay, isFirstDay } from '../utils/calendar';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -14,7 +12,6 @@ const useStyles = makeStyles({
 const CalendarElement = ({ date, studyLog, open, setOpen, setCurrentLogs }) => {
     const classes = useStyles();
     const [logsOnCurrentDate, setLogsOnCurrentDate] = useState([]);
-    const today = dayjs();
 
     useEffect(() => {
         const log = studyLog
@@ -27,8 +24,7 @@ const CalendarElement = ({ date, studyLog, open, setOpen, setCurrentLogs }) => {
         };
     }, [date, studyLog]);
 
-    const format = isFirstDay(date) ? 'M月D日' : 'D';
-    // const isToday = isSameDay(today, day);
+    const format = isFirstDay(date) ? 'M/D' : 'D';
 
     const onSelectDetail = (e) => {
         e.preventDefault();
@@ -40,14 +36,12 @@ const CalendarElement = ({ date, studyLog, open, setOpen, setCurrentLogs }) => {
     };
 
     return (
-        <div>
-            <span
-                className={logsOnCurrentDate.length ? classes.existLogs : ''}
-                onClick={onSelectDetail}
-            >
-                {date.format(format)}
-            </span>
-        </div>
+        <span
+            className={logsOnCurrentDate.length ? classes.existLogs : ''}
+            onClick={onSelectDetail}
+        >
+            {date.format(format)}
+        </span>
     );
 };
 

@@ -29,6 +29,21 @@ const useStyles = makeStyles((theme: Theme) =>
                 marginRight: theme.spacing(1),
             },
         },
+        grid: {
+            display: 'flex',
+        },
+        calendarElement: {
+            height: '40px',
+            width: '40px',
+            textAlign: 'center',
+            verticalAlign: 'middle',
+            borderRadius: '50%',
+            margin: 'auto',
+            paddingTop: '10px',
+            '&:hover': {
+                background: 'lightGray',
+            },
+        },
     })
 );
 
@@ -93,27 +108,28 @@ const Calendar = ({ studyLog }) => {
                     次の月へ
                 </Button>
             </div>
-            <GridList
-                // className={styles.grid}
-                cols={7}
-                spacing={0}
-                cellHeight="auto"
-            >
+            <p>{`${date.year}年${date.month}月`}</p>
+            <GridList cols={7} spacing={0} cellHeight="auto">
                 {days.map((day, index) => (
-                    <li key={index}>{day}</li>
+                    <div className={classes.grid}>
+                        <li className={classes.calendarElement} key={index}>
+                            {day}
+                        </li>
+                    </div>
                 ))}
                 {createCalendar(date).map((date, index) => {
                     return (
-                        <li key={index}>
-                            <CalendarElement
-                                // month={month}
-                                date={date}
-                                studyLog={studyLog}
-                                open={open}
-                                setOpen={setOpen}
-                                setCurrentLogs={setCurrentLogs}
-                            />
-                        </li>
+                        <div key={index} className={classes.grid}>
+                            <li className={classes.calendarElement}>
+                                <CalendarElement
+                                    date={date}
+                                    studyLog={studyLog}
+                                    open={open}
+                                    setOpen={setOpen}
+                                    setCurrentLogs={setCurrentLogs}
+                                />
+                            </li>
+                        </div>
                     );
                 })}
             </GridList>
