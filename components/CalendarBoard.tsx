@@ -3,6 +3,7 @@ import GridList from '@material-ui/core/GridList';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
     createCalendar,
@@ -33,16 +34,9 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
         },
         calendarElement: {
-            height: '40px',
-            width: '40px',
+            height: '30px',
             textAlign: 'center',
-            verticalAlign: 'middle',
-            borderRadius: '50%',
             margin: 'auto',
-            paddingTop: '10px',
-            '&:hover': {
-                background: 'lightGray',
-            },
         },
     })
 );
@@ -108,27 +102,29 @@ const Calendar = ({ studyLog }) => {
                     次の月へ
                 </Button>
             </div>
-            <p>{`${date.year}年${date.month}月`}</p>
+            <Typography component="h2">
+                {`${date.year}年${date.month}月の実施記録`}
+            </Typography>
+
             <GridList cols={7} spacing={0} cellHeight="auto">
                 {days.map((day, index) => (
-                    <div className={classes.grid}>
+                    <div key={index} className={classes.grid}>
                         <li className={classes.calendarElement} key={index}>
-                            {day}
+                            <Typography component="div">{day}</Typography>
                         </li>
                     </div>
                 ))}
-                {createCalendar(date).map((date, index) => {
+                {createCalendar(date).map((day, index) => {
                     return (
                         <div key={index} className={classes.grid}>
-                            <li className={classes.calendarElement}>
-                                <CalendarElement
-                                    date={date}
-                                    studyLog={studyLog}
-                                    open={open}
-                                    setOpen={setOpen}
-                                    setCurrentLogs={setCurrentLogs}
-                                />
-                            </li>
+                            <CalendarElement
+                                day={day}
+                                month={getMonth(date)}
+                                studyLog={studyLog}
+                                open={open}
+                                setOpen={setOpen}
+                                setCurrentLogs={setCurrentLogs}
+                            />
                         </div>
                     );
                 })}
