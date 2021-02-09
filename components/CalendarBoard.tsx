@@ -65,6 +65,34 @@ const Calendar = ({ studyLog }) => {
 
     return (
         <div>
+            <Typography component="h2">
+                {`${date.year}年${date.month}月の実施記録`}
+            </Typography>
+
+            <GridList cols={7} spacing={0} cellHeight="auto">
+                {days.map((day, index) => (
+                    <div key={index} className={classes.grid}>
+                        <li className={classes.calendarElement} key={index}>
+                            <Typography component="div">{day}</Typography>
+                        </li>
+                    </div>
+                ))}
+                {createCalendar(date).map((day, index) => {
+                    return (
+                        <div key={index} className={classes.grid}>
+                            <CalendarElement
+                                day={day}
+                                month={getMonth(date)}
+                                studyLog={studyLog}
+                                open={open}
+                                setOpen={setOpen}
+                                setCurrentLogs={setCurrentLogs}
+                            />
+                        </div>
+                    );
+                })}
+            </GridList>
+            <Dialog open={open} setOpen={setOpen} currentLogs={currentLogs} />
             <div className={classes.btnContainer}>
                 <Button
                     variant="outlined"
@@ -102,34 +130,6 @@ const Calendar = ({ studyLog }) => {
                     次の月へ
                 </Button>
             </div>
-            <Typography component="h2">
-                {`${date.year}年${date.month}月の実施記録`}
-            </Typography>
-
-            <GridList cols={7} spacing={0} cellHeight="auto">
-                {days.map((day, index) => (
-                    <div key={index} className={classes.grid}>
-                        <li className={classes.calendarElement} key={index}>
-                            <Typography component="div">{day}</Typography>
-                        </li>
-                    </div>
-                ))}
-                {createCalendar(date).map((day, index) => {
-                    return (
-                        <div key={index} className={classes.grid}>
-                            <CalendarElement
-                                day={day}
-                                month={getMonth(date)}
-                                studyLog={studyLog}
-                                open={open}
-                                setOpen={setOpen}
-                                setCurrentLogs={setCurrentLogs}
-                            />
-                        </div>
-                    );
-                })}
-            </GridList>
-            <Dialog open={open} setOpen={setOpen} currentLogs={currentLogs} />
         </div>
     );
 };

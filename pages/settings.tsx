@@ -20,6 +20,10 @@ type SettingsData = {
 };
 
 const useStyles = makeStyles((theme) => ({
+    narrowWidthWrapper: {
+        width: '500px',
+        margin: 'auto',
+    },
     root: {
         '& > *': {
             margin: theme.spacing(1),
@@ -99,7 +103,7 @@ const Settings: NextPage = () => {
     };
 
     return (
-        <>
+        <main className={classes.narrowWidthWrapper}>
             {state.currentUser.userId === '' ? (
                 ''
             ) : (
@@ -193,7 +197,7 @@ const Settings: NextPage = () => {
                     </form>
                 </>
             )}
-        </>
+        </main>
     );
 };
 

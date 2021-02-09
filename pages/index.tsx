@@ -5,12 +5,34 @@ import Router from 'next/router';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
 import { MyContext } from './_app';
 import { auth, db } from '../firebase';
 import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
+    narrowWidthWrapper: {
+        width: '500px',
+        margin: 'auto',
+    },
+    title: {
+        marginTop: '-10px',
+        marginBottom: '35px',
+    },
+    titleImg: {
+        width: '100%',
+    },
+    imgContainer: {
+        textAlign: 'center',
+    },
+    img: {
+        height: '250px',
+    },
+    description: {
+        marginBottom: '30px',
+        lineHeight: '1.8',
+    },
     button: {
         marginBottom: '15px',
     },
@@ -73,18 +95,31 @@ const Home: NextPage = () => {
     return (
         <div className={styles.button}>
             <Head>
-                <title>オンライン英会話 応援アプリ</title>
+                <title>えーかいわログ</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <h1>オンライン英会話 応援アプリ</h1>
-                <p>
-                    オンライン英会話を何十回もやっているが、なかなか英語力の伸びを実感できないあなた！
-                </p>
-                <p>
-                    このアプリは、オンライン英会話の継続状況を記録し、自分の英語力の伸びを実感することができます。
-                </p>
-                <p>ぜひ一緒に、英会話を頑張りましょう！</p>
+            <main className={classes.narrowWidthWrapper}>
+                <div className={classes.imgContainer}>
+                    <img
+                        className={classes.img}
+                        src="english_kaiwa_woman.png"
+                    />
+                </div>
+                <h1 className={classes.title}>
+                    <img
+                        className={classes.titleImg}
+                        src="title.png"
+                        alt="えーかいわログ"
+                    />
+                </h1>
+                <div className={classes.description}>
+                    <p>
+                        オンライン英会話を何十回もやっているが、なかなか英語力の伸びを実感できないあなた！
+                        <br />
+                        このアプリは、オンライン英会話の継続状況を記録し、自分の英語力の伸びを実感することができます。
+                    </p>
+                    <p>ぜひ一緒に、英会話を頑張りましょう！</p>
+                </div>
                 {state.currentUser.userId ? (
                     <>
                         <Link href={`./${state.currentUser.userId}`}>
@@ -128,6 +163,7 @@ const Home: NextPage = () => {
                                 className={classes.button}
                                 fullWidth
                                 variant="contained"
+                                color="primary"
                             >
                                 新規ユーザー登録
                             </Button>

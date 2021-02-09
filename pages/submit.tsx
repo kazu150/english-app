@@ -24,6 +24,10 @@ type Result = {
 };
 
 const useStyles = makeStyles((theme) => ({
+    narrowWidthWrapper: {
+        width: '500px',
+        margin: 'auto',
+    },
     button: {
         marginTop: '15px',
     },
@@ -99,7 +103,7 @@ const Submit: NextPage = () => {
     };
 
     return (
-        <>
+        <main className={classes.narrowWidthWrapper}>
             {state.currentUser.userId === '' ? (
                 ''
             ) : (
@@ -203,7 +207,7 @@ const Submit: NextPage = () => {
                     </Button>
                 </div>
             )}
-        </>
+        </main>
     );
 };
 
