@@ -169,14 +169,6 @@ export const MyApp: NextPage<Props> = (props) => {
                     <CssBaseline />
                     <AppBar position="static">
                         <Toolbar>
-                            <IconButton
-                                edge="start"
-                                className={classes.menuButton}
-                                color="inherit"
-                                aria-label="menu"
-                            >
-                                <MenuIcon />
-                            </IconButton>
                             <Link href="./">
                                 <h1>
                                     <img

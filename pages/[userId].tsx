@@ -172,7 +172,7 @@ const MyPage: NextPage = () => {
                                 mb={3}
                             >
                                 <span className={classes.levelIcon}>🐹</span>
-                                あなたは<b>ハムスター</b>レベル
+                                あなたは<b>ハムスター</b>レベル！
                                 <br />
                                 次のレベルまであと<b>300</b>分
                             </Box>

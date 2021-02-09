@@ -12,9 +12,6 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles({
     colorSecondary: {
         color: 'lightgray',
-        '&:hover': {
-            color: 'white',
-        },
     },
     calendarElementActive: {
         height: '40px',

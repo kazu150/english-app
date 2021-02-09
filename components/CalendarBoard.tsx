@@ -118,7 +118,7 @@ const Calendar = ({ studyLog }) => {
                     setOpen={setOpen}
                     currentLogs={currentLogs}
                 />
-                <Box className={classes.btnContainer} mt={1}>
+                <Box className={classes.btnContainer} mt={3} mb={1}>
                     <Button
                         startIcon={<NavigateBeforeIcon />}
                         className={classes.button}
