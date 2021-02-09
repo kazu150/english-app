@@ -57,15 +57,23 @@ const useStyles = makeStyles((theme) => ({
     menuButton: {
         marginRight: theme.spacing(2),
     },
+    headerLeft: {
+        marginLeft: 'auto',
+    },
     title: {
-        marginRight: 'auto',
+        width: '150px',
         cursor: 'pointer',
     },
     body: {
         width: '90%',
-        maxWidth: '500px',
+        maxWidth: '800px',
         margin: 'auto',
         marginTop: '50px',
+    },
+    footer: {
+        marginTop: '80px',
+        marginBottom: '20px',
+        textAlign: 'center',
     },
 }));
 
@@ -149,7 +157,7 @@ export const MyApp: NextPage<Props> = (props) => {
     return (
         <React.Fragment>
             <Head>
-                <title>オンライン英会話 応援アプリ | Home</title>
+                <title>えーかいわログ | Home</title>
                 <meta
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -161,24 +169,17 @@ export const MyApp: NextPage<Props> = (props) => {
                     <CssBaseline />
                     <AppBar position="static">
                         <Toolbar>
-                            <IconButton
-                                edge="start"
-                                className={classes.menuButton}
-                                color="inherit"
-                                aria-label="menu"
-                            >
-                                <MenuIcon />
-                            </IconButton>
                             <Link href="./">
-                                <Typography
-                                    variant="h6"
-                                    className={classes.title}
-                                >
-                                    オンライン英会話 応援アプリ
-                                </Typography>
+                                <h1>
+                                    <img
+                                        className={classes.title}
+                                        src="title-white.png"
+                                        alt="えーかいわログ"
+                                    />
+                                </h1>
                             </Link>
                             {state.currentUser.userId ? (
-                                <>
+                                <div className={classes.headerLeft}>
                                     <Link
                                         href={`./${state.currentUser.userId}`}
                                     >
@@ -197,9 +198,9 @@ export const MyApp: NextPage<Props> = (props) => {
                                             ログアウト
                                         </Button>
                                     </Link>
-                                </>
+                                </div>
                             ) : (
-                                <>
+                                <div className={classes.headerLeft}>
                                     <Link href="./signin">
                                         <Button color="inherit">
                                             ログイン
@@ -210,7 +211,7 @@ export const MyApp: NextPage<Props> = (props) => {
                                             新規登録
                                         </Button>
                                     </Link>
-                                </>
+                                </div>
                             )}
                         </Toolbar>
                     </AppBar>
@@ -234,6 +235,9 @@ export const MyApp: NextPage<Props> = (props) => {
                             </MuiAlert>
                         </Snackbar>
                     </div>
+                    <footer className={classes.footer}>
+                        <small>© 2021 Shironeko-san Company</small>
+                    </footer>
                 </ThemeProvider>
             </MyContext.Provider>
         </React.Fragment>

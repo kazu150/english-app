@@ -15,6 +15,10 @@ type SignInUser = {
 };
 
 const useStyles = makeStyles((theme) => ({
+    narrowWidthWrapper: {
+        width: '500px',
+        margin: 'auto',
+    },
     root: {
         '& > *': {
             margin: theme.spacing(1),
@@ -110,7 +114,7 @@ const SignIn: NextPage = () => {
     };
 
     return (
-        <>
+        <main className={classes.narrowWidthWrapper}>
             <h2>ログイン</h2>
             <form className={classes.root} noValidate autoComplete="off">
                 <TextField
@@ -148,7 +152,7 @@ const SignIn: NextPage = () => {
                     ログイン
                 </Button>
             </form>
-        </>
+        </main>
     );
 };
 
