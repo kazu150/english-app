@@ -244,7 +244,7 @@ export const MyApp: NextPage<Props> = (props) => {
                         </Snackbar>
                     </div>
                     <footer className={classes.footer}>
-                        <small>© 2021 Isoiso Company</small>
+                        <small>© 2021 Shironeko-san Company</small>
                     </footer>
                 </ThemeProvider>
             </MyContext.Provider>

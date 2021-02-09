@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
     createCalendar,
@@ -20,6 +21,12 @@ import Dialog from './Dialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        root: {
+            borderRadius: '5px',
+        },
+        title: {
+            borderRadius: '5px 5px 0 0',
+        },
         btnContainer: {
             display: 'flex',
         },
@@ -64,73 +71,92 @@ const Calendar = ({ studyLog }) => {
     };
 
     return (
-        <div>
-            <Typography component="h2">
-                {`${date.year}年${date.month}月の実施記録`}
-            </Typography>
+        <Box
+            className={classes.root}
+            boxShadow={3}
+            bgcolor="background.paper"
+            p={0}
+        >
+            <Box
+                className={classes.title}
+                p={2}
+                mb={1}
+                bgcolor="primary.main"
+                color="primary.text"
+            >
+                <Typography component="h4">
+                    {`${date.year}年${date.month}月の実施記録`}
+                </Typography>
+            </Box>
 
-            <GridList cols={7} spacing={0} cellHeight="auto">
-                {days.map((day, index) => (
-                    <div key={index} className={classes.grid}>
-                        <li className={classes.calendarElement} key={index}>
-                            <Typography component="div">{day}</Typography>
-                        </li>
-                    </div>
-                ))}
-                {createCalendar(date).map((day, index) => {
-                    return (
+            <Box p={2}>
+                <GridList cols={7} spacing={0} cellHeight="auto">
+                    {days.map((day, index) => (
                         <div key={index} className={classes.grid}>
-                            <CalendarElement
-                                day={day}
-                                month={getMonth(date)}
-                                studyLog={studyLog}
-                                open={open}
-                                setOpen={setOpen}
-                                setCurrentLogs={setCurrentLogs}
-                            />
+                            <li className={classes.calendarElement} key={index}>
+                                <div>{day}</div>
+                            </li>
                         </div>
-                    );
-                })}
-            </GridList>
-            <Dialog open={open} setOpen={setOpen} currentLogs={currentLogs} />
-            <div className={classes.btnContainer}>
-                <Button
-                    variant="outlined"
-                    startIcon={<NavigateBeforeIcon />}
-                    className={classes.button}
-                    onClick={() => onClickChangeMonthBtn(-1)}
-                >
-                    前の月へ
-                </Button>
-                <Button
-                    variant="outlined"
-                    // 表示中の月が当月の場合は非表示にする
-                    disabled={
-                        isSameMonth(getMonth(date), getMonth(initialDate))
-                            ? true
-                            : false
-                    }
-                    className={classes.button}
-                    onClick={() => onClickChangeMonthBtn(0)}
-                >
-                    当月へ戻る
-                </Button>
-                <Button
-                    variant="outlined"
-                    endIcon={<NavigateNextIcon />}
-                    className={classes.button}
-                    // 表示中の月が当月の場合は非表示にする
-                    disabled={
-                        isSameMonth(getMonth(date), getMonth(initialDate))
-                            ? true
-                            : false
-                    }
-                    onClick={() => onClickChangeMonthBtn(1)}
-                >
-                    次の月へ
-                </Button>
-            </div>
-        </div>
+                    ))}
+                    {createCalendar(date).map((day, index) => {
+                        return (
+                            <div key={index} className={classes.grid}>
+                                <CalendarElement
+                                    day={day}
+                                    month={getMonth(date)}
+                                    studyLog={studyLog}
+                                    open={open}
+                                    setOpen={setOpen}
+                                    setCurrentLogs={setCurrentLogs}
+                                />
+                            </div>
+                        );
+                    })}
+                </GridList>
+                <Dialog
+                    open={open}
+                    setOpen={setOpen}
+                    currentLogs={currentLogs}
+                />
+                <Box className={classes.btnContainer} mt={1}>
+                    <Button
+                        startIcon={<NavigateBeforeIcon />}
+                        className={classes.button}
+                        color="primary"
+                        onClick={() => onClickChangeMonthBtn(-1)}
+                    >
+                        前の月へ
+                    </Button>
+                    <Button
+                        // 表示中の月が当月の場合は非表示にする
+                        disabled={
+                            isSameMonth(getMonth(date), getMonth(initialDate))
+                                ? true
+                                : false
+                        }
+                        className={classes.button}
+                        color="primary"
+                        onClick={() => onClickChangeMonthBtn(0)}
+                    >
+                        当月へ戻る
+                    </Button>
+                    <Button
+                        endIcon={<NavigateNextIcon />}
+                        className={classes.button}
+                        // 表示中の月が当月の場合は非表示にする
+                        disabled={
+                            isSameMonth(getMonth(date), getMonth(initialDate))
+                                ? true
+                                : false
+                        }
+                        color="primary"
+                        onClick={() => onClickChangeMonthBtn(1)}
+                    >
+                        次の月へ
+                    </Button>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

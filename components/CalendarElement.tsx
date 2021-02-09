@@ -22,20 +22,24 @@ const useStyles = makeStyles({
         textAlign: 'center',
         borderRadius: '50%',
         margin: 'auto',
-        border: '1px solid lightGray',
         cursor: 'pointer',
-        paddingTop: '6px',
+        paddingTop: '9px',
+        background: '#2196f3',
+        color: '#fff',
+        border: '1px solid #2196f3',
         '&:hover': {
-            background: 'lightGray',
+            background: '#fff',
+            color: '#000',
         },
     },
     calendarElement: {
         height: '40px',
+        border: '1px solid #fff',
         width: '40px',
         textAlign: 'center',
         borderRadius: '50%',
         margin: 'auto',
-        paddingTop: '6px',
+        paddingTop: '9px',
     },
 });
 
@@ -82,12 +86,9 @@ const CalendarElement = ({
             }
             onClick={onSelectDetail}
         >
-            <Typography
-                component="div"
-                className={isCurrentMonth ? '' : classes.colorSecondary}
-            >
+            <div className={isCurrentMonth ? '' : classes.colorSecondary}>
                 {day.format(format)}
-            </Typography>
+            </div>
         </li>
     );
 };

@@ -3,6 +3,8 @@ import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
 import Router from 'next/router';
 import { db, auth } from '../firebase';
@@ -12,8 +14,33 @@ import dayjs from 'dayjs';
 import useGetDataFromDb from '../custom/useGetDataFromDb';
 
 const useStyles = makeStyles((theme) => ({
+    pageTitle: {
+        display: 'inline-block',
+        marginLeft: '10px',
+        marginTop: 0,
+        verticalAlign: '9px',
+    },
     registerBtn: {
         marginBottom: '40px',
+    },
+    balloon: {
+        position: 'relative',
+        padding: '18px',
+        backgroundColor: '#b3e5fc',
+        borderRadius: '5px',
+        marginBottom: '2em',
+        '&::before': {
+            content: '""',
+            position: 'absolute',
+            display: 'block',
+            width: 0,
+            height: 0,
+            left: '20px',
+            bottom: '-15px',
+            borderTop: '15px solid #b3e5fc',
+            borderRight: '15px solid transparent',
+            borderLeft: '15px solid transparent',
+        },
     },
     flexWrapper: {
         display: 'flex',
@@ -22,6 +49,15 @@ const useStyles = makeStyles((theme) => ({
         width: '30%',
         height: '30%',
         paddingRight: '20px',
+    },
+    levelDescription: {
+        backgroundColor: '#b3e5fc',
+        borderRadius: '5px',
+        textAlign: 'center',
+    },
+    levelIcon: {
+        display: 'block',
+        fontSize: '40px',
     },
     totalStudyHour: {
         fontSize: '45px',
@@ -87,48 +123,64 @@ const MyPage: NextPage = () => {
                 ''
             ) : (
                 <div>
-                    <h2>{state.currentUser.name}さんのマイページ</h2>
+                    <div>
+                        <AccountCircleIcon fontSize="large" color="primary" />
+                        <h2 className={classes.pageTitle}>
+                            {state.currentUser.name}さんのマイページ
+                        </h2>
+                    </div>
                     <Link href="./submit">
                         <Button
                             fullWidth
                             variant="contained"
+                            color="primary"
+                            size="large"
                             className={classes.registerBtn}
                         >
                             英会話の実施を登録する
                         </Button>
                     </Link>
                     <div className={classes.flexWrapper}>
-                        <div className={classes.flexElement}>
+                        <Box mr={3} className={classes.flexElement}>
+                            <div className={classes.balloon}>
+                                このペースでがんばろう！
+                            </div>
                             <div className={classes.flexWrapper}>
                                 <img
                                     src="computer_usagi.png"
                                     className={classes.animalImg}
                                 />
-                                    <p>
-                                        トータル英会話時間
-                                        <br />
-                                        <span
-                                            className={classes.totalStudyHour}
-                                        >
-                                            {totalStudyTime}
-                                        </span>
-                                        分
-                                    </p>
+                                <p>
+                                    トータル英会話時間
+                                    <br />
+                                    <span className={classes.totalStudyHour}>
+                                        {totalStudyTime}
+                                    </span>
+                                    分
+                                </p>
                             </div>
-                                    <p>
-                                        今月の英会話時間：
-                                        <span
-                                            className={classes.monthlyStudyHour}
-                                        >
-                                            300
-                                        </span>
-                                        分
-                                    </p>
+                            <p>
+                                今月の英会話時間：
+                                <span className={classes.monthlyStudyHour}>
+                                    300
+                                </span>
+                                分
+                            </p>
+                            <Box
+                                className={classes.levelDescription}
+                                p={2}
+                                mb={3}
+                            >
+                                <span className={classes.levelIcon}>🐹</span>
+                                あなたは<b>ハムスター</b>レベル
+                                <br />
+                                次のレベルまであと<b>300</b>分
+                            </Box>
                             <Chart
                                 nationalities={nationalities}
                                 studyLog={studyLog}
                             />
-                        </div>
+                        </Box>
                         <div className={classes.flexElement}>
                             <CalendarBoard studyLog={studyLog} />
                         </div>
