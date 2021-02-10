@@ -48,16 +48,20 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Calendar = ({ studyLog }) => {
+const Calendar = ({
+    open,
+    setOpen,
+    studyLog,
+    onDeleteClick,
+    currentLogs,
+    setCurrentLogs,
+}) => {
     const classes = useStyles();
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const today = dayjs();
 
     const initialDate = formatMonth(today);
     const [date, setDate] = useState(initialDate);
-
-    const [open, setOpen] = useState(false);
-    const [currentLogs, setCurrentLogs] = useState([]);
 
     // 表示中の月を切り替える
     const onClickChangeMonthBtn = (changeTo) => {
@@ -117,6 +121,7 @@ const Calendar = ({ studyLog }) => {
                     open={open}
                     setOpen={setOpen}
                     currentLogs={currentLogs}
+                    onDeleteClick={onDeleteClick}
                 />
                 <Box className={classes.btnContainer} mt={3} mb={1}>
                     <Button

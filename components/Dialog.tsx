@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { MyContext } from '../pages/_app';
+import React from 'react';
 import {
     createStyles,
     Theme,
@@ -16,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Tooltip from '@material-ui/core/Tooltip';
 import { getDate } from '../utils/calendar';
 import { db } from '../firebase';
 
@@ -79,27 +79,18 @@ const DialogActions = withStyles((theme: Theme) => ({
     },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
+export default function CustomizedDialogs({
+    onDeleteClick,
+    open,
+    setOpen,
+    currentLogs,
+}) {
     const classes = useStyles();
-    const { dispatch, state } = useContext(MyContext);
     const handleClickOpen = () => {
         setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
-    };
-
-    const onDeleteClick = async (index) => {
-        // currrentLogs配列から該当を削除
-        // currentLogs.fi÷lter
-        // ログが０件になったら、自動でダイアログを閉じる
-        // DBから該当項目を削除
-        const studyLogs = await db
-            .collection('users')
-            .doc(state.currentUser.userId)
-            .collection('studyLog')
-            .doc(currentLogs[index].id)
-            .delete();
     };
 
     return (
@@ -110,7 +101,7 @@ export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
                 open={open}
             >
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {currentLogs.length && getDate(currentLogs[0])}
+                    {currentLogs.length && getDate(currentLogs[0])}の記録
                 </DialogTitle>
                 <DialogContent dividers>
                     {currentLogs.map((log, index) => {
@@ -128,9 +119,16 @@ export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
                                         {log.englishService.id}
                                     </li>
                                 </ul>
-                                <DeleteIcon
-                                    onClick={() => onDeleteClick(index)}
-                                />
+                                <Tooltip title="削除">
+                                    <IconButton
+                                        onClick={() =>
+                                            onDeleteClick(currentLogs[index].id)
+                                        }
+                                        aria-label="delete"
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </div>
                         );
                     })}
