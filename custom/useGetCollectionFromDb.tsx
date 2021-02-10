@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react';
 import { MyContext } from '../pages/_app';
 import { db } from '../firebase';
 
-const useGetDataFromDb = (collectionName) => {
+const useGetCollectionFromDb = (collectionName) => {
     const { state } = useContext(MyContext);
     const [dbData, setDbData] = useState([]);
 
@@ -26,4 +26,4 @@ const useGetDataFromDb = (collectionName) => {
     return dbData;
 };
 
-export default useGetDataFromDb;
+export default useGetCollectionFromDb;

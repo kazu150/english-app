@@ -11,10 +11,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { db, auth } from '../../firebase';
 import firebase from 'firebase/app';
-import useGetDataFromDb from '../../custom/useGetDataFromDb';
+import useGetCollectionFromDb from '../../custom/useGetCollectionFromDb';
+import useGetCurrentStudyLog from '../../custom/useGetCurrentStudyLog';
 
 type Result = {
     englishService: string;
@@ -34,9 +35,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Submit: NextPage = () => {
+    const router = useRouter();
     const { state, dispatch } = useContext(MyContext);
-    const nationalities = useGetDataFromDb('nationalities');
-    const englishServices = useGetDataFromDb('englishServices');
+    const nationalities = useGetCollectionFromDb('nationalities');
+    const englishServices = useGetCollectionFromDb('englishServices');
+    const editData = useGetCurrentStudyLog();
+
     const initialResult: Result = {
         englishService: '',
         count: 1,
@@ -48,31 +52,44 @@ const Submit: NextPage = () => {
 
     // englishServicesの切り替えごとに、関係するstateを変更
     useEffect(() => {
-        setResult({
-            ...result,
-            englishService:
-                result.englishService === ''
-                    ? state.currentUser.englishService
-                    : result.englishService,
+        if (editData.englishService === '') {
+            setResult({
+                ...result,
+                englishService:
+                    result.englishService === ''
+                        ? state.currentUser.englishService
+                        : result.englishService,
 
-            defaultTime:
-                englishServices.filter(
-                    (service) => service.id === result?.englishService
-                )[0]?.defaultTime || 0,
-        });
+                defaultTime:
+                    englishServices.filter(
+                        (service) => service.id === result?.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        } else {
+            setResult({
+                ...editData,
+                defaultTime:
+                    englishServices.filter(
+                        (service) => service.id === editData.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        }
     }, [
         state.currentUser.englishService,
         result.englishService,
         englishServices,
+        editData,
     ]);
 
-    // nationalitiesのロード時に、currrentUser内のnationalityを変更
+    // nationalitiesのロード時に、result内のnationalityを変更
     useEffect(() => {
-        setResult({
-            ...result,
-            nationality: nationalities[0]?.id || '',
-        });
-    }, [nationalities]);
+        if (editData.englishService === '') {
+            setResult({
+                ...result,
+                nationality: nationalities[0]?.id || '',
+            });
+        }
+    }, [nationalities, editData]);
 
     const onResultSubmit = async () => {
         try {
@@ -108,7 +125,11 @@ const Submit: NextPage = () => {
                 ''
             ) : (
                 <div>
-                    <h2>英会話をやりました！</h2>
+                    <h2>
+                        {router.query.logid?.length
+                            ? `${router.query.logid[0]}の編集`
+                            : '英会話をやりました！'}
+                    </h2>
                     <InputLabel id="englishService">利用サービス</InputLabel>
                     <Select
                         fullWidth

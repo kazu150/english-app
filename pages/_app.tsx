@@ -173,7 +173,7 @@ export const MyApp: NextPage<Props> = (props) => {
                                 <h1>
                                     <img
                                         className={classes.title}
-                                        src="title-white.png"
+                                        src="/title-white.png"
                                         alt="えーかいわログ"
                                     />
                                 </h1>

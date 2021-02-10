@@ -11,7 +11,7 @@ import { db, auth } from '../firebase';
 import Chart from '../components/Chart';
 import CalendarBoard from '../components/CalendarBoard';
 import dayjs from 'dayjs';
-import useGetDataFromDb from '../custom/useGetDataFromDb';
+import useGetCollectionFromDb from '../custom/useGetCollectionFromDb';
 
 const useStyles = makeStyles((theme) => ({
     pageTitle: {
@@ -80,7 +80,7 @@ const MyPage: NextPage = () => {
     const [currentLogs, setCurrentLogs] = useState([]);
     const [open, setOpen] = useState(false);
     // const [nationalities, setNationalities] = useState([]);
-    const nationalities = useGetDataFromDb('nationalities');
+    const nationalities = useGetCollectionFromDb('nationalities');
     const classes = useStyles();
 
     useEffect(() => {
