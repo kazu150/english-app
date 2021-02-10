@@ -232,6 +232,20 @@ describe("Firestoreのテスト", () => {
             }));
         })
 
+        test("deleteテスト", async () => {
+            //条件（uidやprojectId)を指定してdbを生成
+            const db = authedApp({ uid: "c05cDZITKVZH5930b6FotWsYLvF3"});
+            const log = await db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').add({
+                date: firebase.firestore.FieldValue.serverTimestamp(),
+                nationality: db.doc(`nationalities/us`),
+                count: 1,
+                englishService: db.doc(
+                    `englishServices/dmm`
+                ),
+                time: 25
+            })
+            await firebase.assertSucceeds(db.doc('users/c05cDZITKVZH5930b6FotWsYLvF3').collection('studyLog').doc(log.id).delete());
+        })
     })
 
 })

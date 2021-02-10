@@ -1,8 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Text, Cell } from 'recharts';
+import Box from '@material-ui/core/Box';
+import { makeStyles } from '@material-ui/core/styles';
+
+const colors = [
+    '#3f51b5',
+    '#2196f3',
+    '#03a9f4',
+    '#00bcd4',
+    '#4caf50',
+    '#8bc34a',
+];
+
+const useStyles = makeStyles((theme) => ({
+    chartDescription: {
+        backgroundColor: '#b3e5fc',
+        borderRadius: '5px',
+        textAlign: 'center',
+    },
+}));
 
 const Chart = ({ nationalities, studyLog }) => {
     const [chartData, setChartData] = useState([]);
+    const classes = useStyles();
     // 相手国籍ごとの会話時間を算出
     const handleTimeForEachNationality = (nationality) => {
         let totalLogs = 0;
@@ -14,42 +34,6 @@ const Chart = ({ nationalities, studyLog }) => {
             });
         return totalLogs;
     };
-    const data = [
-        {
-            index: 0,
-            name: 'データ1',
-            value: 300,
-        },
-        {
-            index: 1,
-            name: 'データ2',
-            value: 200,
-        },
-        {
-            index: 2,
-            name: 'データ3',
-            value: 380,
-        },
-        {
-            index: 3,
-            name: 'データ3',
-            value: 80,
-        },
-        {
-            index: 4,
-            name: 'データ4',
-            value: 40,
-        },
-    ];
-
-    const colors = [
-        '#3f51b5',
-        '#2196f3',
-        '#03a9f4',
-        '#00bcd4',
-        '#4caf50',
-        '#8bc34a',
-    ];
 
     const label = ({ name, value, cx, x, y }) => {
         return (
@@ -96,6 +80,11 @@ const Chart = ({ nationalities, studyLog }) => {
                     ))}
                 </Pie>
             </PieChart>
+            <Box className={classes.chartDescription} p={2} mb={3}>
+                なるべくいろんな国の英語に触れて、
+                <br />
+                総合的な英語力を向上させよう！
+            </Box>
         </div>
     );
 };

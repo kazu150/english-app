@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
         width: '30%',
         height: '30%',
         paddingRight: '20px',
+        transform: 'scale(-1, 1)',
     },
     levelDescription: {
         backgroundColor: '#b3e5fc',
@@ -102,13 +103,14 @@ const MyPage: NextPage = () => {
                         studyLogs.docs.map((log) => {
                             return {
                                 ...log.data(),
+                                id: log.id,
                                 date: dayjs(log.data().date.toDate()),
                             };
                         })
                     );
                 }
             } catch (error) {
-                // console.log(error);
+                console.log(error);
             }
         })();
         return () => {
