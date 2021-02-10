@@ -15,9 +15,11 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
 import { getDate } from '../utils/calendar';
 import { db } from '../firebase';
+import Router from 'next/router';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -93,6 +95,10 @@ export default function CustomizedDialogs({
         setOpen(false);
     };
 
+    const onEditClick = (id) => {
+        Router.push(`/submit/${id}`);
+    };
+
     return (
         <div>
             <Dialog
@@ -119,16 +125,32 @@ export default function CustomizedDialogs({
                                         {log.englishService.id}
                                     </li>
                                 </ul>
-                                <Tooltip title="削除">
-                                    <IconButton
-                                        onClick={() =>
-                                            onDeleteClick(currentLogs[index].id)
-                                        }
-                                        aria-label="delete"
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Tooltip>
+                                <div>
+                                    <Tooltip title="記録を編集">
+                                        <IconButton
+                                            onClick={() =>
+                                                onEditClick(
+                                                    currentLogs[index].id
+                                                )
+                                            }
+                                            aria-label="edit"
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="記録を削除">
+                                        <IconButton
+                                            onClick={() =>
+                                                onDeleteClick(
+                                                    currentLogs[index].id
+                                                )
+                                            }
+                                            aria-label="delete"
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
                             </div>
                         );
                     })}

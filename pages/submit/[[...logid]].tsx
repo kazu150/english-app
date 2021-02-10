@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
-import { MyContext } from './_app';
+import { MyContext } from '../_app';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -12,9 +12,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
-import { db, auth } from '../firebase';
+import { db, auth } from '../../firebase';
 import firebase from 'firebase/app';
-import useGetDataFromDb from '../custom/useGetDataFromDb';
+import useGetDataFromDb from '../../custom/useGetDataFromDb';
 
 type Result = {
     englishService: string;
@@ -91,7 +91,7 @@ const Submit: NextPage = () => {
                 });
 
             dispatch({ type: 'studyRegister' });
-            Router.push(`/${state.currentUser.userId}`);
+            Router.push(`../${state.currentUser.userId}`);
             return;
         } catch (error) {
             dispatch({
