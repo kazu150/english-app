@@ -50,7 +50,7 @@ const Submit: NextPage = () => {
     const classes = useStyles();
     const [result, setResult] = useState<Result>(initialResult);
 
-    // englishServicesの切り替えごとに、関係するstateを変更
+    // 画面ロード時処理
     useEffect(() => {
         if (editData.englishService === '') {
             setResult({
@@ -62,7 +62,8 @@ const Submit: NextPage = () => {
 
                 defaultTime:
                     englishServices.filter(
-                        (service) => service.id === result?.englishService
+                        (service) =>
+                            service.id === state.currentUser.englishService
                     )[0]?.defaultTime || 0,
             });
         } else {
@@ -74,22 +75,33 @@ const Submit: NextPage = () => {
                     )[0]?.defaultTime || 0,
             });
         }
-    }, [
-        state.currentUser.englishService,
-        result.englishService,
-        englishServices,
-        editData,
-    ]);
+    }, [state.currentUser.englishService, englishServices, editData]);
 
     // nationalitiesのロード時に、result内のnationalityを変更
     useEffect(() => {
-        if (editData.englishService === '') {
+        if (editData.nationality === '') {
             setResult({
                 ...result,
                 nationality: nationalities[0]?.id || '',
             });
         }
     }, [nationalities, editData]);
+
+    const onEnglishServiceSelected = (
+        e: React.ChangeEvent<{
+            name?: string;
+            value: unknown;
+        }>
+    ) => {
+        setResult({
+            ...result,
+            englishService: e.target.value as string,
+            defaultTime:
+                englishServices.filter(
+                    (service) => service.id === (e.target.value as string)
+                )[0]?.defaultTime || 0,
+        });
+    };
 
     const onResultSubmit = async () => {
         try {
@@ -127,7 +139,7 @@ const Submit: NextPage = () => {
                 <div>
                     <h2>
                         {router.query.logid?.length
-                            ? `${router.query.logid[0]}の編集`
+                            ? `学習記録ID: ${router.query.logid[0]}の編集`
                             : '英会話をやりました！'}
                     </h2>
                     <InputLabel id="englishService">利用サービス</InputLabel>
@@ -136,17 +148,7 @@ const Submit: NextPage = () => {
                         labelId="englishService"
                         id="englishService"
                         value={result.englishService}
-                        onChange={(
-                            e: React.ChangeEvent<{
-                                name?: string;
-                                value: unknown;
-                            }>
-                        ) => {
-                            setResult({
-                                ...result,
-                                englishService: e.target.value as string,
-                            });
-                        }}
+                        onChange={(e) => onEnglishServiceSelected(e)}
                     >
                         {englishServices.map((service, index) => {
                             return (
