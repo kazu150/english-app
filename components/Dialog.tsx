@@ -17,7 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
-import { getDate } from '../utils/calendar';
+import { getDateFromLogs } from '../utils/calendar';
 import { db } from '../firebase';
 import Router from 'next/router';
 
@@ -107,7 +107,8 @@ export default function CustomizedDialogs({
                 open={open}
             >
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {currentLogs.length && getDate(currentLogs[0])}の記録
+                    {currentLogs.length && getDateFromLogs(currentLogs[0])}
+                    の記録
                 </DialogTitle>
                 <DialogContent dividers>
                     {currentLogs.map((log, index) => {

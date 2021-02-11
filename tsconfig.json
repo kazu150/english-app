@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "utils/calendar.ts"  ],
   "exclude": [
     "node_modules", "functions"
   ]

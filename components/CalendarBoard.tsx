@@ -86,7 +86,7 @@ const Calendar = ({
                 p={2}
                 mb={1}
                 bgcolor="primary.main"
-                color="primary.text"
+                color="primary.contrastText"
             >
                 <Typography component="h4">
                     {`${date.year}年${date.month}月の実施記録`}

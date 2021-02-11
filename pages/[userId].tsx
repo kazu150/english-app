@@ -64,8 +64,15 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '45px',
         fontWeight: 'bold',
     },
+    monthlyFlexWrapper: {
+        display: 'flex',
+        justifyContent: 'space-around',
+    },
+    monthlyData: {
+        fontSize: '12px',
+    },
     monthlyStudyHour: {
-        fontSize: '25px',
+        fontSize: '22px',
         fontWeight: 'bold',
     },
     flexElement: {
@@ -187,13 +194,22 @@ const MyPage: NextPage = () => {
                                     分
                                 </p>
                             </div>
-                            <p>
-                                今月の英会話時間：
-                                <span className={classes.monthlyStudyHour}>
-                                    300
-                                </span>
-                                分
-                            </p>
+                            <div className={classes.monthlyFlexWrapper}>
+                                <p className={classes.monthlyData}>
+                                    今月の英会話時間：
+                                    <span className={classes.monthlyStudyHour}>
+                                        300
+                                    </span>
+                                    分
+                                </p>
+                                <p className={classes.monthlyData}>
+                                    今月のランキング：
+                                    <span className={classes.monthlyStudyHour}>
+                                        20
+                                    </span>
+                                    位/101人中
+                                </p>
+                            </div>
                             <Box
                                 className={classes.levelDescription}
                                 p={2}
