@@ -169,28 +169,26 @@ export const MyApp: NextPage<Props> = (props) => {
                     <CssBaseline />
                     <AppBar position="static">
                         <Toolbar>
-                            <Link href="./">
+                            <Link href="/">
                                 <h1>
                                     <img
                                         className={classes.title}
-                                        src="title-white.png"
+                                        src="/title-white.png"
                                         alt="えーかいわログ"
                                     />
                                 </h1>
                             </Link>
                             {state.currentUser.userId ? (
                                 <div className={classes.headerLeft}>
-                                    <Link
-                                        href={`./${state.currentUser.userId}`}
-                                    >
+                                    <Link href={`/${state.currentUser.userId}`}>
                                         <Button color="inherit">
                                             マイページ
                                         </Button>
                                     </Link>
-                                    <Link href={`./settings`}>
+                                    <Link href={`/settings`}>
                                         <Button color="inherit">設定</Button>
                                     </Link>
-                                    <Link href="./">
+                                    <Link href="/">
                                         <Button
                                             onClick={handleLogout}
                                             color="inherit"
@@ -201,12 +199,12 @@ export const MyApp: NextPage<Props> = (props) => {
                                 </div>
                             ) : (
                                 <div className={classes.headerLeft}>
-                                    <Link href="./signin">
+                                    <Link href="/signin">
                                         <Button color="inherit">
                                             ログイン
                                         </Button>
                                     </Link>
-                                    <Link href="./signup">
+                                    <Link href="/signup">
                                         <Button color="inherit">
                                             新規登録
                                         </Button>

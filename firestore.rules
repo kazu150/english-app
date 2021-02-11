@@ -45,6 +45,7 @@ service cloud.firestore {
         && (incomingData().count != null) && (incomingData().count is number) && (incomingData().count >= 1) && (incomingData().count < 10)
         && (incomingData().englishService != null) && (incomingData().englishService is path)
         && (incomingData().time != null) && (incomingData().time is number) && (incomingData().time >= 1) && (incomingData().time < 250)
+      allow delete: if isUserAuthenticated(uid);
       allow read: if isUserAuthenticated(uid);
     }
 

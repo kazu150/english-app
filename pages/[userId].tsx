@@ -11,7 +11,7 @@ import { db, auth } from '../firebase';
 import Chart from '../components/Chart';
 import CalendarBoard from '../components/CalendarBoard';
 import dayjs from 'dayjs';
-import useGetDataFromDb from '../custom/useGetDataFromDb';
+import useGetCollectionFromDb from '../custom/useGetCollectionFromDb';
 
 const useStyles = makeStyles((theme) => ({
     pageTitle: {
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
         width: '30%',
         height: '30%',
         paddingRight: '20px',
+        transform: 'scale(-1, 1)',
     },
     levelDescription: {
         backgroundColor: '#b3e5fc',
@@ -76,8 +77,10 @@ const MyPage: NextPage = () => {
     const { dispatch, state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
     const [studyLog, setStudyLog] = useState([]);
+    const [currentLogs, setCurrentLogs] = useState([]);
+    const [open, setOpen] = useState(false);
     // const [nationalities, setNationalities] = useState([]);
-    const nationalities = useGetDataFromDb('nationalities');
+    const nationalities = useGetCollectionFromDb('nationalities');
     const classes = useStyles();
 
     useEffect(() => {
@@ -102,13 +105,14 @@ const MyPage: NextPage = () => {
                         studyLogs.docs.map((log) => {
                             return {
                                 ...log.data(),
+                                id: log.id,
                                 date: dayjs(log.data().date.toDate()),
                             };
                         })
                     );
                 }
             } catch (error) {
-                // console.log(error);
+                console.log(error);
             }
         })();
         return () => {
@@ -116,6 +120,30 @@ const MyPage: NextPage = () => {
             snapshot && snapshot();
         };
     }, [state.currentUser.userId]);
+
+    const onDeleteClick = async (id) => {
+        try {
+            await db
+                .collection('users')
+                .doc(state.currentUser.userId)
+                .collection('studyLog')
+                .doc(id)
+                .delete();
+
+            const newStudyLog = studyLog.filter((log) => {
+                return log.id !== id;
+            });
+            setStudyLog(newStudyLog);
+
+            const newCurrentLogs = currentLogs.filter((log) => {
+                return log.id !== id;
+            });
+            setCurrentLogs(newCurrentLogs);
+            !newCurrentLogs.length && setOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <>
@@ -182,7 +210,14 @@ const MyPage: NextPage = () => {
                             />
                         </Box>
                         <div className={classes.flexElement}>
-                            <CalendarBoard studyLog={studyLog} />
+                            <CalendarBoard
+                                open={open}
+                                setOpen={setOpen}
+                                currentLogs={currentLogs}
+                                setCurrentLogs={setCurrentLogs}
+                                onDeleteClick={onDeleteClick}
+                                studyLog={studyLog}
+                            />
                         </div>
                     </div>
                     {/* <p>（今後作成したい）今週の英会話時間: X分</p>

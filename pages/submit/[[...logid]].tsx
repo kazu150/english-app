@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
-import { MyContext } from './_app';
+import { MyContext } from '../_app';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -11,10 +11,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import Router from 'next/router';
-import { db, auth } from '../firebase';
+import Router, { useRouter } from 'next/router';
+import { db, auth } from '../../firebase';
 import firebase from 'firebase/app';
-import useGetDataFromDb from '../custom/useGetDataFromDb';
+import useGetCollectionFromDb from '../../custom/useGetCollectionFromDb';
+import useGetCurrentStudyLog from '../../custom/useGetCurrentStudyLog';
 
 type Result = {
     englishService: string;
@@ -34,9 +35,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Submit: NextPage = () => {
+    const router = useRouter();
     const { state, dispatch } = useContext(MyContext);
-    const nationalities = useGetDataFromDb('nationalities');
-    const englishServices = useGetDataFromDb('englishServices');
+    const nationalities = useGetCollectionFromDb('nationalities');
+    const englishServices = useGetCollectionFromDb('englishServices');
+    const editData = useGetCurrentStudyLog();
+
     const initialResult: Result = {
         englishService: '',
         count: 1,
@@ -46,52 +50,100 @@ const Submit: NextPage = () => {
     const classes = useStyles();
     const [result, setResult] = useState<Result>(initialResult);
 
-    // englishServicesの切り替えごとに、関係するstateを変更
+    // 画面ロード時処理
     useEffect(() => {
+        if (editData.englishService === '') {
+            setResult({
+                ...result,
+                englishService:
+                    result.englishService === ''
+                        ? state.currentUser.englishService
+                        : result.englishService,
+
+                defaultTime:
+                    englishServices.filter(
+                        (service) =>
+                            service.id === state.currentUser.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        } else {
+            setResult({
+                ...editData,
+                defaultTime:
+                    englishServices.filter(
+                        (service) => service.id === editData.englishService
+                    )[0]?.defaultTime || 0,
+            });
+        }
+    }, [state.currentUser.englishService, englishServices, editData]);
+
+    // nationalitiesのロード時に、result内のnationalityを変更
+    useEffect(() => {
+        if (editData.nationality === '') {
+            setResult({
+                ...result,
+                nationality: nationalities[0]?.id || '',
+            });
+        }
+    }, [nationalities, editData]);
+
+    const onEnglishServiceSelected = (
+        e: React.ChangeEvent<{
+            name?: string;
+            value: unknown;
+        }>
+    ) => {
         setResult({
             ...result,
-            englishService:
-                result.englishService === ''
-                    ? state.currentUser.englishService
-                    : result.englishService,
-
+            englishService: e.target.value as string,
             defaultTime:
                 englishServices.filter(
-                    (service) => service.id === result?.englishService
+                    (service) => service.id === (e.target.value as string)
                 )[0]?.defaultTime || 0,
         });
-    }, [
-        state.currentUser.englishService,
-        result.englishService,
-        englishServices,
-    ]);
-
-    // nationalitiesのロード時に、currrentUser内のnationalityを変更
-    useEffect(() => {
-        setResult({
-            ...result,
-            nationality: nationalities[0]?.id || '',
-        });
-    }, [nationalities]);
+    };
 
     const onResultSubmit = async () => {
         try {
-            await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .collection('studyLog')
-                .add({
-                    date: firebase.firestore.FieldValue.serverTimestamp(),
-                    nationality: db.doc(`nationalities/${result.nationality}`),
-                    count: result.count,
-                    englishService: db.doc(
-                        `englishServices/${result.englishService}`
-                    ),
-                    time: result.defaultTime * result.count,
-                });
+            if (router.query.logid?.length) {
+                await db
+                    .collection('users')
+                    .doc(state.currentUser.userId)
+                    .collection('studyLog')
+                    .doc(router.query.logid[0])
+                    .update({
+                        nationality: db.doc(
+                            `nationalities/${result.nationality}`
+                        ),
+                        count: result.count,
+                        englishService: db.doc(
+                            `englishServices/${result.englishService}`
+                        ),
+                        time: result.defaultTime * result.count,
+                    });
 
-            dispatch({ type: 'studyRegister' });
-            Router.push(`/${state.currentUser.userId}`);
+                dispatch({ type: 'studyUpdate' });
+            } else {
+                await db
+                    .collection('users')
+                    .doc(state.currentUser.userId)
+                    .collection('studyLog')
+                    .add({
+                        date: firebase.firestore.FieldValue.serverTimestamp(),
+                        nationality: db.doc(
+                            `nationalities/${result.nationality}`
+                        ),
+                        count: result.count,
+                        englishService: db.doc(
+                            `englishServices/${result.englishService}`
+                        ),
+                        time: result.defaultTime * result.count,
+                    });
+
+                dispatch({ type: 'studyRegister' });
+            }
+
+            Router.push(`../${state.currentUser.userId}`);
             return;
         } catch (error) {
             dispatch({
@@ -108,24 +160,18 @@ const Submit: NextPage = () => {
                 ''
             ) : (
                 <div>
-                    <h2>英会話をやりました！</h2>
+                    <h2>
+                        {router.query.logid?.length
+                            ? `学習記録ID: ${router.query.logid[0]}の編集`
+                            : '英会話をやりました！'}
+                    </h2>
                     <InputLabel id="englishService">利用サービス</InputLabel>
                     <Select
                         fullWidth
                         labelId="englishService"
                         id="englishService"
                         value={result.englishService}
-                        onChange={(
-                            e: React.ChangeEvent<{
-                                name?: string;
-                                value: unknown;
-                            }>
-                        ) => {
-                            setResult({
-                                ...result,
-                                englishService: e.target.value as string,
-                            });
-                        }}
+                        onChange={(e) => onEnglishServiceSelected(e)}
                     >
                         {englishServices.map((service, index) => {
                             return (

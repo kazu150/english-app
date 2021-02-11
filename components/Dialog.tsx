@@ -4,6 +4,7 @@ import {
     Theme,
     withStyles,
     WithStyles,
+    makeStyles,
 } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -13,12 +14,18 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import Tooltip from '@material-ui/core/Tooltip';
 import { getDate } from '../utils/calendar';
+import { db } from '../firebase';
+import Router from 'next/router';
 
 const styles = (theme: Theme) =>
     createStyles({
         root: {
             margin: 0,
+            width: '500px',
             padding: theme.spacing(2),
         },
         closeButton: {
@@ -28,6 +35,14 @@ const styles = (theme: Theme) =>
             color: theme.palette.grey[500],
         },
     });
+
+const useStyles = makeStyles((theme) => ({
+    flexWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+}));
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
     id: string;
@@ -66,12 +81,22 @@ const DialogActions = withStyles((theme: Theme) => ({
     },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
+export default function CustomizedDialogs({
+    onDeleteClick,
+    open,
+    setOpen,
+    currentLogs,
+}) {
+    const classes = useStyles();
     const handleClickOpen = () => {
         setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const onEditClick = (id) => {
+        Router.push(`/submit/${id}`);
     };
 
     return (
@@ -82,23 +107,51 @@ export default function CustomizedDialogs({ open, setOpen, currentLogs }) {
                 open={open}
             >
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {currentLogs.length && getDate(currentLogs[0])}
+                    {currentLogs.length && getDate(currentLogs[0])}の記録
                 </DialogTitle>
                 <DialogContent dividers>
                     {currentLogs.map((log, index) => {
                         return (
-                            <ul key={index}>
-                                <li>
-                                    授業日時：{log.date.hour()}時
-                                    {log.date.minute()}分
-                                </li>
-                                <li>授業回数：{log.count}回</li>
-                                <li>授業時間：{log.time}分</li>
-                                <li>
-                                    サービス：
-                                    {log.englishService.id}
-                                </li>
-                            </ul>
+                            <div key={index} className={classes.flexWrapper}>
+                                <ul>
+                                    <li>
+                                        授業日時：{log.date.hour()}時
+                                        {log.date.minute()}分
+                                    </li>
+                                    <li>授業回数：{log.count}回</li>
+                                    <li>授業時間：{log.time}分</li>
+                                    <li>
+                                        サービス：
+                                        {log.englishService.id}
+                                    </li>
+                                </ul>
+                                <div>
+                                    <Tooltip title="記録を編集">
+                                        <IconButton
+                                            onClick={() =>
+                                                onEditClick(
+                                                    currentLogs[index].id
+                                                )
+                                            }
+                                            aria-label="edit"
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="記録を削除">
+                                        <IconButton
+                                            onClick={() =>
+                                                onDeleteClick(
+                                                    currentLogs[index].id
+                                                )
+                                            }
+                                            aria-label="delete"
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+                            </div>
                         );
                     })}
                     <Typography gutterBottom></Typography>
