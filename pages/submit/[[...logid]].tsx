@@ -105,21 +105,44 @@ const Submit: NextPage = () => {
 
     const onResultSubmit = async () => {
         try {
-            await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .collection('studyLog')
-                .add({
-                    date: firebase.firestore.FieldValue.serverTimestamp(),
-                    nationality: db.doc(`nationalities/${result.nationality}`),
-                    count: result.count,
-                    englishService: db.doc(
-                        `englishServices/${result.englishService}`
-                    ),
-                    time: result.defaultTime * result.count,
-                });
+            if (router.query.logid?.length) {
+                await db
+                    .collection('users')
+                    .doc(state.currentUser.userId)
+                    .collection('studyLog')
+                    .doc(router.query.logid[0])
+                    .update({
+                        nationality: db.doc(
+                            `nationalities/${result.nationality}`
+                        ),
+                        count: result.count,
+                        englishService: db.doc(
+                            `englishServices/${result.englishService}`
+                        ),
+                        time: result.defaultTime * result.count,
+                    });
 
-            dispatch({ type: 'studyRegister' });
+                dispatch({ type: 'studyUpdate' });
+            } else {
+                await db
+                    .collection('users')
+                    .doc(state.currentUser.userId)
+                    .collection('studyLog')
+                    .add({
+                        date: firebase.firestore.FieldValue.serverTimestamp(),
+                        nationality: db.doc(
+                            `nationalities/${result.nationality}`
+                        ),
+                        count: result.count,
+                        englishService: db.doc(
+                            `englishServices/${result.englishService}`
+                        ),
+                        time: result.defaultTime * result.count,
+                    });
+
+                dispatch({ type: 'studyRegister' });
+            }
+
             Router.push(`../${state.currentUser.userId}`);
             return;
         } catch (error) {

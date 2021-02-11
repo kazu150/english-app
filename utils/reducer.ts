@@ -43,6 +43,8 @@ export const reducer = (state: State, action: Action): State => {
             };
         case 'studyRegister':
             return { ...state };
+        case 'studyUpdate':
+            return { ...state };
         case 'studySettings':
             return { ...state };
         case 'studyDelete':
