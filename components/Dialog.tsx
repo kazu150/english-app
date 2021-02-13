@@ -139,7 +139,9 @@ const CustomizedDialogs: FC<Props> = ({
                                         <IconButton
                                             onClick={() =>
                                                 onEditClick(
-                                                    currentLogs[index].id
+                                                    Number(
+                                                        currentLogs[index].id
+                                                    )
                                                 )
                                             }
                                             aria-label="edit"
