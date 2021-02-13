@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import GridList from '@material-ui/core/GridList';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -16,8 +16,8 @@ import {
 } from '../utils/calendar';
 import dayjs from 'dayjs';
 import CalendarElement from './CalendarElement';
-import { db } from '../firebase';
 import Dialog from './Dialog';
+import { Log } from '../pages/[userId]';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,7 +48,16 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Calendar = ({
+type Props = {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    studyLog: Log[];
+    onDeleteClick: (id: string) => Promise<void>;
+    currentLogs: Log[];
+    setCurrentLogs: React.Dispatch<React.SetStateAction<Log[]>>;
+};
+
+const Calendar: FC<Props> = ({
     open,
     setOpen,
     studyLog,
@@ -64,12 +73,12 @@ const Calendar = ({
     const [date, setDate] = useState(initialDate);
 
     // 表示中の月を切り替える
-    const onClickChangeMonthBtn = (changeTo) => {
-        if (changeTo < 0) {
+    const onClickChangeMonthBtn = (changeTo: -1 | 0 | 1) => {
+        if (changeTo === -1) {
             setDate(getPreviousMonth(date));
         } else if (changeTo === 0) {
             setDate(initialDate);
-        } else if (changeTo > 0) {
+        } else if (changeTo === 1) {
             setDate(getNextMonth(date));
         }
     };

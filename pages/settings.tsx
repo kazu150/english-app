@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import { User, MyContext } from './_app';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -19,7 +19,7 @@ type SettingsData = {
     englishService: string;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',

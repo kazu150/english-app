@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -53,7 +53,7 @@ export const MyContext = createContext<ContextType>({
     state: initialState,
 });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     menuButton: {
         marginRight: theme.spacing(2),
     },
@@ -127,7 +127,7 @@ export const MyApp: NextPage<Props> = (props) => {
             } catch (error) {
                 dispatch({
                     type: 'errorOther',
-                    payload: `エラー内容：${error.message} [on App 1]`,
+                    payload: {},
                 });
                 return;
             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import {
     createStyles,
     Theme,
@@ -20,6 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { getDateFromLogs } from '../utils/calendar';
 import { db } from '../firebase';
 import Router from 'next/router';
+import { Log } from '../pages/[userId]';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -36,7 +37,7 @@ const styles = (theme: Theme) =>
         },
     });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     flexWrapper: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -81,12 +82,19 @@ const DialogActions = withStyles((theme: Theme) => ({
     },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs({
+type Props = {
+    onDeleteClick: (id: string) => Promise<void>;
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    currentLogs: Log[];
+};
+
+const CustomizedDialogs: FC<Props> = ({
     onDeleteClick,
     open,
     setOpen,
     currentLogs,
-}) {
+}) => {
     const classes = useStyles();
     const handleClickOpen = () => {
         setOpen(true);
@@ -95,7 +103,7 @@ export default function CustomizedDialogs({
         setOpen(false);
     };
 
-    const onEditClick = (id) => {
+    const onEditClick = (id: number) => {
         Router.push(`/submit/${id}`);
     };
 
@@ -165,4 +173,6 @@ export default function CustomizedDialogs({
             </Dialog>
         </div>
     );
-}
+};
+
+export default CustomizedDialogs;

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Router from 'next/router';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { regEmail, regPass } from '../utils/validate';
@@ -14,7 +14,7 @@ type SignInUser = {
     password: string;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',

@@ -1,8 +1,19 @@
-import { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, FC } from 'react';
 import { MyContext } from '../pages/_app';
 import { db } from '../firebase';
+import { AppProps } from 'next/app';
 
-const useGetCollectionFromDb = (collectionName) => {
+export type Nationalities = {
+    id?: string;
+    countryName?: string;
+};
+export type EnglishServices = {
+    id?: string;
+    defaultTime?: number;
+    serviceName?: string;
+};
+
+const useGetCollectionFromDb = <T,>(collectionName: string): T[] => {
     const { state } = useContext(MyContext);
     const [dbData, setDbData] = useState([]);
 

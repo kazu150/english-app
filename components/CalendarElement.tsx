@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import {
     isSameDay,
     getMonth,
@@ -8,6 +8,8 @@ import {
 } from '../utils/calendar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import dayjs from 'dayjs';
+import { Log } from '../pages/[userId]';
 
 const useStyles = makeStyles({
     colorSecondary: {
@@ -40,7 +42,16 @@ const useStyles = makeStyles({
     },
 });
 
-const CalendarElement = ({
+type Props = {
+    day: dayjs.Dayjs;
+    studyLog: Log[];
+    open: boolean;
+    month: dayjs.Dayjs;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setCurrentLogs: React.Dispatch<React.SetStateAction<Log[]>>;
+};
+
+const CalendarElement: FC<Props> = ({
     day,
     studyLog,
     open,
@@ -49,7 +60,7 @@ const CalendarElement = ({
     setCurrentLogs,
 }) => {
     const classes = useStyles();
-    const [logsOnCurrentDate, setLogsOnCurrentDate] = useState([]);
+    const [logsOnCurrentDate, setLogsOnCurrentDate] = useState<Log[]>([]);
     const isCurrentMonth = isSameMonth(getMonth(formatMonth(day)), month);
 
     useEffect(() => {
@@ -65,7 +76,7 @@ const CalendarElement = ({
 
     const format = isFirstDay(day) ? 'M/D' : 'D';
 
-    const onSelectDetail = (e) => {
+    const onSelectDetail = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         e.preventDefault();
         if (!logsOnCurrentDate.length) {
             return;

@@ -1,13 +1,19 @@
-import { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, FC } from 'react';
 import { MyContext } from '../pages/_app';
 import { db } from '../firebase';
 import { useRouter } from 'next/router';
+
+type LogOnSubmitPage = {
+    englishService: string;
+    count: number;
+    nationality: string;
+};
 
 // 個別Logの編集画面用のデータを取得
 const useGetCurrentStudyLog = () => {
     const router = useRouter();
     const { state } = useContext(MyContext);
-    const [dbData, setDbData] = useState({
+    const [dbData, setDbData] = useState<LogOnSubmitPage>({
         englishService: '',
         count: null,
         nationality: '',

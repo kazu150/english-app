@@ -10,11 +10,14 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Router, { useRouter } from 'next/router';
 import { db, auth } from '../../firebase';
 import firebase from 'firebase/app';
-import useGetCollectionFromDb from '../../custom/useGetCollectionFromDb';
+import useGetCollectionFromDb, {
+    Nationalities,
+    EnglishServices,
+} from '../../custom/useGetCollectionFromDb';
 import useGetCurrentStudyLog from '../../custom/useGetCurrentStudyLog';
 
 type Result = {
@@ -24,7 +27,7 @@ type Result = {
     defaultTime: number;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',
@@ -37,8 +40,12 @@ const useStyles = makeStyles((theme) => ({
 const Submit: NextPage = () => {
     const router = useRouter();
     const { state, dispatch } = useContext(MyContext);
-    const nationalities = useGetCollectionFromDb('nationalities');
-    const englishServices = useGetCollectionFromDb('englishServices');
+    const nationalities = useGetCollectionFromDb<Nationalities>(
+        'nationalities'
+    );
+    const englishServices = useGetCollectionFromDb<EnglishServices>(
+        'englishServices'
+    );
     const editData = useGetCurrentStudyLog();
 
     const initialResult: Result = {

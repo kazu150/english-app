@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { MyContext } from './_app';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
@@ -11,9 +11,21 @@ import { db, auth } from '../firebase';
 import Chart from '../components/Chart';
 import CalendarBoard from '../components/CalendarBoard';
 import dayjs from 'dayjs';
-import useGetCollectionFromDb from '../custom/useGetCollectionFromDb';
+import useGetCollectionFromDb, {
+    EnglishServices,
+    Nationalities,
+} from '../custom/useGetCollectionFromDb';
 
-const useStyles = makeStyles((theme) => ({
+export type Log = {
+    id?: string;
+    date?: dayjs.Dayjs;
+    count?: number;
+    englishService?: EnglishServices;
+    nationality?: Nationalities;
+    time?: number;
+};
+
+const useStyles = makeStyles((theme: Theme) => ({
     pageTitle: {
         display: 'inline-block',
         marginLeft: '10px',
@@ -81,13 +93,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyPage: NextPage = () => {
-    const { dispatch, state } = useContext(MyContext);
+    const { state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
-    const [studyLog, setStudyLog] = useState([]);
-    const [currentLogs, setCurrentLogs] = useState([]);
+    const [studyLog, setStudyLog] = useState<Log[]>([]);
+    const [currentLogs, setCurrentLogs] = useState<Log[]>([]);
     const [open, setOpen] = useState(false);
-    // const [nationalities, setNationalities] = useState([]);
-    const nationalities = useGetCollectionFromDb('nationalities');
+    const nationalities = useGetCollectionFromDb<Nationalities>(
+        'nationalities'
+    );
     const classes = useStyles();
 
     useEffect(() => {
@@ -95,7 +108,7 @@ const MyPage: NextPage = () => {
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
-                    snapshot = db
+                    const snapshot = db
                         .collection('publicProfiles')
                         .doc(state.currentUser.userId)
                         .onSnapshot((snapshot) => {
@@ -128,7 +141,7 @@ const MyPage: NextPage = () => {
         };
     }, [state.currentUser.userId]);
 
-    const onDeleteClick = async (id) => {
+    const onDeleteClick = async (id: string) => {
         try {
             await db
                 .collection('users')

@@ -4,14 +4,13 @@ import Head from 'next/head';
 import Router from 'next/router';
 import styles from '../styles/Home.module.css';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Link from 'next/link';
 import { MyContext } from './_app';
 import { auth, db } from '../firebase';
 import firebase from 'firebase/app';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { PieChart, Pie, Text, Cell } from 'recharts';
 import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Log } from '../pages/[userId]';
+import { Nationalities } from '../custom/useGetCollectionFromDb';
 
 const colors = [
     '#3f51b5',
@@ -12,7 +14,7 @@ const colors = [
     '#8bc34a',
 ];
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     chartDescription: {
         backgroundColor: '#b3e5fc',
         borderRadius: '5px',
@@ -20,15 +22,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Chart = ({ nationalities, studyLog }) => {
-    const [chartData, setChartData] = useState([]);
+type Props = {
+    nationalities: Nationalities[];
+    studyLog: Log[];
+};
+
+const Chart: FC<Props> = ({ nationalities, studyLog }) => {
     const classes = useStyles();
     // 相手国籍ごとの会話時間を算出
-    const handleTimeForEachNationality = (nationality) => {
+    const handleTimeForEachNationality = (nationalityId: string): number => {
         let totalLogs = 0;
 
         studyLog
-            .filter((log) => log.nationality.id === nationality)
+            .filter((log) => log.nationality.id === nationalityId)
             .forEach((doc) => {
                 totalLogs += doc.time;
             });

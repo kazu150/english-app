@@ -1,29 +1,10 @@
 import { initialState } from './initialState';
 import { State } from '../pages/_app';
+import { AnyMxRecord } from 'dns';
 
-export type Action =
-    | { type: 'userSignup'; payload: object }
-    | { type: 'userUpdate'; payload: object }
-    | { type: 'userSignin'; payload: object }
-    | { type: 'userChangepass' }
-    | { type: 'userSignout' }
-    | { type: 'studyRegister' }
-    | { type: 'studyUpdate' }
-    | { type: 'studySettings' }
-    | { type: 'studyDelete' }
-    | { type: 'studyModify' }
-    | { type: 'errorEmptyMail' }
-    | { type: 'errorEmptyPassword' }
-    | { type: 'errorUnmatchPassword' }
-    | { type: 'errorInvalidEmail' }
-    | { type: 'errorInvalidPassword' }
-    | { type: 'errorUnregisteredPassword' }
-    | { type: 'errorEmptyname' }
-    | { type: 'errorInvalidInitialTime' }
-    | { type: 'errorOther'; payload: string }
-    | { type: 'errorClose' };
+export type Action = { type: string; payload?: any };
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = <T>(state: State, action: Action): State => {
     switch (action.type) {
         case 'userSignup':
             return {
