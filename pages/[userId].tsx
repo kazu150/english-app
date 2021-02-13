@@ -108,7 +108,7 @@ const MyPage: NextPage = () => {
         (async () => {
             try {
                 if (state.currentUser.userId !== '') {
-                    const snapshot = db
+                    snapshot = db
                         .collection('publicProfiles')
                         .doc(state.currentUser.userId)
                         .onSnapshot((snapshot) => {

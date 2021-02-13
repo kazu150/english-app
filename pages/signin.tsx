@@ -119,7 +119,7 @@ const SignIn: NextPage = () => {
             <form className={classes.root} noValidate autoComplete="off">
                 <TextField
                     fullWidth
-                    id="standard-basic"
+                    id="email"
                     label="メールアドレス"
                     error={state.error.errorPart === 'email' ? true : false}
                     value={signInUser.email}
@@ -132,7 +132,7 @@ const SignIn: NextPage = () => {
                 />
                 <TextField
                     fullWidth
-                    id="standard-basic"
+                    id="password"
                     label="パスワード"
                     type="password"
                     error={state.error.errorPart === 'password' ? true : false}

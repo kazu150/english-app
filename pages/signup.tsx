@@ -137,7 +137,7 @@ const SignUp: NextPage = () => {
                 <TextField
                     fullWidth
                     error={state.error.errorPart === 'password' ? true : false}
-                    id="standard-basic"
+                    id="password"
                     label="パスワード"
                     type="password"
                     value={signUpUser.password}
@@ -159,7 +159,7 @@ const SignUp: NextPage = () => {
                             ? true
                             : false
                     }
-                    id="standard-basic"
+                    id="passwordConfirm"
                     label="パスワード(確認用)"
                     type="password"
                     value={signUpUser.passwordConfirm}
