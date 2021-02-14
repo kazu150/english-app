@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',
+        [theme.breakpoints.down('xs')]: {
+            width: 'auto',
+        },
     },
     root: {
         '& > *': {

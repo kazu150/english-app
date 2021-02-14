@@ -54,8 +54,17 @@ const useStyles = makeStyles((theme: Theme) => ({
             borderLeft: '15px solid transparent',
         },
     },
-    flexWrapper: {
+    mainFlexWrapper: {
         display: 'flex',
+        [theme.breakpoints.down(800)]: {
+            flexWrap: 'wrap',
+        },
+    },
+    totalTimeFlexWrapper: {
+        display: 'flex',
+        [theme.breakpoints.down(800)]: {
+            flexWrap: 'wrap',
+        },
     },
     animalImg: {
         width: '30%',
@@ -79,9 +88,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     monthlyFlexWrapper: {
         display: 'flex',
         justifyContent: 'space-around',
+        [theme.breakpoints.down(800)]: {
+            flexWrap: 'wrap',
+            justifyContent: 'left',
+        },
     },
     monthlyData: {
         fontSize: '12px',
+        [theme.breakpoints.down(800)]: {
+            width: '100%',
+        },
     },
     monthlyStudyHour: {
         fontSize: '22px',
@@ -89,6 +105,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     flexElement: {
         flex: 1,
+        [theme.breakpoints.down(800)]: {
+            width: '100%',
+            flex: 'none',
+        },
     },
 }));
 
@@ -188,12 +208,12 @@ const MyPage: NextPage = () => {
                             英会話の実施を登録する
                         </Button>
                     </Link>
-                    <div className={classes.flexWrapper}>
+                    <div className={classes.mainFlexWrapper}>
                         <Box mr={3} className={classes.flexElement}>
                             <div className={classes.balloon}>
                                 このペースでがんばろう！
                             </div>
-                            <div className={classes.flexWrapper}>
+                            <div className={classes.totalTimeFlexWrapper}>
                                 <img
                                     src="computer_usagi.png"
                                     className={classes.animalImg}

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { PieChart, Pie, Text, Cell } from 'recharts';
+import { PieChart, Pie, Text, Cell, ResponsiveContainer } from 'recharts';
 import Box from '@material-ui/core/Box';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Log } from '../pages/[userId]';
@@ -15,6 +15,10 @@ const colors = [
 ];
 
 const useStyles = makeStyles((theme: Theme) => ({
+    chartWrapper: {
+        width: 'auto',
+        height: '300px',
+    },
     chartDescription: {
         backgroundColor: '#b3e5fc',
         borderRadius: '5px',
@@ -42,17 +46,18 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
     };
 
     const label = ({ name, value, cx, x, y }) => {
-        return (
-            <>
-                {/* 引数で付属情報を受け取れます */}
-                <Text x={x} y={y} fill="#000">
-                    {name}
-                </Text>
-                <Text x={x} y={y} dominantBaseline="hanging" fill="#000">
-                    {`${value}分`}
-                </Text>
-            </>
-        );
+        if (!value) return;
+        else
+            return (
+                <>
+                    <Text x={x} y={y} fill="#000">
+                        {name}
+                    </Text>
+                    <Text x={x} y={y} dominantBaseline="hanging" fill="#000">
+                        {`${value}分`}
+                    </Text>
+                </>
+            );
     };
     // 相手国籍ごとの会話時間を表示
     const handleNationalities = () => {
@@ -71,21 +76,28 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
     return (
         <div>
             <p>会話相手の国籍</p>
-            <PieChart width={400} height={300}>
-                <Pie
-                    dataKey="value"
-                    data={handleNationalities()}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    innerRadius={50}
-                    label={label}
-                >
-                    {handleNationalities().map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={colors[index]} />
-                    ))}
-                </Pie>
-            </PieChart>
+            <div className={classes.chartWrapper}>
+                <ResponsiveContainer>
+                    <PieChart>
+                        <Pie
+                            dataKey="value"
+                            data={handleNationalities()}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            innerRadius={50}
+                            label={label}
+                        >
+                            {handleNationalities().map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={colors[index]}
+                                />
+                            ))}
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
             <Box className={classes.chartDescription} p={2} mb={3}>
                 なるべくいろんな国の英語に触れて、
                 <br />
