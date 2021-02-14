@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',
+        [theme.breakpoints.down('xs')]: {
+            width: 'auto',
+        },
     },
     root: {
         '& > *': {
@@ -119,7 +122,7 @@ const SignIn: NextPage = () => {
             <form className={classes.root} noValidate autoComplete="off">
                 <TextField
                     fullWidth
-                    id="standard-basic"
+                    id="email"
                     label="メールアドレス"
                     error={state.error.errorPart === 'email' ? true : false}
                     value={signInUser.email}
@@ -132,9 +135,10 @@ const SignIn: NextPage = () => {
                 />
                 <TextField
                     fullWidth
-                    id="standard-basic"
+                    id="password"
                     label="パスワード"
                     type="password"
+                    autoComplete="off"
                     error={state.error.errorPart === 'password' ? true : false}
                     value={signInUser.password}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>

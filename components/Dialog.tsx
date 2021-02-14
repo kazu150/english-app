@@ -103,7 +103,7 @@ const CustomizedDialogs: FC<Props> = ({
         setOpen(false);
     };
 
-    const onEditClick = (id: number) => {
+    const onEditClick = (id: string) => {
         Router.push(`/submit/${id}`);
     };
 
@@ -139,9 +139,7 @@ const CustomizedDialogs: FC<Props> = ({
                                         <IconButton
                                             onClick={() =>
                                                 onEditClick(
-                                                    Number(
-                                                        currentLogs[index].id
-                                                    )
+                                                    currentLogs[index].id
                                                 )
                                             }
                                             aria-label="edit"

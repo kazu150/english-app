@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
         width: '500px',
         margin: 'auto',
+        [theme.breakpoints.down('xs')]: {
+            width: 'auto',
+        },
     },
     root: {
         '& > *': {
@@ -137,9 +140,10 @@ const SignUp: NextPage = () => {
                 <TextField
                     fullWidth
                     error={state.error.errorPart === 'password' ? true : false}
-                    id="standard-basic"
+                    id="password"
                     label="パスワード"
                     type="password"
+                    autoComplete="off"
                     value={signUpUser.password}
                     onChange={(
                         e: React.ChangeEvent<
@@ -159,9 +163,10 @@ const SignUp: NextPage = () => {
                             ? true
                             : false
                     }
-                    id="standard-basic"
+                    id="passwordConfirm"
                     label="パスワード(確認用)"
                     type="password"
+                    autoComplete="off"
                     value={signUpUser.passwordConfirm}
                     onChange={(
                         e: React.ChangeEvent<
