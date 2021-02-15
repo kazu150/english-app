@@ -1,4 +1,5 @@
-# 英会話アプリ
+# えーかいわログ
+<img width="281" alt="スクリーンショット 2021-02-15 16 04 36" src="https://user-images.githubusercontent.com/33169480/107915477-e6f57680-6fa7-11eb-9c19-bf0214f41003.png"> 　　<img width="300" alt="スクリーンショット 2021-02-15 16 05 12" src="https://user-images.githubusercontent.com/33169480/107915476-e65ce000-6fa7-11eb-9b58-59371d9321eb.png">
   
 ### 目次
 - アプリ概要
