@@ -6,7 +6,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { db, auth } from '../firebase';
 import Chart from '../components/Chart';
 import CalendarBoard from '../components/CalendarBoard';
@@ -113,6 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const MyPage: NextPage = () => {
+    const router = useRouter();
     const { state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
     const [studyLog, setStudyLog] = useState<Log[]>([]);

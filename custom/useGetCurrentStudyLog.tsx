@@ -21,21 +21,24 @@ const useGetCurrentStudyLog = () => {
 
     useEffect(() => {
         (async () => {
-            // データをDBから未取得のときのみ発火
-            if (dbData.englishService === '') {
-                if (router.query.logid?.length && state.currentUser.userId) {
-                    const snapshot = await db
-                        .doc(
-                            `users/${state.currentUser.userId}/studyLog/${router.query.logid[0]}`
-                        )
-                        .get();
+            // userを取得してない場合は処理をせずreturn
+            if (state.currentUser.userId === '') return;
 
-                    setDbData({
-                        englishService: snapshot.data().englishService.id,
-                        count: Number(snapshot.data().count),
-                        nationality: snapshot.data().nationality.id,
-                    });
-                }
+            // データをDBから取得済のときは処理をせずreturn
+            if (dbData.englishService !== '') return;
+
+            if (router.query.logid?.length) {
+                const snapshot = await db
+                    .doc(
+                        `users/${state.currentUser.userId}/studyLog/${router.query.logid[0]}`
+                    )
+                    .get();
+
+                setDbData({
+                    englishService: snapshot.data().englishService.id,
+                    count: Number(snapshot.data().count),
+                    nationality: snapshot.data().nationality.id,
+                });
             }
         })();
     }, [router.query, state.currentUser.userId]);
