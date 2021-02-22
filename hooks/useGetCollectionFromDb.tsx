@@ -19,6 +19,9 @@ const useGetCollectionFromDb = <T,>(collectionName: string): T[] => {
 
     useEffect(() => {
         (async () => {
+            // userを取得してない場合は処理をせずreturn
+            if (state.currentUser.userId === '') return;
+
             // データをDBから未取得のときのみ発火
             if (!dbData.length) {
                 const snapshot = await db.collection(collectionName).get();

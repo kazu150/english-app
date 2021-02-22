@@ -6,15 +6,15 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { db, auth } from '../firebase';
-import Chart from '../components/Chart';
-import CalendarBoard from '../components/CalendarBoard';
+import Chart from '../components/organisms/Chart';
+import CalendarBoard from '../components/molecules/CalendarBoard';
 import dayjs from 'dayjs';
 import useGetCollectionFromDb, {
     EnglishServices,
     Nationalities,
-} from '../custom/useGetCollectionFromDb';
+} from '../hooks/useGetCollectionFromDb';
 
 export type Log = {
     id?: string;
@@ -113,6 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const MyPage: NextPage = () => {
+    const router = useRouter();
     const { state } = useContext(MyContext);
     const [totalStudyTime, setTotalStudyTime] = useState(0);
     const [studyLog, setStudyLog] = useState<Log[]>([]);
@@ -127,36 +128,38 @@ const MyPage: NextPage = () => {
         let snapshot = null;
         (async () => {
             try {
-                if (state.currentUser.userId !== '') {
-                    snapshot = db
-                        .collection('publicProfiles')
-                        .doc(state.currentUser.userId)
-                        .onSnapshot((snapshot) => {
-                            setTotalStudyTime(snapshot.data().studyTime);
-                        });
+                // currentUserを読み込むまでは発火させない
+                if (state.currentUser.userId === '') return;
 
-                    const studyLogs = await db
-                        .collection('users')
-                        .doc(state.currentUser.userId)
-                        .collection('studyLog')
-                        .get();
+                // ログインユーザーの状態を監視し、cloudfunctionsでstudyTimeを変更
+                snapshot = db
+                    .collection('publicProfiles')
+                    .doc(state.currentUser.userId)
+                    .onSnapshot((snapshot) => {
+                        setTotalStudyTime(snapshot.data().studyTime);
+                    });
 
-                    setStudyLog(
-                        studyLogs.docs.map((log) => {
-                            return {
-                                ...log.data(),
-                                id: log.id,
-                                date: dayjs(log.data().date.toDate()),
-                            };
-                        })
-                    );
-                }
+                const studyLogs = await db
+                    .collection('users')
+                    .doc(state.currentUser.userId)
+                    .collection('studyLog')
+                    .get();
+
+                setStudyLog(
+                    studyLogs.docs.map((log) => {
+                        return {
+                            ...log.data(),
+                            id: log.id,
+                            date: dayjs(log.data().date.toDate()),
+                        };
+                    })
+                );
             } catch (error) {
                 console.log(error);
             }
         })();
         return () => {
-            // snapshotに関数が代入されていた場合のみ発火
+            // snapshotに関数が代入されていれば、アンマウント時にクリーンアップする
             snapshot && snapshot();
         };
     }, [state.currentUser.userId]);
@@ -269,11 +272,6 @@ const MyPage: NextPage = () => {
                             />
                         </div>
                     </div>
-                    {/* <p>（今後作成したい）今週の英会話時間: X分</p>
-                    <p>（今後作成したい）全ユーザーの第XX位/Y人！</p>
-                    <p>（今後作成したい）今月の英会話時間: XX分</p>
-                    <p>（今後作成したい）全ユーザーの第X位/Y人！</p>
-                    <p>（今後作成したい）総合 第X位！</p> */}
                 </div>
             )}
         </>

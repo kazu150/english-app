@@ -13,11 +13,11 @@ import {
     getPreviousMonth,
     getMonth,
     formatMonth,
-} from '../utils/calendar';
+} from '../../utils/calendar';
 import dayjs from 'dayjs';
-import CalendarElement from './CalendarElement';
-import Dialog from './Dialog';
-import { Log } from '../pages/[userId]';
+import CalendarElement from '../atoms/CalendarElement';
+import Dialog from '../organisms/Dialog';
+import { Log } from '../../pages/[userId]';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -48,9 +48,11 @@ const Home: NextPage = () => {
         try {
             // ユーザーのログイン状態をどれだけ継続するか（SESSIONの場合、ブラウザを開いている間有効）
             await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+
+            // ゲストログインの場合(envファイルに記載)
             const data = await auth.signInWithEmailAndPassword(
-                'guest@guest.guest',
-                'guest123'
+                process.env.NEXT_PUBLIC_GUEST_ID,
+                process.env.NEXT_PUBLIC_GUEST_PW
             );
 
             const userInfo = await db

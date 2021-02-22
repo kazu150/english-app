@@ -1,6 +1,5 @@
 import { initialState } from './initialState';
 import { State } from '../pages/_app';
-import { AnyMxRecord } from 'dns';
 
 export type Action = { type: string; payload?: any };
 

@@ -1,6 +1,5 @@
 import React, { useReducer, createContext, useEffect } from 'react';
 import { NextPage } from 'next';
-import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,17 +7,14 @@ import theme from '../src/theme';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
-import Router from 'next/router';
+import useCheckAuthState from '../hooks/useCheckAuthState';
 
 type Props = {
     Component: NextPage;
@@ -80,6 +76,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const MyApp: NextPage<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
+    const [state, dispatch] = useReducer(reducer, initialState);
+    // ユーザーのログイン状態を管理するカスタムフック
+    const useAuth = useCheckAuthState(dispatch);
 
     useEffect(() => {
         // Remove the server-side injected CSS.
@@ -87,56 +86,6 @@ export const MyApp: NextPage<Props> = (props) => {
         if (jssStyles) {
             jssStyles.parentElement.removeChild(jssStyles);
         }
-    }, []);
-
-    useEffect(() => {
-        let userInfo = null;
-        let publicUserInfo = null;
-
-        // ユーザーのログイン状態を監視
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            try {
-                // ユーザーが検出されたら、signInの処理
-                if (user) {
-                    userInfo = await db.collection('users').doc(user.uid).get();
-
-                    publicUserInfo = await db
-                        .collection('publicProfiles')
-                        .doc(user.uid)
-                        .get();
-
-                    dispatch({
-                        type: 'userSignin',
-                        payload: {
-                            userId: user.uid,
-                            name: user.displayName,
-                            initialTime: userInfo.data()?.initialTime || '',
-                            englishService:
-                                userInfo.data().englishService?.id || '',
-                            studyTime: publicUserInfo.data()?.studyTime || '',
-                            photoUrl: publicUserInfo.data()?.photoUrl || '',
-                        },
-                    });
-                    // ユーザーが検出されなかったら、signOutの処理
-                } else {
-                    await auth.signOut();
-                    dispatch({ type: 'userSignout' });
-                    Router.push('/');
-                    return;
-                }
-            } catch (error) {
-                dispatch({
-                    type: 'errorOther',
-                    payload: {},
-                });
-                return;
-            }
-        });
-        return () => {
-            userInfo && userInfo;
-            publicUserInfo && publicUserInfo;
-            unsubscribe();
-        };
     }, []);
 
     const handleLogout = async () => {
@@ -151,8 +100,6 @@ export const MyApp: NextPage<Props> = (props) => {
             return;
         }
     };
-
-    const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
         <React.Fragment>

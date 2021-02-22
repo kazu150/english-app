@@ -5,11 +5,11 @@ import {
     isSameMonth,
     isFirstDay,
     formatMonth,
-} from '../utils/calendar';
+} from '../../utils/calendar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import dayjs from 'dayjs';
-import { Log } from '../pages/[userId]';
+import { Log } from '../../pages/[userId]';
 
 const useStyles = makeStyles({
     colorSecondary: {
