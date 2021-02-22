@@ -15,8 +15,7 @@ import Link from 'next/link';
 import { auth, db } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
-import Router from 'next/router';
-import useAuthState from '../custom/useAuthState';
+import useCheckAuthState from '../custom/useCheckAuthState';
 
 type Props = {
     Component: NextPage;
@@ -78,7 +77,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const MyApp: NextPage<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
-    const useAuth = useAuthState();
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const useAuth = useCheckAuthState(dispatch);
 
     useEffect(() => {
         // Remove the server-side injected CSS.
@@ -100,8 +101,6 @@ export const MyApp: NextPage<Props> = (props) => {
             return;
         }
     };
-
-    const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
         <React.Fragment>

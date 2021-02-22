@@ -1,11 +1,8 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { MyContext } from '../pages/_app';
 import Router from 'next/router';
 
-const useAuthState = () => {
-    const { state, dispatch } = useContext(MyContext);
-
+const useCheckAuthState = (dispatch) => {
     useEffect(() => {
         let userInfo = null;
         let publicUserInfo = null;
@@ -15,6 +12,7 @@ const useAuthState = () => {
             try {
                 // ユーザーが検出されたら、signInの処理
                 if (user) {
+                    console.log(dispatch);
                     userInfo = await db.collection('users').doc(user.uid).get();
 
                     publicUserInfo = await db
@@ -42,6 +40,7 @@ const useAuthState = () => {
                     return;
                 }
             } catch (error) {
+                console.log(error);
                 dispatch({
                     type: 'errorOther',
                     payload: {},
@@ -59,4 +58,4 @@ const useAuthState = () => {
     return [];
 };
 
-export default useAuthState;
+export default useCheckAuthState;
