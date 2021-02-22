@@ -2,8 +2,8 @@ import React, { FC, useState, useEffect } from 'react';
 import { PieChart, Pie, Text, Cell, ResponsiveContainer } from 'recharts';
 import Box from '@material-ui/core/Box';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Log } from '../pages/[userId]';
-import { Nationalities } from '../custom/useGetCollectionFromDb';
+import { Log } from '../../pages/[userId]';
+import { Nationalities } from '../../hooks/useGetCollectionFromDb';
 
 const colors = [
     '#3f51b5',

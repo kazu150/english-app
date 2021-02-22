@@ -8,13 +8,13 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { db, auth } from '../firebase';
-import Chart from '../components/Chart';
-import CalendarBoard from '../components/CalendarBoard';
+import Chart from '../components/organisms/Chart';
+import CalendarBoard from '../components/molecules/CalendarBoard';
 import dayjs from 'dayjs';
 import useGetCollectionFromDb, {
     EnglishServices,
     Nationalities,
-} from '../custom/useGetCollectionFromDb';
+} from '../hooks/useGetCollectionFromDb';
 
 export type Log = {
     id?: string;

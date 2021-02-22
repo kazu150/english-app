@@ -17,8 +17,8 @@ import firebase from 'firebase/app';
 import useGetCollectionFromDb, {
     Nationalities,
     EnglishServices,
-} from '../../custom/useGetCollectionFromDb';
-import useGetCurrentStudyLog from '../../custom/useGetCurrentStudyLog';
+} from '../../hooks/useGetCollectionFromDb';
+import useGetCurrentStudyLog from '../../hooks/useGetCurrentStudyLog';
 
 type Result = {
     englishService: string;

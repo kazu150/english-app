@@ -1,6 +1,5 @@
 import React, { useReducer, createContext, useEffect } from 'react';
 import { NextPage } from 'next';
-import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,10 +11,10 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from 'next/link';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
-import useCheckAuthState from '../custom/useCheckAuthState';
+import useCheckAuthState from '../hooks/useCheckAuthState';
 
 type Props = {
     Component: NextPage;

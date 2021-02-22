@@ -12,7 +12,6 @@ const useCheckAuthState = (dispatch) => {
             try {
                 // ユーザーが検出されたら、signInの処理
                 if (user) {
-                    console.log(dispatch);
                     userInfo = await db.collection('users').doc(user.uid).get();
 
                     publicUserInfo = await db
