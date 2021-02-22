@@ -78,7 +78,7 @@ export const MyApp: NextPage<Props> = (props) => {
     const { Component, pageProps } = props;
     const classes = useStyles();
     const [state, dispatch] = useReducer(reducer, initialState);
-
+    // ユーザーのログイン状態を管理するカスタムフック
     const useAuth = useCheckAuthState(dispatch);
 
     useEffect(() => {
