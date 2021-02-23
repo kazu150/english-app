@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import useAnimalNum from '../../hooks/useAnimalNum';
-import { Props } from './Level';
 
 const useStyles = makeStyles((theme: Theme) => ({
     balloon: {
@@ -59,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-const StudyStatistics: FC<Props> = ({ totalStudyTime }) => {
+const StudyStatistics = ({ totalStudyTime }) => {
     const classes = useStyles();
     // 動物画像とコメントを返すカスタムフック
     const [animalNum, comment] = useAnimalNum();
