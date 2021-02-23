@@ -39,10 +39,9 @@ const useCheckAuthState = (dispatch) => {
                     return;
                 }
             } catch (error) {
-                console.log(error);
                 dispatch({
                     type: 'errorOther',
-                    payload: {},
+                    payload: '認証関係でエラーが発生しました',
                 });
                 return;
             }
@@ -54,7 +53,20 @@ const useCheckAuthState = (dispatch) => {
         };
     }, []);
 
-    return [];
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            dispatch({ type: 'userSignout' });
+        } catch (error) {
+            dispatch({
+                type: 'errorOther',
+                payload: `エラー内容：${error.message} [on App 2]`,
+            });
+            return;
+        }
+    };
+
+    return handleLogout;
 };
 
 export default useCheckAuthState;

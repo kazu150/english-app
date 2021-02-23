@@ -13,7 +13,7 @@ export type EnglishServices = {
     serviceName?: string;
 };
 
-const useGetCollectionFromDb = <T,>(collectionName: string): T[] => {
+const useGetCollectionFromDb = <T,>(collectionName): T[] => {
     const { state } = useContext(MyContext);
     const [dbData, setDbData] = useState([]);
 

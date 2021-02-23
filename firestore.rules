@@ -75,5 +75,9 @@ service cloud.firestore {
       allow read: if isAuthenticated();
     }
 
+    match /levels/{level} {
+      allow read: if isAuthenticated();
+    }
+
   }
 }

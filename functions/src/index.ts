@@ -4,6 +4,40 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 const db = admin.firestore();
 
+const sendResponse = (
+    response: functions.Response,
+    statusCode: number,
+    body: any
+) => {
+    response.send({
+        statusCode,
+        body: JSON.stringify(body),
+    });
+};
+
+/**
+ * firebaseにLevelsデータセットを登録する
+ * 下記コマンドにて、firestore内のlevels_collectionの中身を上書き
+ * curl -X POST https://asia-northeast1-englishapp-ab9b0.cloudfunctions.net/addLevelsDataset -H "Content-Type:application/json" -d @levelsDataset.json
+ */
+
+export const addLevelsDataset = functions
+    .region('asia-northeast1')
+    .https.onRequest(async (req: any, res: any) => {
+        if (req.method !== 'POST') {
+            sendResponse(res, 405, { error: 'Invalid Request' });
+        } else {
+            const dataset = req.body;
+            for (const key of Object.keys(dataset)) {
+                const data = dataset[key];
+                await db.collection('levels').doc(key).set(data);
+            }
+            sendResponse(res, 200, {
+                message: '✨✨✨ Successfully added dataset! ✨✨✨',
+            });
+        }
+    });
+
 export const sumUpStudyTimeOnChangeInitialTime = functions
     .region('asia-northeast1')
     .firestore.document('users/{uid}')
