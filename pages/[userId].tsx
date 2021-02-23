@@ -10,6 +10,8 @@ import { useRouter } from 'next/router';
 import { db, auth } from '../firebase';
 import Chart from '../components/organisms/Chart';
 import CalendarBoard from '../components/molecules/CalendarBoard';
+import StudyStatistics from '../components/molecules/StudyStatistics';
+import Level from '../components/molecules/Level';
 import dayjs from 'dayjs';
 import useGetCollectionFromDb, {
     EnglishServices,
@@ -35,73 +37,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     registerBtn: {
         marginBottom: '40px',
     },
-    balloon: {
-        position: 'relative',
-        padding: '18px',
-        backgroundColor: '#b3e5fc',
-        borderRadius: '5px',
-        marginBottom: '2em',
-        '&::before': {
-            content: '""',
-            position: 'absolute',
-            display: 'block',
-            width: 0,
-            height: 0,
-            left: '20px',
-            bottom: '-15px',
-            borderTop: '15px solid #b3e5fc',
-            borderRight: '15px solid transparent',
-            borderLeft: '15px solid transparent',
-        },
-    },
     mainFlexWrapper: {
         display: 'flex',
         [theme.breakpoints.down(800)]: {
             flexWrap: 'wrap',
         },
-    },
-    totalTimeFlexWrapper: {
-        display: 'flex',
-        [theme.breakpoints.down(800)]: {
-            flexWrap: 'wrap',
-        },
-    },
-    animalImg: {
-        width: '30%',
-        height: '30%',
-        paddingRight: '20px',
-        transform: 'scale(-1, 1)',
-    },
-    levelDescription: {
-        backgroundColor: '#b3e5fc',
-        borderRadius: '5px',
-        textAlign: 'center',
-    },
-    levelIcon: {
-        display: 'block',
-        fontSize: '40px',
-    },
-    totalStudyHour: {
-        fontSize: '45px',
-        fontWeight: 'bold',
-    },
-    monthlyFlexWrapper: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        [theme.breakpoints.down(800)]: {
-            flexWrap: 'wrap',
-            justifyContent: 'left',
-        },
-    },
-    monthlyData: {
-        fontSize: '12px',
-        [theme.breakpoints.down(800)]: {
-            width: '100%',
-        },
-    },
-    monthlyStudyHour: {
-        fontSize: '22px',
-        fontWeight: 'bold',
     },
     flexElement: {
         flex: 1,
@@ -213,49 +153,8 @@ const MyPage: NextPage = () => {
                     </Link>
                     <div className={classes.mainFlexWrapper}>
                         <Box mr={3} className={classes.flexElement}>
-                            <div className={classes.balloon}>
-                                このペースでがんばろう！
-                            </div>
-                            <div className={classes.totalTimeFlexWrapper}>
-                                <img
-                                    src="computer_usagi.png"
-                                    className={classes.animalImg}
-                                />
-                                <p>
-                                    トータル英会話時間
-                                    <br />
-                                    <span className={classes.totalStudyHour}>
-                                        {totalStudyTime}
-                                    </span>
-                                    分
-                                </p>
-                            </div>
-                            <div className={classes.monthlyFlexWrapper}>
-                                <p className={classes.monthlyData}>
-                                    今月の英会話時間：
-                                    <span className={classes.monthlyStudyHour}>
-                                        300
-                                    </span>
-                                    分
-                                </p>
-                                <p className={classes.monthlyData}>
-                                    今月のランキング：
-                                    <span className={classes.monthlyStudyHour}>
-                                        20
-                                    </span>
-                                    位/101人中
-                                </p>
-                            </div>
-                            <Box
-                                className={classes.levelDescription}
-                                p={2}
-                                mb={3}
-                            >
-                                <span className={classes.levelIcon}>🐹</span>
-                                あなたは<b>ハムスター</b>レベル！
-                                <br />
-                                次のレベルまであと<b>300</b>分
-                            </Box>
+                            <StudyStatistics totalStudyTime={totalStudyTime} />
+                            <Level />
                             <Chart
                                 nationalities={nationalities}
                                 studyLog={studyLog}
