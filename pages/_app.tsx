@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { auth } from '../firebase';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
-import useCheckAuthState from '../hooks/useCheckAuthState';
+import useAuthManagement from '../hooks/useAuthManagement';
 
 type Props = {
     Component: NextPage;
@@ -78,7 +78,7 @@ export const MyApp: NextPage<Props> = (props) => {
     const classes = useStyles();
     const [state, dispatch] = useReducer(reducer, initialState);
     // ユーザーのログイン状態を管理するカスタムフック
-    const useAuth = useCheckAuthState(dispatch);
+    const handleLogout = useAuthManagement(dispatch);
 
     useEffect(() => {
         // Remove the server-side injected CSS.
@@ -87,19 +87,6 @@ export const MyApp: NextPage<Props> = (props) => {
             jssStyles.parentElement.removeChild(jssStyles);
         }
     }, []);
-
-    const handleLogout = async () => {
-        try {
-            await auth.signOut();
-            dispatch({ type: 'userSignout' });
-        } catch (error) {
-            dispatch({
-                type: 'errorOther',
-                payload: `エラー内容：${error.message} [on App 2]`,
-            });
-            return;
-        }
-    };
 
     return (
         <React.Fragment>

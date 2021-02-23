@@ -53,7 +53,20 @@ const useCheckAuthState = (dispatch) => {
         };
     }, []);
 
-    return [];
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            dispatch({ type: 'userSignout' });
+        } catch (error) {
+            dispatch({
+                type: 'errorOther',
+                payload: `エラー内容：${error.message} [on App 2]`,
+            });
+            return;
+        }
+    };
+
+    return handleLogout;
 };
 
 export default useCheckAuthState;
