@@ -39,10 +39,9 @@ const useCheckAuthState = (dispatch) => {
                     return;
                 }
             } catch (error) {
-                console.log(error);
                 dispatch({
                     type: 'errorOther',
-                    payload: {},
+                    payload: '認証関係でエラーが発生しました',
                 });
                 return;
             }

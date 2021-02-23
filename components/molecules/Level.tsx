@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import useShowLevel from '../../hooks/useShowLevel';
 
 const useStyles = makeStyles((theme: Theme) => ({
     levelDescription: {
@@ -14,15 +15,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-const Level = () => {
+const Level = ({ totalStudyTime }: { totalStudyTime: number }) => {
     const classes = useStyles();
+    const currentLevel = useShowLevel(totalStudyTime);
 
     return (
         <Box className={classes.levelDescription} p={2} mb={3}>
-            <span className={classes.levelIcon}>🐹</span>
-            あなたは<b>ハムスター</b>レベル！
+            <span className={classes.levelIcon}>{currentLevel?.character}</span>
+            あなたは<b>{currentLevel?.name}</b>レベル！
             <br />
-            次のレベルまであと<b>300</b>分
+            {currentLevel?.comment}
+            <br />
+            次のレベルまであと<b>{currentLevel?.endAt - totalStudyTime}</b>分!!!
         </Box>
     );
 };

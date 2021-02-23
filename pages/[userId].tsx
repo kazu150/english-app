@@ -130,9 +130,7 @@ const MyPage: NextPage = () => {
 
     return (
         <>
-            {state.currentUser.userId === '' ? (
-                ''
-            ) : (
+            {state.currentUser.userId !== '' && (
                 <div>
                     <div>
                         <AccountCircleIcon fontSize="large" color="primary" />
@@ -154,7 +152,7 @@ const MyPage: NextPage = () => {
                     <div className={classes.mainFlexWrapper}>
                         <Box mr={3} className={classes.flexElement}>
                             <StudyStatistics totalStudyTime={totalStudyTime} />
-                            <Level />
+                            <Level totalStudyTime={totalStudyTime} />
                             <Chart
                                 nationalities={nationalities}
                                 studyLog={studyLog}
