@@ -7,16 +7,17 @@ import Box from '@material-ui/core/Box';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { db, auth } from '../firebase';
+import { db } from '../firebase';
 import Chart from '../components/organisms/Chart';
 import CalendarBoard from '../components/molecules/CalendarBoard';
 import StudyStatistics from '../components/molecules/StudyStatistics';
 import Level from '../components/molecules/Level';
-import dayjs from 'dayjs';
 import useGetCollectionFromDb, {
     EnglishServices,
     Nationalities,
 } from '../hooks/useGetCollectionFromDb';
+import useFetchStudyLog from '../hooks/useFetchStudyLog';
+import dayjs from 'dayjs';
 
 export type Log = {
     id?: string;
@@ -55,54 +56,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 const MyPage: NextPage = () => {
     const router = useRouter();
     const { state } = useContext(MyContext);
-    const [totalStudyTime, setTotalStudyTime] = useState(0);
-    const [studyLog, setStudyLog] = useState<Log[]>([]);
     const [currentLogs, setCurrentLogs] = useState<Log[]>([]);
     const [open, setOpen] = useState(false);
     const nationalities = useGetCollectionFromDb<Nationalities>(
         'nationalities'
     );
     const classes = useStyles();
-
-    useEffect(() => {
-        let snapshot = null;
-        (async () => {
-            try {
-                // currentUserを読み込むまでは発火させない
-                if (state.currentUser.userId === '') return;
-
-                // ログインユーザーの状態を監視し、cloudfunctionsでstudyTimeを変更
-                snapshot = db
-                    .collection('publicProfiles')
-                    .doc(state.currentUser.userId)
-                    .onSnapshot((snapshot) => {
-                        setTotalStudyTime(snapshot.data().studyTime);
-                    });
-
-                const studyLogs = await db
-                    .collection('users')
-                    .doc(state.currentUser.userId)
-                    .collection('studyLog')
-                    .get();
-
-                setStudyLog(
-                    studyLogs.docs.map((log) => {
-                        return {
-                            ...log.data(),
-                            id: log.id,
-                            date: dayjs(log.data().date.toDate()),
-                        };
-                    })
-                );
-            } catch (error) {
-                console.log(error);
-            }
-        })();
-        return () => {
-            // snapshotに関数が代入されていれば、アンマウント時にクリーンアップする
-            snapshot && snapshot();
-        };
-    }, [state.currentUser.userId]);
+    const { studyLog, setStudyLog, totalStudyTime } = useFetchStudyLog(
+        state.currentUser.userId
+    );
 
     const onDeleteClick = async (id: string) => {
         try {
