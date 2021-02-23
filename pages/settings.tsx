@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NextPage } from 'next';
-import Router from 'next/router';
 import { User, MyContext } from './_app';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -10,14 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { db, auth } from '../firebase';
-import firebase from 'firebase/app';
-
-type SettingsData = {
-    name: string;
-    initialTime: string;
-    englishService: string;
-};
+import useSettings from '../hooks/useManageSettingsData';
 
 const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
@@ -41,75 +33,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Settings: NextPage = () => {
     const classes = useStyles();
     const { state, dispatch } = useContext(MyContext);
-    const [settingsData, setSettingsData] = useState<SettingsData>({
-        name: state.currentUser.name || '',
-        initialTime: state.currentUser.initialTime.toString() || '0',
-        englishService: state.currentUser.englishService || 'dmm',
-    });
 
-    const onSubmitButtonClick = async () => {
-        if (settingsData.name === '') {
-            dispatch({ type: 'errorEmptyname' });
-            return;
-        } else if (
-            Number(settingsData.initialTime) < 0 ||
-            isNaN(Number(settingsData.initialTime))
-        ) {
-            dispatch({ type: 'errorInvalidInitialTime' });
-            return;
-        }
-
-        try {
-            // Firebase Authentication側のdisplayNameを上書き
-            if (auth.currentUser.displayName !== settingsData.name) {
-                auth.currentUser.updateProfile({
-                    displayName: settingsData.name,
-                });
-            }
-
-            // Firestore側のユーザー情報のアップデート
-            const batch = firebase.firestore().batch();
-
-            batch.update(db.doc(`users/${state.currentUser.userId}`), {
-                englishService: db.doc(
-                    `englishServices/${settingsData.englishService}`
-                ),
-                initialTime: Number(settingsData.initialTime),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-
-            batch.update(db.doc(`publicProfiles/${state.currentUser.userId}`), {
-                name: settingsData.name,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-
-            await batch.commit();
-
-            dispatch({
-                type: 'userUpdate',
-                payload: {
-                    englishService: settingsData.englishService,
-                    initialTime: settingsData.initialTime,
-                    name: settingsData.name,
-                },
-            });
-
-            Router.push(`/${state.currentUser.userId}`);
-            return;
-        } catch (error) {
-            dispatch({
-                type: 'errorOther',
-                payload: `エラー内容：${error.message} [on settings]`,
-            });
-            return;
-        }
-    };
+    // settingsで扱うstate群の処理に関するcustomHook
+    const { settingsData, setSettingsData, onSubmitButtonClick } = useSettings(
+        state.currentUser,
+        dispatch
+    );
 
     return (
         <main className={classes.narrowWidthWrapper}>
-            {state.currentUser.userId === '' ? (
-                ''
-            ) : (
+            {state.currentUser.userId !== '' && (
                 <>
                     <h2>ユーザー情報設定</h2>
                     <form
