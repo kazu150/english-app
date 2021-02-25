@@ -97,7 +97,7 @@ const Home: NextPage = () => {
     };
 
     return (
-        <div className={styles.button}>
+        <div>
             <Head>
                 <title>えーかいわログ</title>
                 <link rel="icon" href="/favicon.ico" />
