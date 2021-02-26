@@ -58,7 +58,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-const StudyStatistics = ({ totalStudyTime }) => {
+const StudyStatistics = ({
+    totalStudyTime,
+    monthlyStudyTime,
+    myRank,
+    totalUser,
+}: {
+    totalStudyTime: number;
+    monthlyStudyTime: number;
+    myRank: number;
+    totalUser: number;
+}) => {
     const classes = useStyles();
     // 動物画像とコメントを返すカスタムフック
     const [animalNum, comment] = useAnimalNum();
@@ -83,12 +93,15 @@ const StudyStatistics = ({ totalStudyTime }) => {
             <div className={classes.monthlyFlexWrapper}>
                 <p className={classes.monthlyData}>
                     今月の英会話時間：
-                    <span className={classes.monthlyStudyHour}>300</span>分
+                    <span className={classes.monthlyStudyHour}>
+                        {monthlyStudyTime}
+                    </span>
+                    分
                 </p>
                 <p className={classes.monthlyData}>
-                    今月のランキング：
-                    <span className={classes.monthlyStudyHour}>20</span>
-                    位/101人中
+                    全ユーザ総合ランキング：
+                    <span className={classes.monthlyStudyHour}>{myRank}</span>
+                    位/{totalUser}人中
                 </p>
             </div>
         </>

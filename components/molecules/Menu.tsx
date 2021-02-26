@@ -5,6 +5,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const linkStyle = {
     color: '#000',
@@ -12,38 +13,43 @@ const linkStyle = {
 };
 
 export const PcMenu = ({ state, handleLogout, classes }) => {
+    const router = useRouter();
     return (
         <div className={`${classes.headerRight} ${classes.pc}`}>
             {state.currentUser.userId ? (
                 // ログイン状態では以下を表示
                 <>
-                    <Link href={`/blog`}>
+                    <a onClick={() => router.push(`/blog`)}>
                         <Button color="inherit">英会話TIPS</Button>
-                    </Link>
-                    <Link href={`/${state.currentUser.userId}`}>
+                    </a>
+                    <a
+                        onClick={() =>
+                            router.push(`/${state.currentUser.userId}`)
+                        }
+                    >
                         <Button color="inherit">マイページ</Button>
-                    </Link>
-                    <Link href={`/settings`}>
+                    </a>
+                    <a onClick={() => router.push(`/settings`)}>
                         <Button color="inherit">設定</Button>
-                    </Link>
-                    <Link href="/">
+                    </a>
+                    <a onClick={() => router.push('/')}>
                         <Button onClick={handleLogout} color="inherit">
                             ログアウト
                         </Button>
-                    </Link>
+                    </a>
                 </>
             ) : (
                 // ログアウト状態では以下を表示
                 <>
-                    <Link href={`/blog`}>
+                    <a onClick={() => router.push(`/blog`)}>
                         <Button color="inherit">英会話TIPS</Button>
-                    </Link>
-                    <Link href="/signin">
+                    </a>
+                    <a onClick={() => router.push('/signin')}>
                         <Button color="inherit">ログイン</Button>
-                    </Link>
-                    <Link href="/signup">
+                    </a>
+                    <a onClick={() => router.push('/signup')}>
                         <Button color="inherit">新規登録</Button>
-                    </Link>
+                    </a>
                 </>
             )}
         </div>
@@ -51,8 +57,17 @@ export const PcMenu = ({ state, handleLogout, classes }) => {
 };
 
 export const SpMenu = ({ state, handleLogout, classes }) => {
-    const handleClose = () => {
+    const router = useRouter();
+
+    const handleClose = (page) => {
         setAnchorEl(null);
+        if (page) {
+            router.push(page);
+        }
+
+        if (page === '/') {
+            handleLogout();
+        }
     };
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -76,27 +91,23 @@ export const SpMenu = ({ state, handleLogout, classes }) => {
                     anchorEl={anchorEl}
                     keepMounted
                     open={Boolean(anchorEl)}
-                    onClose={handleClose}
+                    onClose={() => handleClose(null)}
                 >
-                    <MenuItem onClick={handleClose}>
-                        <Link href={`/blog`}>
-                            <a style={linkStyle}>英会話TIPS</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/blog`)}>
+                        英会話TIPS
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <Link href={`/${state.currentUser.userId}`}>
-                            <a style={linkStyle}>マイページ</a>
-                        </Link>
+                    <MenuItem
+                        onClick={() =>
+                            handleClose(`/${state.currentUser.userId}`)
+                        }
+                    >
+                        マイページ
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <Link href={`/settings`}>
-                            <a style={linkStyle}>設定</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/settings`)}>
+                        設定
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>
-                        <Link href="/">
-                            <a style={linkStyle}>ログアウト</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/`)}>
+                        ログアウト
                     </MenuItem>
                 </Menu>
             ) : (
@@ -108,20 +119,14 @@ export const SpMenu = ({ state, handleLogout, classes }) => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    <MenuItem onClick={handleClose}>
-                        <Link href={`/blog`}>
-                            <a style={linkStyle}>英会話TIPS</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/blog`)}>
+                        英会話TIPS
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <Link href={`/signin`}>
-                            <a style={linkStyle}>ログイン</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/signin`)}>
+                        <a style={linkStyle}>ログイン</a>
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <Link href="/signup">
-                            <a style={linkStyle}>新規登録</a>
-                        </Link>
+                    <MenuItem onClick={() => handleClose(`/signup`)}>
+                        <a style={linkStyle}>新規登録</a>
                     </MenuItem>
                 </Menu>
             )}

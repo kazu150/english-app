@@ -9,7 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import useSettings from '../hooks/useManageSettingsData';
+import useManageSettingsData from '../hooks/useManageSettingsData';
 
 const useStyles = makeStyles((theme: Theme) => ({
     narrowWidthWrapper: {
@@ -35,10 +35,11 @@ const Settings: NextPage = () => {
     const { state, dispatch } = useContext(MyContext);
 
     // settingsで扱うstate群の処理に関するcustomHook
-    const { settingsData, setSettingsData, onSubmitButtonClick } = useSettings(
-        state.currentUser,
-        dispatch
-    );
+    const {
+        settingsData,
+        setSettingsData,
+        onSubmitButtonClick,
+    } = useManageSettingsData(state.currentUser, dispatch);
 
     return (
         <main className={classes.narrowWidthWrapper}>

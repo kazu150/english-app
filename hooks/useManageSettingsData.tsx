@@ -19,7 +19,7 @@ const useManageSettingsData = (currentUser, dispatch) => {
     useEffect(() => {
         setSettingsData({
             name: currentUser.name,
-            initialTime: currentUser.initialTime.toString(),
+            initialTime: currentUser.initialTime,
             englishService: currentUser.englishService,
         });
     }, [currentUser]);
@@ -61,8 +61,9 @@ const useManageSettingsData = (currentUser, dispatch) => {
                 name: settingsData.name,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
-
             await batch.commit();
+
+            db.collection('publicProfiles').orderBy('studyTime', 'desc');
 
             dispatch({
                 type: 'userUpdate',
