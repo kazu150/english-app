@@ -62,33 +62,20 @@ const MyPage: NextPage = () => {
         'nationalities'
     );
     const classes = useStyles();
-    const { studyLog, setStudyLog, totalStudyTime } = useFetchStudyLog(
-        state.currentUser.userId
+    const {
+        studyLog,
+        totalStudyTime,
+        monthlyStudyTime,
+        myRank,
+        totalUser,
+        onDeleteClick,
+    } = useFetchStudyLog(
+        state.currentUser.userId,
+        state.currentUser.initialTime,
+        currentLogs,
+        setCurrentLogs,
+        setOpen
     );
-
-    const onDeleteClick = async (id: string) => {
-        try {
-            await db
-                .collection('users')
-                .doc(state.currentUser.userId)
-                .collection('studyLog')
-                .doc(id)
-                .delete();
-
-            const newStudyLog = studyLog.filter((log) => {
-                return log.id !== id;
-            });
-            setStudyLog(newStudyLog);
-
-            const newCurrentLogs = currentLogs.filter((log) => {
-                return log.id !== id;
-            });
-            setCurrentLogs(newCurrentLogs);
-            !newCurrentLogs.length && setOpen(false);
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     return (
         <>
@@ -113,7 +100,12 @@ const MyPage: NextPage = () => {
                     </Link>
                     <div className={classes.mainFlexWrapper}>
                         <Box mr={3} className={classes.flexElement}>
-                            <StudyStatistics totalStudyTime={totalStudyTime} />
+                            <StudyStatistics
+                                totalStudyTime={totalStudyTime}
+                                monthlyStudyTime={monthlyStudyTime}
+                                myRank={myRank}
+                                totalUser={totalUser}
+                            />
                             <Level totalStudyTime={totalStudyTime} />
                             <Chart
                                 nationalities={nationalities}

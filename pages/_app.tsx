@@ -5,13 +5,9 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import Link from 'next/link';
-import { auth } from '../firebase';
+import Header from '../components/organisms/Header';
 import { reducer, Action } from '../utils/reducer';
 import { initialState } from '../utils/initialState';
 import useAuthManagement from '../hooks/useAuthManagement';
@@ -50,16 +46,6 @@ export const MyContext = createContext<ContextType>({
 });
 
 const useStyles = makeStyles((theme: Theme) => ({
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    headerLeft: {
-        marginLeft: 'auto',
-    },
-    title: {
-        width: '150px',
-        cursor: 'pointer',
-    },
     body: {
         width: '90%',
         maxWidth: '800px',
@@ -101,52 +87,7 @@ export const MyApp: NextPage<Props> = (props) => {
                 <ThemeProvider theme={theme}>
                     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                     <CssBaseline />
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Link href="/">
-                                <h1>
-                                    <img
-                                        className={classes.title}
-                                        src="/title-white.png"
-                                        alt="えーかいわログ"
-                                    />
-                                </h1>
-                            </Link>
-                            {state.currentUser.userId ? (
-                                <div className={classes.headerLeft}>
-                                    <Link href={`/${state.currentUser.userId}`}>
-                                        <Button color="inherit">
-                                            マイページ
-                                        </Button>
-                                    </Link>
-                                    <Link href={`/settings`}>
-                                        <Button color="inherit">設定</Button>
-                                    </Link>
-                                    <Link href="/">
-                                        <Button
-                                            onClick={handleLogout}
-                                            color="inherit"
-                                        >
-                                            ログアウト
-                                        </Button>
-                                    </Link>
-                                </div>
-                            ) : (
-                                <div className={classes.headerLeft}>
-                                    <Link href="/signin">
-                                        <Button color="inherit">
-                                            ログイン
-                                        </Button>
-                                    </Link>
-                                    <Link href="/signup">
-                                        <Button color="inherit">
-                                            新規登録
-                                        </Button>
-                                    </Link>
-                                </div>
-                            )}
-                        </Toolbar>
-                    </AppBar>
+                    <Header handleLogout={handleLogout} />
                     <div className={classes.body}>
                         <Component {...pageProps} />
                         <Snackbar

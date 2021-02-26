@@ -38,70 +38,74 @@ export const addLevelsDataset = functions
         }
     });
 
-export const sumUpStudyTimeOnChangeInitialTime = functions
-    .region('asia-northeast1')
-    .firestore.document('users/{uid}')
-    .onUpdate(async (change, context) => {
-        if (
-            change.before.data().initialTime !== change.after.data().initialTime
-        ) {
-            const newInitialTime = Number(change.after.data().initialTime);
-            const currentInitialTime = Number(change.before.data().initialTime);
+// InitialTimeが変更されたときに、総勉強時間を再度算出
 
-            try {
-                const publicProfile = await db
-                    .collection('publicProfiles')
-                    .doc(context.params.uid)
-                    .get();
-                const currentStudyTime =
-                    Number(publicProfile.data()?.studyTime) || 0;
+// export const sumUpStudyTimeOnChangeInitialTime = functions
+//     .region('asia-northeast1')
+//     .firestore.document('users/{uid}')
+//     .onUpdate(async (change, context) => {
+//         if (
+//             change.before.data().initialTime !== change.after.data().initialTime
+//         ) {
+//             const newInitialTime = Number(change.after.data().initialTime);
+//             const currentInitialTime = Number(change.before.data().initialTime);
 
-                await db
-                    .collection('publicProfiles')
-                    .doc(context.params.uid)
-                    .update({
-                        studyTime:
-                            currentStudyTime -
-                            currentInitialTime +
-                            newInitialTime,
-                    });
-            } catch (error) {
-                // console.log('エラー内容：', error);
-            }
-        }
-    });
+//             try {
+//                 const publicProfile = await db
+//                     .collection('publicProfiles')
+//                     .doc(context.params.uid)
+//                     .get();
+//                 const currentStudyTime =
+//                     Number(publicProfile.data()?.studyTime) || 0;
 
-export const sumUpStudyTimeOnWriteStudyLog = functions
-    .region('asia-northeast1')
-    .firestore.document('users/{uid}/studyLog/{id}')
-    .onWrite(async (change, context) => {
-        try {
-            const studyLogs = await db
-                .collection('users')
-                .doc(context.params.uid)
-                .collection('studyLog')
-                .where('time', '>=', 0)
-                .get();
+//                 await db
+//                     .collection('publicProfiles')
+//                     .doc(context.params.uid)
+//                     .update({
+//                         studyTime:
+//                             currentStudyTime -
+//                             currentInitialTime +
+//                             newInitialTime,
+//                     });
+//             } catch (error) {
+//                 // console.log('エラー内容：', error);
+//             }
+//         }
+//     });
 
-            let totalLogs = 0;
-            studyLogs.forEach((doc) => {
-                totalLogs += doc.data().time;
-            });
+// studyLogが追加されたときに、総勉強時間を再度算出
 
-            const user = await db
-                .collection('users')
-                .doc(context.params.uid)
-                .get();
+// export const sumUpStudyTimeOnWriteStudyLog = functions
+//     .region('asia-northeast1')
+//     .firestore.document('users/{uid}/studyLog/{id}')
+//     .onWrite(async (change, context) => {
+//         try {
+//             const studyLogs = await db
+//                 .collection('users')
+//                 .doc(context.params.uid)
+//                 .collection('studyLog')
+//                 .where('time', '>=', 0)
+//                 .get();
 
-            const currentInitialTime = Number(user.data()?.initialTime) || 0;
+//             let totalLogs = 0;
+//             studyLogs.forEach((doc) => {
+//                 totalLogs += doc.data().time;
+//             });
 
-            await db
-                .collection('publicProfiles')
-                .doc(context.params.uid)
-                .update({
-                    studyTime: totalLogs + currentInitialTime,
-                });
-        } catch (error) {
-            // console.log('エラー内容：', error);
-        }
-    });
+//             const user = await db
+//                 .collection('users')
+//                 .doc(context.params.uid)
+//                 .get();
+
+//             const currentInitialTime = Number(user.data()?.initialTime) || 0;
+
+//             await db
+//                 .collection('publicProfiles')
+//                 .doc(context.params.uid)
+//                 .update({
+//                     studyTime: totalLogs + currentInitialTime,
+//                 });
+//         } catch (error) {
+//             // console.log('エラー内容：', error);
+//         }
+//     });
