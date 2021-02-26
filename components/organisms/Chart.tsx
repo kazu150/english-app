@@ -33,6 +33,8 @@ type Props = {
 
 const Chart: FC<Props> = ({ nationalities, studyLog }) => {
     const classes = useStyles();
+    const [nationalityData, setNationalityData] = useState([]);
+
     // 相手国籍ごとの会話時間を算出
     const handleTimeForEachNationality = (nationalityId: string): number => {
         let totalLogs = 0;
@@ -45,22 +47,8 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
         return totalLogs;
     };
 
-    const label = ({ name, value, cx, x, y }) => {
-        if (!value) return;
-        else
-            return (
-                <>
-                    <Text x={x} y={y} fill="#000">
-                        {name}
-                    </Text>
-                    <Text x={x} y={y} dominantBaseline="hanging" fill="#000">
-                        {`${value}分`}
-                    </Text>
-                </>
-            );
-    };
     // 相手国籍ごとの会話時間を表示
-    const handleNationalities = () => {
+    useEffect(() => {
         const array = [];
         nationalities.length &&
             nationalities.map((nationality, index) => {
@@ -70,9 +58,28 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
                     value: handleTimeForEachNationality(nationality.id),
                 });
             });
+        setNationalityData(array);
+        return;
+    }, [studyLog]);
 
-        return array;
+    const label = ({ name, value, cx, x, y }) => {
+        if (!value) return;
+        return (
+            <>
+                <Text x={x} y={y} fill="#000">
+                    {name}
+                </Text>
+                <Text x={x} y={y} dominantBaseline="hanging" fill="#000">
+                    {`${value}分`}
+                </Text>
+            </>
+        );
     };
+
+    useEffect(() => {
+        label;
+    });
+
     return (
         <div>
             <p>会話相手の国籍</p>
@@ -81,14 +88,14 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
                     <PieChart>
                         <Pie
                             dataKey="value"
-                            data={handleNationalities()}
+                            data={nationalityData}
                             cx="50%"
                             cy="50%"
                             outerRadius={100}
                             innerRadius={50}
                             label={label}
                         >
-                            {handleNationalities().map((entry, index) => (
+                            {nationalityData.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={colors[index]}
