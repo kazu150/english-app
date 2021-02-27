@@ -20,7 +20,8 @@
     "next": "10.0.5",
     "react": "^16.0.1",
     "react-dom": "^16.0.1",
-    "recharts": "^2.0.6"
+    "recharts": "^2.0.6",
+    "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
     "@firebase/testing": "^0.20.11",

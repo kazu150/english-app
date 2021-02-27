@@ -1,3 +1,4 @@
+import 'resize-observer-polyfill/dist/ResizeObserver.global';
 import React, { FC, useState, useEffect } from 'react';
 import { PieChart, Pie, Text, Cell, ResponsiveContainer } from 'recharts';
 import Box from '@material-ui/core/Box';
@@ -92,7 +93,7 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
                 <Text x={x} y={y} fill="#000">
                     {name}
                 </Text>
-                <Text x={x} y={y + 5} dominantBaseline="hanging" fill="#000">
+                <Text x={x} y={y + 8} dominantBaseline="hanging" fill="#000">
                     {`${value}分`}
                 </Text>
             </>
