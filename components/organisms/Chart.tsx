@@ -62,6 +62,29 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
         return;
     }, [studyLog]);
 
+    const renderChart = () => {
+        return (
+            <ResponsiveContainer>
+                <PieChart>
+                    <Pie
+                        dataKey="value"
+                        data={nationalityData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        innerRadius={50}
+                        label={label}
+                        isAnimationActive={false}
+                    >
+                        {nationalityData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={colors[index]} />
+                        ))}
+                    </Pie>
+                </PieChart>
+            </ResponsiveContainer>
+        );
+    };
+
     const label = ({ name, value, cx, x, y }) => {
         if (!value) return;
         return (
@@ -69,42 +92,17 @@ const Chart: FC<Props> = ({ nationalities, studyLog }) => {
                 <Text x={x} y={y} fill="#000">
                     {name}
                 </Text>
-                <Text x={x} y={y} dominantBaseline="hanging" fill="#000">
+                <Text x={x} y={y + 5} dominantBaseline="hanging" fill="#000">
                     {`${value}分`}
                 </Text>
             </>
         );
     };
 
-    useEffect(() => {
-        label;
-    });
-
     return (
         <div>
             <p>会話相手の国籍</p>
-            <div className={classes.chartWrapper}>
-                <ResponsiveContainer>
-                    <PieChart>
-                        <Pie
-                            dataKey="value"
-                            data={nationalityData}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={100}
-                            innerRadius={50}
-                            label={label}
-                        >
-                            {nationalityData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={colors[index]}
-                                />
-                            ))}
-                        </Pie>
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
+            <div className={classes.chartWrapper}>{renderChart()}</div>
             <Box className={classes.chartDescription} p={2} mb={3}>
                 なるべくいろんな国の英語に触れて、
                 <br />
